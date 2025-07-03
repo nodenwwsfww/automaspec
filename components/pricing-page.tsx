@@ -61,23 +61,23 @@ export function PricingPage() {
             <CardContent className="space-y-6">
               <div className="space-y-3">
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                   <span>Up to 50 tests</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                   <span>Basic Playwright code generation</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                   <span>1 project</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                   <span>Community support</span>
                 </div>
                 <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
+                  <CheckCircle className="w-5 h-5 text-green-500 shrink-0" />
                   <span>Basic test execution</span>
                 </div>
               </div>

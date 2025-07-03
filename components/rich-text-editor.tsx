@@ -33,7 +33,7 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
     },
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-none min-h-[100px] p-3",
+        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-hidden min-h-[100px] p-3",
       },
     },
   })
