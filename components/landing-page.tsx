@@ -176,55 +176,6 @@ export function LandingPage() {
                 </Link>
               </CardContent>
             </Card>
-
-            <Card className="border-primary">
-              <CardHeader>
-                <div className="flex items-center gap-2">
-                  <CardTitle className="text-2xl">Pro</CardTitle>
-                  <Badge>Most Popular</Badge>
-                </div>
-                <CardDescription>For teams and professionals</CardDescription>
-                <div className="text-3xl font-bold mt-4">
-                  $29
-                  <span className="text-lg font-normal text-muted-foreground">/month</span>
-                </div>
-              </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">Unlimited tests</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">Advanced code generation</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">Priority support</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">Unlimited projects</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">Team collaboration</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">Git integration</span>
-                  </div>
-                  <div className="flex items-center gap-2">
-                    <CheckCircle className="w-4 h-4 text-green-500" />
-                    <span className="text-sm">API access</span>
-                  </div>
-                </div>
-                <Link href="/pricing" className="block">
-                  <Button className="w-full">Upgrade to Pro</Button>
-                </Link>
-              </CardContent>
-            </Card>
           </div>
         </div>
       </section>

@@ -93,76 +93,6 @@ export function PricingPage() {
               </div>
             </CardContent>
           </Card>
-
-          {/* Pro Plan */}
-          <Card className="relative border-primary shadow-lg">
-            <div className="absolute -top-3 left-1/2 transform -translate-x-1/2">
-              <Badge className="bg-primary text-primary-foreground px-4 py-1">
-                <Star className="w-3 h-3 mr-1" />
-                Most Popular
-              </Badge>
-            </div>
-            <CardHeader>
-              <div>
-                <CardTitle className="text-2xl">Pro</CardTitle>
-                <CardDescription>For teams and professionals</CardDescription>
-              </div>
-              <div className="text-4xl font-bold mt-4">
-                $29
-                <span className="text-lg font-normal text-muted-foreground">/month</span>
-              </div>
-              <p className="text-sm text-muted-foreground">Billed monthly</p>
-            </CardHeader>
-            <CardContent className="space-y-6">
-              <div className="space-y-3">
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span className="font-medium">Everything in Free, plus:</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Unlimited tests</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Advanced code generation (Jest, VTest)</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Unlimited projects</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Team collaboration</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Git integration</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Priority support</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>API access</span>
-                </div>
-                <div className="flex items-center gap-3">
-                  <CheckCircle className="w-5 h-5 text-green-500 flex-shrink-0" />
-                  <span>Advanced analytics</span>
-                </div>
-              </div>
-
-              <Button className="w-full" size="lg">
-                Upgrade to Pro
-                <ArrowRight className="w-4 h-4 ml-2" />
-              </Button>
-
-              <div className="text-center">
-                <p className="text-sm text-muted-foreground">14-day free trial</p>
-              </div>
-            </CardContent>
-          </Card>
         </div>
 
         {/* FAQ Section */}
@@ -170,9 +100,9 @@ export function PricingPage() {
           <h2 className="text-3xl font-bold text-center mb-12">Frequently asked questions</h2>
           <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
             <div>
-              <h3 className="font-semibold mb-2">Can I change plans anytime?</h3>
+              <h3 className="font-semibold mb-2">Is the free plan really free?</h3>
               <p className="text-muted-foreground text-sm">
-                Yes, you can upgrade or downgrade your plan at any time. Changes take effect immediately.
+                Yes, the free plan is completely free. No credit card required.
               </p>
             </div>
             <div>
@@ -182,15 +112,15 @@ export function PricingPage() {
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">Is there a free trial for Pro?</h3>
+              <h3 className="font-semibold mb-2">Can I use this for commercial projects?</h3>
               <p className="text-muted-foreground text-sm">
-                Yes, you get a 14-day free trial when you upgrade to Pro. No credit card required.
+                Yes, the free plan can be used for both personal and commercial projects.
               </p>
             </div>
             <div>
-              <h3 className="font-semibold mb-2">Do you offer team discounts?</h3>
+              <h3 className="font-semibold mb-2">Do you offer support?</h3>
               <p className="text-muted-foreground text-sm">
-                Yes, we offer discounts for teams of 10+ users. Contact us for custom pricing.
+                Community support is available for all users on the free plan.
               </p>
             </div>
           </div>

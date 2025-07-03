@@ -115,7 +115,7 @@ const testDatabase = {
   ],
 }
 
-function getStatusColor(status) {
+function getStatusColor(status: any) {
   switch (status) {
     case "passed":
     case "healthy":
@@ -129,7 +129,7 @@ function getStatusColor(status) {
   }
 }
 
-function getStatusBadge(status) {
+function getStatusBadge(status: any) {
   switch (status) {
     case "passed":
     case "healthy":
@@ -143,7 +143,7 @@ function getStatusBadge(status) {
   }
 }
 
-function TreeNode({ node, level = 0, onSelect, selectedId, onEdit, onAddChild, onDelete }) {
+function TreeNode({ node, level = 0, onSelect, selectedId, onEdit, onAddChild, onDelete }: any) {
   const [isExpanded, setIsExpanded] = useState(level < 3)
   const hasChildren = node.children && node.children.length > 0
   const isLeaf = !hasChildren
@@ -232,7 +232,7 @@ function TreeNode({ node, level = 0, onSelect, selectedId, onEdit, onAddChild, o
 
       {hasChildren && isExpanded && (
         <div>
-          {node.children.map((child) => (
+          {node.children.map((child: any) => (
             <TreeNode
               key={child.id}
               node={child}
@@ -251,52 +251,52 @@ function TreeNode({ node, level = 0, onSelect, selectedId, onEdit, onAddChild, o
 }
 
 export function TestDashboard() {
-  const [selectedTest, setSelectedTest] = useState(null)
+  const [selectedTest, setSelectedTest] = useState<any>(null)
   const [aiModalOpen, setAiModalOpen] = useState(false)
   const [groupEditorOpen, setGroupEditorOpen] = useState(false)
   const [testEditorOpen, setTestEditorOpen] = useState(false)
-  const [editingGroup, setEditingGroup] = useState(null)
-  const [editingTest, setEditingTest] = useState(null)
-  const [parentGroup, setParentGroup] = useState(null)
+  const [editingGroup, setEditingGroup] = useState<any>(null)
+  const [editingTest, setEditingTest] = useState<any>(null)
+  const [parentGroup, setParentGroup] = useState<any>(null)
   const [aiPrompt, setAiPrompt] = useState("")
   const [isGenerating, setIsGenerating] = useState(false)
   const [copied, setCopied] = useState(false)
   const [editingRequirements, setEditingRequirements] = useState(false)
   const [requirementsContent, setRequirementsContent] = useState("")
 
-  const handleTestSelect = (test) => {
+  const handleTestSelect = (test: any) => {
     setSelectedTest(test)
     setRequirementsContent(test.requirements?.join("\n") || "")
   }
 
-  const handleEditGroup = (group) => {
+  const handleEditGroup = (group: any) => {
     setEditingGroup(group)
     setParentGroup(null)
     setGroupEditorOpen(true)
   }
 
-  const handleAddChild = (parentGroup) => {
+  const handleAddChild = (parentGroup: any) => {
     setEditingGroup(null)
     setParentGroup(parentGroup)
     setGroupEditorOpen(true)
   }
 
-  const handleEditTest = (test) => {
+  const handleEditTest = (test: any) => {
     setEditingTest(test)
     setTestEditorOpen(true)
   }
 
-  const handleDeleteGroup = (group) => {
+  const handleDeleteGroup = (group: any) => {
     // In real app, would show confirmation dialog and delete from database
     console.log("Delete group:", group.name)
   }
 
-  const handleSaveGroup = (group) => {
+  const handleSaveGroup = (group: any) => {
     // In real app, would save to database
     console.log("Save group:", group)
   }
 
-  const handleSaveTest = (test) => {
+  const handleSaveTest = (test: any) => {
     // In real app, would save to database
     console.log("Save test:", test)
   }
@@ -432,12 +432,6 @@ export function TestDashboard() {
                   Settings
                 </DropdownMenuItem>
                 <DropdownMenuItem asChild>
-                  <Link href="/pricing">
-                    <Badge className="w-4 h-4 mr-2" />
-                    Upgrade to Pro
-                  </Link>
-                </DropdownMenuItem>
-                <DropdownMenuItem asChild>
                   <Link href="/">
                     <LogOut className="w-4 h-4 mr-2" />
                     Logout
@@ -449,12 +443,12 @@ export function TestDashboard() {
         </div>
 
         <div className="flex-1 overflow-auto p-2">
-          {allTests.map((node) => (
+          {(allTests as any[]).map((node: any) => (
             <TreeNode
               key={node.id}
               node={node}
               onSelect={handleTestSelect}
-              selectedId={selectedTest?.id}
+              selectedId={(selectedTest as any)?.id}
               onEdit={handleEditGroup}
               onAddChild={handleAddChild}
               onDelete={handleDeleteGroup}
@@ -471,24 +465,24 @@ export function TestDashboard() {
               <div className="flex items-start justify-between mb-2">
                 <div>
                   <div className="flex items-center gap-2 mb-1">
-                    <h2 className="text-xl font-semibold">{selectedTest.name}</h2>
+                    <h2 className="text-xl font-semibold">{(selectedTest as any).name}</h2>
                     <Button variant="ghost" size="sm" onClick={() => handleEditTest(selectedTest)}>
                       <Edit className="w-4 h-4" />
                     </Button>
                   </div>
                   <div
                     className="text-sm text-muted-foreground mb-2 prose prose-sm"
-                    dangerouslySetInnerHTML={{ __html: selectedTest.description }}
+                    dangerouslySetInnerHTML={{ __html: (selectedTest as any).description }}
                   />
                   <div className="flex items-center gap-2">
-                    <Badge variant="outline">{selectedTest.framework}</Badge>
-                    {getStatusBadge(selectedTest.status)}
+                    <Badge variant="outline">{(selectedTest as any).framework}</Badge>
+                    {getStatusBadge((selectedTest as any).status)}
                     <span className="text-sm text-muted-foreground">
                       Coverage:{" "}
-                      <span className={cn("font-medium", getStatusColor(selectedTest.status))}>
-                        {selectedTest.total ? Math.round((selectedTest.passed / selectedTest.total) * 100) : 0}%
+                      <span className={cn("font-medium", getStatusColor((selectedTest as any).status))}>
+                        {(selectedTest as any).total ? Math.round(((selectedTest as any).passed / (selectedTest as any).total) * 100) : 0}%
                       </span>{" "}
-                      ({selectedTest.passed} of {selectedTest.total})
+                      {(selectedTest as any).passed} of {(selectedTest as any).total}
                     </span>
                   </div>
                 </div>
@@ -546,14 +540,14 @@ export function TestDashboard() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {selectedTest.requirements?.map((req, index) => (
+                        {(selectedTest as any).requirements?.map((req: any, index: number) => (
                           <div key={index} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
                             <div
                               className={cn(
                                 "w-2 h-2 rounded-full mt-2 flex-shrink-0",
-                                selectedTest.status === "passed"
+                                (selectedTest as any).status === "passed"
                                   ? "bg-green-500"
-                                  : selectedTest.status === "failed"
+                                  : (selectedTest as any).status === "failed"
                                     ? "bg-red-500"
                                     : "bg-gray-500",
                               )}
@@ -585,7 +579,7 @@ export function TestDashboard() {
                       </Button>
                     </div>
                     <div className="bg-slate-950 text-slate-50 p-4 rounded-lg font-mono text-sm overflow-auto max-h-[500px]">
-                      <pre className="whitespace-pre-wrap">{selectedTest.playwrightCode}</pre>
+                      <pre className="whitespace-pre-wrap">{(selectedTest as any).playwrightCode}</pre>
                     </div>
                   </div>
                 </TabsContent>
