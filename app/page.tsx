@@ -61,7 +61,7 @@ export default function LandingPage() {
       <section className="px-4 py-20">
         <div className="container mx-auto max-w-4xl text-center">
           <Badge className="mb-4" variant="secondary">
-            🚀 Now supporting Playwright, Jest & VTest
+            🚀 Supporting Playwright, Vitest
           </Badge>
           <h1 className="mb-6 bg-linear-to-r from-primary to-blue-600 bg-clip-text font-bold text-5xl text-transparent leading-tight">
             Testing Made Simple
