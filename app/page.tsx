@@ -144,7 +144,7 @@ export default function LandingPage() {
             <p className="text-muted-foreground">Start free, upgrade when you need more power.</p>
           </div>
 
-          <div className="grid md:grid-cols-2 gap-8 max-w-4xl mx-auto">
+          <div className="grid md:grid-cols-1 gap-8 max-w-4xl mx-auto">
             <Card>
               <CardHeader>
                 <CardTitle className="text-2xl">Free</CardTitle>
