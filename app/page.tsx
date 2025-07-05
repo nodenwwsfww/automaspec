@@ -234,87 +234,16 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t px-4 py-12">
         <div className="container mx-auto">
-          <div className="grid gap-8 md:grid-cols-4">
-            <div>
-              <div className="mb-4 flex items-center gap-2">
-                <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
-                  <Code className="h-4 w-4 text-primary-foreground" />
-                </div>
-                <span className="font-bold">TestAssist</span>
+          <div className="text-center">
+            <div className="mb-4 flex items-center justify-center gap-2">
+              <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
+                <Code className="h-4 w-4 text-primary-foreground" />
               </div>
-              <p className="text-muted-foreground text-sm">
-                Modern testing dashboard for developers, testers, and managers.
-              </p>
+              <span className="font-bold">TestAssist</span>
             </div>
-            <div>
-              <h3 className="mb-4 font-semibold">Product</h3>
-              <div className="space-y-2 text-sm">
-                <Link
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#features"
-                >
-                  Features
-                </Link>
-                <Link
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="/pricing"
-                >
-                  Pricing
-                </Link>
-                <Link
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="/dashboard"
-                >
-                  Dashboard
-                </Link>
-              </div>
-            </div>
-            <div>
-              <h3 className="mb-4 font-semibold">Support</h3>
-              <div className="space-y-2 text-sm">
-                <a
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#"
-                >
-                  Documentation
-                </a>
-                <a
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#"
-                >
-                  Help Center
-                </a>
-                <a
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#"
-                >
-                  Contact
-                </a>
-              </div>
-            </div>
-            <div>
-              <h3 className="mb-4 font-semibold">Company</h3>
-              <div className="space-y-2 text-sm">
-                <a
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#"
-                >
-                  About
-                </a>
-                <a
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#"
-                >
-                  Blog
-                </a>
-                <a
-                  className="block text-muted-foreground hover:text-foreground"
-                  href="#"
-                >
-                  Careers
-                </a>
-              </div>
-            </div>
+            <p className="text-muted-foreground text-sm">
+              Modern testing dashboard for developers, testers, and managers.
+            </p>
           </div>
           <div className="mt-8 border-t pt-8 text-center text-muted-foreground text-sm">
             © {new Date().getFullYear()} TestAssist. All rights reserved.
