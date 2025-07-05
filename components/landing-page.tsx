@@ -40,7 +40,7 @@ export function LandingPage() {
           <Badge variant="secondary" className="mb-4">
             🚀 Now supporting Playwright, Jest & VTest
           </Badge>
-          <h1 className="text-5xl font-bold mb-6 bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">
+          <h1 className="text-5xl font-bold mb-6 leading-tight bg-linear-to-r from-primary to-blue-600 bg-clip-text text-transparent">
             Testing Made Simple
           </h1>
           <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
