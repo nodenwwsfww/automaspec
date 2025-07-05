@@ -177,8 +177,8 @@ export default function LandingPage() {
             </p>
           </div>
 
-          <div className="mx-auto grid max-w-4xl gap-8 md:grid-cols-2">
-            <Card>
+          <div className="flex justify-center">
+            <Card className="max-w-sm w-full">
               <CardHeader>
                 <CardTitle className="text-2xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started</CardDescription>
