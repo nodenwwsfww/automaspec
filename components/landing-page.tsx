@@ -255,7 +255,7 @@ export function LandingPage() {
             </div>
           </div>
           <div className="border-t mt-8 pt-8 text-center text-sm text-muted-foreground">
-            © 2024 TestAssist. All rights reserved.
+            © 2025 TestAssist. All rights reserved.
           </div>
         </div>
       </footer>
