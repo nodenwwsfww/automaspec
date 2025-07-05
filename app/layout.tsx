@@ -3,11 +3,11 @@ import './globals.css';
 import { ReactPlugin } from '@21st-extension/react';
 import { TwentyFirstToolbar } from '@21st-extension/toolbar-next';
 import { ThemeProvider } from '@/components/theme-provider';
+import '../lib/orpc.server' // for pre-rendering
 
 export const metadata: Metadata = {
-  title: 'v0 App',
-  description: 'Created with v0',
-  generator: 'v0.dev',
+  title: 'Automaspeq',
+  description: 'Automaspeq - Your AI-powered solution for automating your business processes',
 };
 
 export default function RootLayout({
@@ -27,7 +27,7 @@ export default function RootLayout({
           {children}
         </ThemeProvider>
       </body>
-      <TwentyFirstToolbar config={{ plugins: [ReactPlugin] }} />
+      {/* <TwentyFirstToolbar config={{ plugins: [ReactPlugin] }} /> */}
     </html>
   );
 }

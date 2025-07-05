@@ -18,8 +18,20 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { headers } from 'next/headers';
+import { auth } from '@/lib/auth';
+import { redirect } from 'next/navigation';
 
-export default function LandingPage() {
+export default async function LandingPage() {
+
+  const session = await auth.api.getSession({
+    headers: await headers()
+})
+
+if(!session) {
+    redirect("/login")
+}
+
   return (
     <div className="min-h-screen bg-background">
       {/* Header */}
@@ -178,7 +190,7 @@ export default function LandingPage() {
           </div>
 
           <div className="flex justify-center">
-            <Card className="max-w-sm w-full">
+            <Card className="w-full max-w-sm">
               <CardHeader>
                 <CardTitle className="text-2xl">Free</CardTitle>
                 <CardDescription>Perfect for getting started</CardDescription>
