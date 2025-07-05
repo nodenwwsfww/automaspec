@@ -1,11 +1,12 @@
 'use client';
 
-import { useState } from 'react';
 import {
   AlertTriangle,
   Check,
+  CheckCircle,
   ChevronDown,
   ChevronRight,
+  Clock,
   Copy,
   Edit,
   FileText,
@@ -13,6 +14,7 @@ import {
   Loader2,
   LogOut,
   MessageSquare,
+  MinusCircle,
   MoreHorizontal,
   Play,
   Plus,
@@ -20,24 +22,33 @@ import {
   Settings,
   Sparkles,
   Trash2,
-  CheckCircle,
-  XCircle,
-  MinusCircle,
-  Clock,
   User,
-} from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { Badge } from "@/components/ui/badge"
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Label } from "@/components/ui/label"
-import { Textarea } from "@/components/ui/textarea"
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from "@/components/ui/dropdown-menu"
-import { GroupEditorModal } from "./group-editor-modal"
-import { TestEditorModal } from "./test-editor-modal"
-import { RichTextEditor } from "./rich-text-editor"
-import { cn } from "@/lib/utils"
-import Link from "next/link"
+  XCircle,
+} from 'lucide-react';
+import Link from 'next/link';
+import { useState } from 'react';
+import { Badge } from '@/components/ui/badge';
+import { Button } from '@/components/ui/button';
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from '@/components/ui/dialog';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import { Label } from '@/components/ui/label';
+import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
+import { Textarea } from '@/components/ui/textarea';
+import { cn } from '@/lib/utils';
+import { GroupEditorModal } from './group-editor-modal';
+import { RichTextEditor } from './rich-text-editor';
+import { TestEditorModal } from './test-editor-modal';
 
 // Mock database structure with realistic test data
 const testDatabase = {
@@ -80,24 +91,24 @@ const testDatabase = {
                     '<p>Login form validation and authentication flow</p>',
                   requirements: [
                     {
-                      id: "req-1",
-                      text: "Отображается форма логина с полями email и password",
-                      status: "passed"
+                      id: 'req-1',
+                      text: 'Отображается форма логина с полями email и password',
+                      status: 'passed',
                     },
                     {
-                      id: "req-2", 
-                      text: "При вводе валидных данных происходит успешная авторизация",
-                      status: "passed"
+                      id: 'req-2',
+                      text: 'При вводе валидных данных происходит успешная авторизация',
+                      status: 'passed',
                     },
                     {
-                      id: "req-3",
-                      text: "При неверных данных показывается ошибка", 
-                      status: "passed"
+                      id: 'req-3',
+                      text: 'При неверных данных показывается ошибка',
+                      status: 'passed',
                     },
                     {
-                      id: "req-4",
+                      id: 'req-4',
                       text: "Работает функция 'Запомнить меня'",
-                      status: "failed"
+                      status: 'failed',
                     },
                   ],
                   playwrightCode: `describe('Authentication', () => {
@@ -176,31 +187,31 @@ function getStatusBadge(status: any) {
 
 function getRequirementStatusIcon(status: string) {
   switch (status) {
-    case "passed":
-      return <CheckCircle className="w-4 h-4 text-green-600" />
-    case "failed":
-      return <XCircle className="w-4 h-4 text-red-600" />
-    case "skipped":
-      return <MinusCircle className="w-4 h-4 text-gray-400" />
-    case "pending":
-      return <Clock className="w-4 h-4 text-yellow-600" />
+    case 'passed':
+      return <CheckCircle className="h-4 w-4 text-green-600" />;
+    case 'failed':
+      return <XCircle className="h-4 w-4 text-red-600" />;
+    case 'skipped':
+      return <MinusCircle className="h-4 w-4 text-gray-400" />;
+    case 'pending':
+      return <Clock className="h-4 w-4 text-yellow-600" />;
     default:
-      return <MinusCircle className="w-4 h-4 text-gray-400" />
+      return <MinusCircle className="h-4 w-4 text-gray-400" />;
   }
 }
 
 function getRequirementStatusColor(status: string) {
   switch (status) {
-    case "passed":
-      return "text-green-800 bg-green-50"
-    case "failed":
-      return "text-red-800 bg-red-50"
-    case "skipped":
-      return "text-gray-600 bg-gray-50"
-    case "pending":
-      return "text-yellow-800 bg-yellow-50"
+    case 'passed':
+      return 'text-green-800 bg-green-50';
+    case 'failed':
+      return 'text-red-800 bg-red-50';
+    case 'skipped':
+      return 'text-gray-600 bg-gray-50';
+    case 'pending':
+      return 'text-yellow-800 bg-yellow-50';
     default:
-      return "text-gray-600 bg-gray-50"
+      return 'text-gray-600 bg-gray-50';
   }
 }
 
@@ -348,7 +359,9 @@ export function Dashboard() {
 
   const handleTestSelect = (test: any) => {
     setSelectedTest(test);
-    setRequirementsContent(test.requirements?.map((req: any) => req.text || req).join('\n') || '');
+    setRequirementsContent(
+      test.requirements?.map((req: any) => req.text || req).join('\n') || ''
+    );
   };
 
   const handleEditGroup = (group: any) => {
@@ -402,19 +415,19 @@ export function Dashboard() {
       description: `<p>Generated test based on: "${aiPrompt}"</p>`,
       requirements: [
         {
-          id: "gen-req-1",
-          text: "Автоматически сгенерированное требование 1",
-          status: "pending"
+          id: 'gen-req-1',
+          text: 'Автоматически сгенерированное требование 1',
+          status: 'pending',
         },
         {
-          id: "gen-req-2",
-          text: "Автоматически сгенерированное требование 2",
-          status: "pending"
+          id: 'gen-req-2',
+          text: 'Автоматически сгенерированное требование 2',
+          status: 'pending',
         },
         {
-          id: "gen-req-3",
-          text: "Автоматически сгенерированное требование 3",
-          status: "pending"
+          id: 'gen-req-3',
+          text: 'Автоматически сгенерированное требование 3',
+          status: 'pending',
         },
       ],
       playwrightCode: `describe('AI Generated Test', () => {
@@ -437,11 +450,14 @@ export function Dashboard() {
   const saveRequirements = () => {
     // In real app, would save to database
     if (selectedTest) {
-      selectedTest.requirements = requirementsContent.split('\n').filter((req) => req.trim()).map((req: string, index: number) => ({
-        id: `req-${index + 1}`,
-        text: req,
-        status: "pending"
-      }));
+      selectedTest.requirements = requirementsContent
+        .split('\n')
+        .filter((req) => req.trim())
+        .map((req: string, index: number) => ({
+          id: `req-${index + 1}`,
+          text: req,
+          status: 'pending',
+        }));
     }
     setEditingRequirements(false);
   };
@@ -648,24 +664,42 @@ export function Dashboard() {
                     </div>
 
                     {((selectedTest as any).requirements || []).length > 0 && (
-                      <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+                      <div className="mb-4 rounded-lg bg-muted/30 p-3">
                         <div className="flex items-center gap-4 text-sm">
                           <div className="flex items-center gap-1">
-                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <CheckCircle className="h-4 w-4 text-green-600" />
                             <span className="font-medium">
-                              {((selectedTest as any).requirements || []).filter((req: any) => req.status === "passed").length} Passed
+                              {
+                                (
+                                  (selectedTest as any).requirements || []
+                                ).filter((req: any) => req.status === 'passed')
+                                  .length
+                              }{' '}
+                              Passed
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <XCircle className="w-4 h-4 text-red-600" />
+                            <XCircle className="h-4 w-4 text-red-600" />
                             <span className="font-medium">
-                              {((selectedTest as any).requirements || []).filter((req: any) => req.status === "failed").length} Failed
+                              {
+                                (
+                                  (selectedTest as any).requirements || []
+                                ).filter((req: any) => req.status === 'failed')
+                                  .length
+                              }{' '}
+                              Failed
                             </span>
                           </div>
                           <div className="flex items-center gap-1">
-                            <Clock className="w-4 h-4 text-yellow-600" />
+                            <Clock className="h-4 w-4 text-yellow-600" />
                             <span className="font-medium">
-                              {((selectedTest as any).requirements || []).filter((req: any) => req.status === "pending").length} Pending
+                              {
+                                (
+                                  (selectedTest as any).requirements || []
+                                ).filter((req: any) => req.status === 'pending')
+                                  .length
+                              }{' '}
+                              Pending
                             </span>
                           </div>
                         </div>
@@ -675,13 +709,18 @@ export function Dashboard() {
                     {editingRequirements ? (
                       <div className="space-y-2">
                         <Textarea
-                          value={requirementsContent}
-                          onChange={(e) => setRequirementsContent(e.target.value)}
-                          placeholder="Enter requirements, one per line"
                           className="min-h-[200px]"
+                          onChange={(e) =>
+                            setRequirementsContent(e.target.value)
+                          }
+                          placeholder="Enter requirements, one per line"
+                          value={requirementsContent}
                         />
                         <div className="flex justify-end gap-2">
-                          <Button variant="outline" onClick={() => setEditingRequirements(false)}>
+                          <Button
+                            onClick={() => setEditingRequirements(false)}
+                            variant="outline"
+                          >
                             Cancel
                           </Button>
                           <Button onClick={saveRequirements}>
@@ -691,21 +730,41 @@ export function Dashboard() {
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {((selectedTest as any).requirements || []).map((req: any, index: number) => (
-                          <div key={req.id || index} className={cn("flex items-start gap-3 p-3 rounded-lg border", getRequirementStatusColor(req.status || "pending"))}>
-                            <div className="mt-0.5">
-                              {getRequirementStatusIcon(req.status || "pending")}
-                            </div>
-                            <div className="flex-1">
-                              <span className="text-sm font-medium">{req.text || req}</span>
-                              <div className="text-xs text-muted-foreground mt-1">
-                                Status: <span className="capitalize">{req.status || "pending"}</span>
+                        {((selectedTest as any).requirements || []).map(
+                          (req: any, index: number) => (
+                            <div
+                              className={cn(
+                                'flex items-start gap-3 rounded-lg border p-3',
+                                getRequirementStatusColor(
+                                  req.status || 'pending'
+                                )
+                              )}
+                              key={req.id || index}
+                            >
+                              <div className="mt-0.5">
+                                {getRequirementStatusIcon(
+                                  req.status || 'pending'
+                                )}
+                              </div>
+                              <div className="flex-1">
+                                <span className="font-medium text-sm">
+                                  {req.text || req}
+                                </span>
+                                <div className="mt-1 text-muted-foreground text-xs">
+                                  Status:{' '}
+                                  <span className="capitalize">
+                                    {req.status || 'pending'}
+                                  </span>
+                                </div>
                               </div>
                             </div>
+                          )
+                        )}
+                        {((selectedTest as any).requirements || []).length ===
+                          0 && (
+                          <div className="text-muted-foreground text-sm">
+                            No requirements defined
                           </div>
-                        ))}
-                        {((selectedTest as any).requirements || []).length === 0 && (
-                          <div className="text-sm text-muted-foreground">No requirements defined</div>
                         )}
                       </div>
                     )}

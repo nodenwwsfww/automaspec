@@ -51,6 +51,7 @@ function BreadcrumbLink({
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'span'>) {
   return (
+    // biome-ignore lint/a11y/useFocusableInteractive: aria-disabled is true
     <span
       aria-current="page"
       aria-disabled="true"

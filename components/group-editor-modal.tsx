@@ -54,10 +54,10 @@ export function GroupEditorModal({
   parentGroup,
 }: GroupEditorModalProps) {
   const [formData, setFormData] = useState({
-    name: group?.name || "",
-    type: group?.type || "component",
-    framework: group?.framework || "Playwright",
-  })
+    name: group?.name || '',
+    type: group?.type || 'component',
+    framework: group?.framework || 'Playwright',
+  });
 
   const isEditing = !!group;
 
@@ -152,7 +152,6 @@ export function GroupEditorModal({
               </SelectContent>
             </Select>
           </div>
-
 
           {/* Actions */}
           <div className="flex justify-end gap-2 border-t pt-4">
