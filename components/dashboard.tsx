@@ -756,15 +756,71 @@ export function Dashboard() {
                     )}
 
                     {editingRequirements ? (
-                      <div className="space-y-2">
-                        <Textarea
-                          className="min-h-[200px]"
-                          onChange={(e) =>
-                            setRequirementsContent(e.target.value)
-                          }
-                          placeholder="Enter requirements, one per line"
-                          value={requirementsContent}
-                        />
+                      <div className="space-y-4">
+                        <div className="space-y-2">
+                          {((selectedTest as any).requirements || []).map(
+                            (req: any, index: number) => (
+                              <div
+                                key={req.id || index}
+                                className="flex items-center gap-2 rounded-lg border p-3"
+                              >
+                                <input
+                                  className="flex-1 bg-transparent outline-none"
+                                  onChange={(e) => {
+                                    const updatedReqs = [...((selectedTest as any).requirements || [])];
+                                    updatedReqs[index] = {
+                                      ...req,
+                                      text: e.target.value,
+                                    };
+                                    (selectedTest as any).requirements = updatedReqs;
+                                    setRequirementsContent(
+                                      updatedReqs.map((r: any) => r.text).join('\n')
+                                    );
+                                  }}
+                                  placeholder="Enter requirement..."
+                                  value={req.text || ''}
+                                />
+                                <Button
+                                  onClick={() => {
+                                    const updatedReqs = ((selectedTest as any).requirements || []).filter(
+                                      (_: any, i: number) => i !== index
+                                    );
+                                    (selectedTest as any).requirements = updatedReqs;
+                                    setRequirementsContent(
+                                      updatedReqs.map((r: any) => r.text).join('\n')
+                                    );
+                                  }}
+                                  size="sm"
+                                  variant="ghost"
+                                >
+                                  <Trash2 className="h-4 w-4" />
+                                </Button>
+                              </div>
+                            )
+                          )}
+                          <Button
+                            onClick={() => {
+                              const newReq = {
+                                id: `req-${Date.now()}`,
+                                text: '',
+                                status: 'pending',
+                              };
+                              const updatedReqs = [
+                                ...((selectedTest as any).requirements || []),
+                                newReq,
+                              ];
+                              (selectedTest as any).requirements = updatedReqs;
+                              setRequirementsContent(
+                                updatedReqs.map((r: any) => r.text).join('\n')
+                              );
+                            }}
+                            size="sm"
+                            variant="outline"
+                          >
+                            <Plus className="mr-2 h-4 w-4" />
+                            Add Requirement
+                          </Button>
+                        </div>
                         <div className="flex justify-end gap-2">
                           <Button
                             onClick={() => setEditingRequirements(false)}
@@ -772,9 +828,7 @@ export function Dashboard() {
                           >
                             Cancel
                           </Button>
-                          <Button onClick={saveRequirements}>
-                            Save Requirements
-                          </Button>
+                          <Button onClick={saveRequirements}>Save Requirements</Button>
                         </div>
                       </div>
                     ) : (

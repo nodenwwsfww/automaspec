@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
-import { RichTextEditor } from './rich-text-editor';
+import { Plus, Trash2 } from 'lucide-react';
 
 interface TestEditorModalProps {
   open: boolean;
@@ -86,13 +86,14 @@ export function TestEditorModal({
             </div>
             <div>
               <Label>Description</Label>
-              <RichTextEditor
+              <Textarea
                 className="mt-2"
-                content={formData.description}
-                onChange={(content) =>
-                  setFormData({ ...formData, description: content })
+                id="test-description"
+                onChange={(e) =>
+                  setFormData({ ...formData, description: e.target.value })
                 }
                 placeholder="Describe what this test does..."
+                value={formData.description}
               />
             </div>
           </TabsContent>
@@ -101,24 +102,46 @@ export function TestEditorModal({
             <div>
               <Label>Test Requirements</Label>
               <p className="mb-2 text-muted-foreground text-sm">
-                Enter each requirement on a new line. You can use rich text
-                formatting.
+                Define individual requirements for this test.
               </p>
-              <RichTextEditor
-                className="mt-2"
-                content={formData.requirements
-                  .split('\n')
-                  .map((req: string) => `<p>${req}</p>`)
-                  .join('')}
-                onChange={(content) => {
-                  // Convert HTML back to plain text lines
-                  const div = document.createElement('div');
-                  div.innerHTML = content;
-                  const text = div.textContent || div.innerText || '';
-                  setFormData({ ...formData, requirements: text });
-                }}
-                placeholder="• Requirement 1&#10;• Requirement 2&#10;• Requirement 3"
-              />
+              <div className="mt-2 space-y-2">
+                {formData.requirements.split('\n').filter(req => req.trim()).map((req, index) => (
+                  <div key={index} className="flex items-center gap-2 rounded-lg border p-3">
+                    <input
+                      className="flex-1 bg-transparent outline-none"
+                      onChange={(e) => {
+                        const reqs = formData.requirements.split('\n').filter(r => r.trim());
+                        reqs[index] = e.target.value;
+                        setFormData({ ...formData, requirements: reqs.join('\n') });
+                      }}
+                      placeholder="Enter requirement..."
+                      value={req}
+                    />
+                    <Button
+                      onClick={() => {
+                        const reqs = formData.requirements.split('\n').filter(r => r.trim());
+                        reqs.splice(index, 1);
+                        setFormData({ ...formData, requirements: reqs.join('\n') });
+                      }}
+                      size="sm"
+                      variant="ghost"
+                    >
+                      <Trash2 className="h-4 w-4" />
+                    </Button>
+                  </div>
+                ))}
+                <Button
+                  onClick={() => {
+                    const currentReqs = formData.requirements.split('\n').filter(r => r.trim());
+                    setFormData({ ...formData, requirements: [...currentReqs, ''].join('\n') });
+                  }}
+                  size="sm"
+                  variant="outline"
+                >
+                  <Plus className="mr-2 h-4 w-4" />
+                  Add Requirement
+                </Button>
+              </div>
             </div>
           </TabsContent>
 
