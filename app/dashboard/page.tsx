@@ -1,6 +1,6 @@
-"use client"
-import { TestDashboard } from "@/components/test-dashboard"
+'use client';
+import { TestDashboard } from '@/components/test-dashboard';
 
 export default function Page() {
-  return <TestDashboard />
+  return <TestDashboard />;
 }

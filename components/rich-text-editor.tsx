@@ -1,19 +1,32 @@
-"use client"
+'use client';
 
-import { useEditor, EditorContent } from "@tiptap/react"
-import StarterKit from "@tiptap/starter-kit"
-import { Bold, Italic, List, ListOrdered, Quote, Undo, Redo } from "lucide-react"
-import { Button } from "@/components/ui/button"
-import { cn } from "@/lib/utils"
+import { EditorContent, useEditor } from '@tiptap/react';
+import StarterKit from '@tiptap/starter-kit';
+import {
+  Bold,
+  Italic,
+  List,
+  ListOrdered,
+  Quote,
+  Redo,
+  Undo,
+} from 'lucide-react';
+import { Button } from '@/components/ui/button';
+import { cn } from '@/lib/utils';
 
 interface RichTextEditorProps {
-  content: string
-  onChange: (content: string) => void
-  placeholder?: string
-  className?: string
+  content: string;
+  onChange: (content: string) => void;
+  placeholder?: string;
+  className?: string;
 }
 
-export function RichTextEditor({ content, onChange, placeholder, className }: RichTextEditorProps) {
+export function RichTextEditor({
+  content,
+  onChange,
+  placeholder,
+  className,
+}: RichTextEditorProps) {
   const editor = useEditor({
     extensions: [
       StarterKit.configure({
@@ -29,85 +42,90 @@ export function RichTextEditor({ content, onChange, placeholder, className }: Ri
     ],
     content,
     onUpdate: ({ editor }) => {
-      onChange(editor.getHTML())
+      onChange(editor.getHTML());
     },
     editorProps: {
       attributes: {
-        class: "prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-hidden min-h-[100px] p-3",
+        class:
+          'prose prose-sm sm:prose lg:prose-lg xl:prose-2xl mx-auto focus:outline-hidden min-h-[100px] p-3',
       },
     },
-  })
+  });
 
   if (!editor) {
-    return null
+    return null;
   }
 
   return (
-    <div className={cn("border rounded-md", className)}>
+    <div className={cn('rounded-md border', className)}>
       {/* Toolbar */}
-      <div className="border-b p-2 flex items-center gap-1 flex-wrap">
+      <div className="flex flex-wrap items-center gap-1 border-b p-2">
         <Button
-          variant="ghost"
-          size="sm"
+          className={editor.isActive('bold') ? 'bg-muted' : ''}
           onClick={() => editor.chain().focus().toggleBold().run()}
-          className={editor.isActive("bold") ? "bg-muted" : ""}
+          size="sm"
+          variant="ghost"
         >
-          <Bold className="w-4 h-4" />
+          <Bold className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
-          size="sm"
+          className={editor.isActive('italic') ? 'bg-muted' : ''}
           onClick={() => editor.chain().focus().toggleItalic().run()}
-          className={editor.isActive("italic") ? "bg-muted" : ""}
-        >
-          <Italic className="w-4 h-4" />
-        </Button>
-        <div className="w-px h-6 bg-border mx-1" />
-        <Button
-          variant="ghost"
           size="sm"
+          variant="ghost"
+        >
+          <Italic className="h-4 w-4" />
+        </Button>
+        <div className="mx-1 h-6 w-px bg-border" />
+        <Button
+          className={editor.isActive('bulletList') ? 'bg-muted' : ''}
           onClick={() => editor.chain().focus().toggleBulletList().run()}
-          className={editor.isActive("bulletList") ? "bg-muted" : ""}
+          size="sm"
+          variant="ghost"
         >
-          <List className="w-4 h-4" />
+          <List className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
-          size="sm"
+          className={editor.isActive('orderedList') ? 'bg-muted' : ''}
           onClick={() => editor.chain().focus().toggleOrderedList().run()}
-          className={editor.isActive("orderedList") ? "bg-muted" : ""}
+          size="sm"
+          variant="ghost"
         >
-          <ListOrdered className="w-4 h-4" />
+          <ListOrdered className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
-          size="sm"
+          className={editor.isActive('blockquote') ? 'bg-muted' : ''}
           onClick={() => editor.chain().focus().toggleBlockquote().run()}
-          className={editor.isActive("blockquote") ? "bg-muted" : ""}
-        >
-          <Quote className="w-4 h-4" />
-        </Button>
-        <div className="w-px h-6 bg-border mx-1" />
-        <Button
-          variant="ghost"
           size="sm"
-          onClick={() => editor.chain().focus().undo().run()}
+          variant="ghost"
+        >
+          <Quote className="h-4 w-4" />
+        </Button>
+        <div className="mx-1 h-6 w-px bg-border" />
+        <Button
           disabled={!editor.can().undo()}
+          onClick={() => editor.chain().focus().undo().run()}
+          size="sm"
+          variant="ghost"
         >
-          <Undo className="w-4 h-4" />
+          <Undo className="h-4 w-4" />
         </Button>
         <Button
-          variant="ghost"
-          size="sm"
-          onClick={() => editor.chain().focus().redo().run()}
           disabled={!editor.can().redo()}
+          onClick={() => editor.chain().focus().redo().run()}
+          size="sm"
+          variant="ghost"
         >
-          <Redo className="w-4 h-4" />
+          <Redo className="h-4 w-4" />
         </Button>
       </div>
 
       {/* Editor */}
-      <EditorContent editor={editor} className="min-h-[100px]" placeholder={placeholder} />
+      <EditorContent
+        className="min-h-[100px]"
+        editor={editor}
+        placeholder={placeholder}
+      />
     </div>
-  )
+  );
 }
