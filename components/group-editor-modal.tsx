@@ -26,7 +26,6 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { RichTextEditor } from './rich-text-editor';
 
 const groupTypes = [
   { value: 'frontend', label: 'Frontend', icon: Globe },
