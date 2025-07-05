@@ -30,7 +30,6 @@ interface GroupEditorModalProps {
 export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGroup }: GroupEditorModalProps) {
   const [formData, setFormData] = useState({
     name: group?.name || "",
-    description: group?.description || "",
     type: group?.type || "component",
     framework: group?.framework || "Playwright",
   })
@@ -43,7 +42,6 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGrou
       ...group,
       id: group?.id || `group-${Date.now()}`,
       name: formData.name,
-      description: formData.description,
       type: formData.type,
       framework: formData.framework,
       icon: selectedType?.icon,
@@ -117,16 +115,7 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGrou
             </Select>
           </div>
 
-          {/* Description */}
-          <div>
-            <Label>Description</Label>
-            <RichTextEditor
-              content={formData.description}
-              onChange={(content) => setFormData({ ...formData, description: content })}
-              placeholder="Describe what this group tests..."
-              className="mt-2"
-            />
-          </div>
+
 
           {/* Actions */}
           <div className="flex justify-end gap-2 pt-4 border-t">

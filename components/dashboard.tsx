@@ -21,6 +21,10 @@ import {
   Edit,
   MoreHorizontal,
   Trash2,
+  CheckCircle,
+  XCircle,
+  MinusCircle,
+  Clock,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
@@ -35,7 +39,7 @@ import { RichTextEditor } from "./rich-text-editor"
 import { cn } from "@/lib/utils"
 import Link from "next/link"
 
-// Mock database structure with more realistic test data
+// Mock database structure with realistic test data
 const testDatabase = {
   projects: [
     {
@@ -74,10 +78,26 @@ const testDatabase = {
                   framework: "Playwright",
                   description: "<p>Login form validation and authentication flow</p>",
                   requirements: [
-                    "Отображается форма логина с полями email и password",
-                    "При вводе валидных данных происходит успешная авторизация",
-                    "При неверных данных показывается ошибка",
-                    "Работает функция 'Запомнить меня'",
+                    {
+                      id: "req-1",
+                      text: "Отображается форма логина с полями email и password",
+                      status: "passed"
+                    },
+                    {
+                      id: "req-2", 
+                      text: "При вводе валидных данных происходит успешная авторизация",
+                      status: "passed"
+                    },
+                    {
+                      id: "req-3",
+                      text: "При неверных данных показывается ошибка", 
+                      status: "passed"
+                    },
+                    {
+                      id: "req-4",
+                      text: "Работает функция 'Запомнить меня'",
+                      status: "failed"
+                    },
                   ],
                   playwrightCode: `describe('Authentication', () => {
     describe('Login Block', () => {
@@ -140,6 +160,36 @@ function getStatusBadge(status: any) {
       return <Badge className="bg-red-100 text-red-800 border-red-200">Failed</Badge>
     default:
       return <Badge variant="secondary">Unknown</Badge>
+  }
+}
+
+function getRequirementStatusIcon(status: string) {
+  switch (status) {
+    case "passed":
+      return <CheckCircle className="w-4 h-4 text-green-600" />
+    case "failed":
+      return <XCircle className="w-4 h-4 text-red-600" />
+    case "skipped":
+      return <MinusCircle className="w-4 h-4 text-gray-400" />
+    case "pending":
+      return <Clock className="w-4 h-4 text-yellow-600" />
+    default:
+      return <MinusCircle className="w-4 h-4 text-gray-400" />
+  }
+}
+
+function getRequirementStatusColor(status: string) {
+  switch (status) {
+    case "passed":
+      return "text-green-800 bg-green-50"
+    case "failed":
+      return "text-red-800 bg-red-50"
+    case "skipped":
+      return "text-gray-600 bg-gray-50"
+    case "pending":
+      return "text-yellow-800 bg-yellow-50"
+    default:
+      return "text-gray-600 bg-gray-50"
   }
 }
 
@@ -250,7 +300,7 @@ function TreeNode({ node, level = 0, onSelect, selectedId, onEdit, onAddChild, o
   )
 }
 
-export function TestDashboard() {
+export function Dashboard() {
   const [selectedTest, setSelectedTest] = useState<any>(null)
   const [aiModalOpen, setAiModalOpen] = useState(false)
   const [groupEditorOpen, setGroupEditorOpen] = useState(false)
@@ -266,7 +316,7 @@ export function TestDashboard() {
 
   const handleTestSelect = (test: any) => {
     setSelectedTest(test)
-    setRequirementsContent(test.requirements?.join("\n") || "")
+    setRequirementsContent(test.requirements?.map((req: any) => req.text || req).join("\n") || "")
   }
 
   const handleEditGroup = (group: any) => {
@@ -326,9 +376,21 @@ export function TestDashboard() {
       framework: "Playwright",
       description: `<p>Generated test based on: "${aiPrompt}"</p>`,
       requirements: [
-        "Автоматически сгенерированное требование 1",
-        "Автоматически сгенерированное требование 2",
-        "Автоматически сгенерированное требование 3",
+        {
+          id: "gen-req-1",
+          text: "Автоматически сгенерированное требование 1",
+          status: "pending"
+        },
+        {
+          id: "gen-req-2",
+          text: "Автоматически сгенерированное требование 2",
+          status: "pending"
+        },
+        {
+          id: "gen-req-3",
+          text: "Автоматически сгенерированное требование 3",
+          status: "pending"
+        },
       ],
       playwrightCode: `describe('AI Generated Test', () => {
     describe('Generated from prompt: ${aiPrompt}', () => {
@@ -350,7 +412,11 @@ export function TestDashboard() {
   const saveRequirements = () => {
     // In real app, would save to database
     if (selectedTest) {
-      selectedTest.requirements = requirementsContent.split("\n").filter((req) => req.trim())
+      selectedTest.requirements = requirementsContent.split("\n").filter((req) => req.trim()).map((req: string, index: number) => ({
+        id: `req-${index + 1}`,
+        text: req,
+        status: "pending"
+      }))
     }
     setEditingRequirements(false)
   }
@@ -379,23 +445,23 @@ export function TestDashboard() {
                   Generate with AI
                 </Button>
               </DialogTrigger>
-              <DialogContent className="max-w-md">
+              <DialogContent>
                 <DialogHeader>
                   <DialogTitle>Generate Test with AI</DialogTitle>
                 </DialogHeader>
                 <div className="space-y-4">
                   <div>
-                    <Label htmlFor="ai-prompt">Describe what you want to test</Label>
+                    <Label htmlFor="prompt">Describe what you want to test</Label>
                     <Textarea
-                      id="ai-prompt"
-                      placeholder="e.g., 'Test user registration form with email validation and password confirmation'"
+                      id="prompt"
+                      placeholder="e.g., Test login functionality with valid and invalid credentials"
                       value={aiPrompt}
                       onChange={(e) => setAiPrompt(e.target.value)}
-                      className="min-h-[100px]"
+                      className="mt-2"
                     />
                   </div>
                   <div className="flex justify-end gap-2">
-                    <Button variant="outline" onClick={() => setAiModalOpen(false)} disabled={isGenerating}>
+                    <Button variant="outline" onClick={() => setAiModalOpen(false)}>
                       Cancel
                     </Button>
                     <Button onClick={generateTestWithAI} disabled={isGenerating || !aiPrompt.trim()}>
@@ -516,45 +582,66 @@ export function TestDashboard() {
                       </Button>
                     </div>
 
+                    {((selectedTest as any).requirements || []).length > 0 && (
+                      <div className="mb-4 p-3 bg-muted/30 rounded-lg">
+                        <div className="flex items-center gap-4 text-sm">
+                          <div className="flex items-center gap-1">
+                            <CheckCircle className="w-4 h-4 text-green-600" />
+                            <span className="font-medium">
+                              {((selectedTest as any).requirements || []).filter((req: any) => req.status === "passed").length} Passed
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <XCircle className="w-4 h-4 text-red-600" />
+                            <span className="font-medium">
+                              {((selectedTest as any).requirements || []).filter((req: any) => req.status === "failed").length} Failed
+                            </span>
+                          </div>
+                          <div className="flex items-center gap-1">
+                            <Clock className="w-4 h-4 text-yellow-600" />
+                            <span className="font-medium">
+                              {((selectedTest as any).requirements || []).filter((req: any) => req.status === "pending").length} Pending
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    )}
+
                     {editingRequirements ? (
-                      <div className="space-y-4">
-                        <RichTextEditor
-                          content={requirementsContent
-                            .split("\n")
-                            .map((req) => `<p>${req}</p>`)
-                            .join("")}
-                          onChange={(content) => {
-                            const div = document.createElement("div")
-                            div.innerHTML = content
-                            const text = div.textContent || div.innerText || ""
-                            setRequirementsContent(text)
-                          }}
-                          placeholder="Enter test requirements..."
+                      <div className="space-y-2">
+                        <Textarea
+                          value={requirementsContent}
+                          onChange={(e) => setRequirementsContent(e.target.value)}
+                          placeholder="Enter requirements, one per line"
+                          className="min-h-[200px]"
                         />
                         <div className="flex justify-end gap-2">
-                          <Button variant="outline" onClick={() => setEditingRequirements(false)}>
+                          <Button size="sm" variant="outline" onClick={() => setEditingRequirements(false)}>
                             Cancel
                           </Button>
-                          <Button onClick={saveRequirements}>Save Requirements</Button>
+                          <Button size="sm" onClick={saveRequirements}>
+                            Save
+                          </Button>
                         </div>
                       </div>
                     ) : (
                       <div className="space-y-2">
-                        {(selectedTest as any).requirements?.map((req: any, index: number) => (
-                          <div key={index} className="flex items-start gap-2 p-3 bg-muted/30 rounded-lg">
-                            <div
-                              className={cn(
-                                "w-2 h-2 rounded-full mt-2 shrink-0",
-                                (selectedTest as any).status === "passed"
-                                  ? "bg-green-500"
-                                  : (selectedTest as any).status === "failed"
-                                    ? "bg-red-500"
-                                    : "bg-gray-500",
-                              )}
-                            />
-                            <p className="text-sm">{req}</p>
+                        {((selectedTest as any).requirements || []).map((req: any, index: number) => (
+                          <div key={req.id || index} className={cn("flex items-start gap-3 p-3 rounded-lg border", getRequirementStatusColor(req.status || "pending"))}>
+                            <div className="mt-0.5">
+                              {getRequirementStatusIcon(req.status || "pending")}
+                            </div>
+                            <div className="flex-1">
+                              <span className="text-sm font-medium">{req.text || req}</span>
+                              <div className="text-xs text-muted-foreground mt-1">
+                                Status: <span className="capitalize">{req.status || "pending"}</span>
+                              </div>
+                            </div>
                           </div>
                         ))}
+                        {((selectedTest as any).requirements || []).length === 0 && (
+                          <div className="text-sm text-muted-foreground">No requirements defined</div>
+                        )}
                       </div>
                     )}
                   </div>
@@ -617,4 +704,4 @@ export function TestDashboard() {
       />
     </div>
   )
-}
+} 
