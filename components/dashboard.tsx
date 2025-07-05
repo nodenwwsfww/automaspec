@@ -10,13 +10,13 @@ import {
   Copy,
   Edit,
   FileText,
+  Folder,
   Globe,
   Loader2,
   LogOut,
   MessageSquare,
   MinusCircle,
   MoreHorizontal,
-  Play,
   Plus,
   RotateCcw,
   Settings,
@@ -50,7 +50,7 @@ import { GroupEditorModal } from './group-editor-modal';
 import { RichTextEditor } from './rich-text-editor';
 import { TestEditorModal } from './test-editor-modal';
 
-// Mock database structure with realistic test data
+// Mock database structure with simplified test data
 const testDatabase = {
   projects: [
     {
@@ -61,34 +61,33 @@ const testDatabase = {
         {
           id: 'frontend-group',
           name: 'Frontend Tests',
-          type: 'frontend',
-          icon: Globe,
+          type: 'group',
+          icon: Folder,
           passed: 143,
           total: 145,
           status: 'healthy',
-          description: '<p>Frontend user interface and interaction tests</p>',
+          description: 'Frontend user interface and interaction tests',
           children: [
             {
               id: 'auth-group',
               name: 'Authentication',
-              type: 'feature',
-              icon: User,
+              type: 'group',
+              icon: Folder,
               passed: 49,
               total: 50,
               status: 'warning',
-              description: '<p>User authentication and authorization flows</p>',
+              description: 'User authentication and authorization flows',
               children: [
                 {
-                  id: 'login-block',
-                  name: 'Login Block',
-                  type: 'component',
-                  icon: MessageSquare,
+                  id: 'login-test',
+                  name: 'Login Test',
+                  type: 'test',
+                  icon: FileText,
                   passed: 9,
                   total: 9,
                   status: 'passed',
                   framework: 'Playwright',
-                  description:
-                    '<p>Login form validation and authentication flow</p>',
+                  description: 'Login form validation and authentication flow',
                   requirements: [
                     {
                       id: 'req-1',
@@ -112,7 +111,7 @@ const testDatabase = {
                     },
                   ],
                   playwrightCode: `describe('Authentication', () => {
-    describe('Login Block', () => {
+    describe('Login Test', () => {
         it('should display login form correctly', async ({ page }) => {
             await page.goto('/login');
             await expect(page.locator('#email')).toBeVisible();
@@ -241,7 +240,8 @@ function TreeNode({
     if (hasChildren) {
       setIsExpanded(!isExpanded);
     }
-    if (isLeaf) {
+    // Only allow selecting test items (not groups)
+    if (node.type === 'test') {
       onSelect(node);
     }
   };
@@ -308,10 +308,18 @@ function TreeNode({
               <Edit className="mr-2 h-4 w-4" />
               Edit
             </DropdownMenuItem>
-            <DropdownMenuItem onClick={() => onAddChild(node)}>
-              <Plus className="mr-2 h-4 w-4" />
-              Add Child
-            </DropdownMenuItem>
+            {node.type === 'group' && (
+              <>
+                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'group' })}>
+                  <Folder className="mr-2 h-4 w-4" />
+                  Add Group
+                </DropdownMenuItem>
+                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'test' })}>
+                  <FileText className="mr-2 h-4 w-4" />
+                  Add Test
+                </DropdownMenuItem>
+              </>
+            )}
             <DropdownMenuItem
               className="text-red-600"
               onClick={() => onDelete(node)}
@@ -348,6 +356,7 @@ export function Dashboard() {
   const [aiModalOpen, setAiModalOpen] = useState(false);
   const [groupEditorOpen, setGroupEditorOpen] = useState(false);
   const [testEditorOpen, setTestEditorOpen] = useState(false);
+  const [groups, setGroups] = useState<any[]>(testDatabase.projects[0]?.groups || []);
   const [editingGroup, setEditingGroup] = useState<any>(null);
   const [editingTest, setEditingTest] = useState<any>(null);
   const [parentGroup, setParentGroup] = useState<any>(null);
@@ -371,7 +380,7 @@ export function Dashboard() {
   };
 
   const handleAddChild = (parentGroup: any) => {
-    setEditingGroup(null);
+    setEditingGroup({ type: parentGroup.type });
     setParentGroup(parentGroup);
     setGroupEditorOpen(true);
   };
@@ -383,7 +392,42 @@ export function Dashboard() {
 
   const handleDeleteGroup = (_group: any) => {};
 
-  const handleSaveGroup = (_group: any) => {};
+  const handleSaveGroup = (item: any) => {
+    const replaceNode = (nodes: any[]): any[] =>
+      nodes.map((n) =>
+        n.id === item.id
+          ? { ...item }
+          : { ...n, children: n.children ? replaceNode(n.children) : n.children }
+      );
+
+    let updated: any[] = groups;
+
+    if (groups.some((n) => n.id === item.id)) {
+      // editing root-level item
+      updated = replaceNode(groups);
+    } else if (editingGroup && editingGroup.id) {
+      // editing nested item
+      updated = replaceNode(groups);
+    } else {
+      if (parentGroup) {
+        // add new item under parent
+        const addChild = (nodes: any[]): any[] =>
+          nodes.map((n) =>
+            n.id === parentGroup.id
+              ? { ...n, children: [...(n.children || []), item] }
+              : { ...n, children: n.children ? addChild(n.children) : n.children }
+          );
+        updated = addChild(groups);
+      } else {
+        // add to root
+        updated = [...groups, item];
+      }
+    }
+
+    setGroups(updated);
+    setEditingGroup(null);
+    setParentGroup(null);
+  };
 
   const handleSaveTest = (_test: any) => {};
 
@@ -406,13 +450,13 @@ export function Dashboard() {
     const generatedTest = {
       id: `generated-${Date.now()}`,
       name: 'AI Generated Test',
-      type: 'component',
-      icon: MessageSquare,
+      type: 'test',
+      icon: FileText,
       passed: 0,
-      total: 5,
-      status: 'not_run',
+      total: 3,
+      status: 'pending',
       framework: 'Playwright',
-      description: `<p>Generated test based on: "${aiPrompt}"</p>`,
+      description: `Generated test based on: "${aiPrompt}"`,
       requirements: [
         {
           id: 'gen-req-1',
@@ -462,7 +506,7 @@ export function Dashboard() {
     setEditingRequirements(false);
   };
 
-  const allTests = testDatabase.projects[0]?.groups || [];
+  const allTests = groups;
 
   return (
     <div className="flex h-screen bg-background">
@@ -474,16 +518,29 @@ export function Dashboard() {
             <Badge variant="secondary">Free Plan</Badge>
           </div>
           <div className="flex items-center gap-2">
-            <Button onClick={() => setGroupEditorOpen(true)} size="sm">
-              <Plus className="mr-2 h-4 w-4" />
+            <Button onClick={() => {
+              setEditingGroup({ type: 'group' });
+              setParentGroup(null);
+              setGroupEditorOpen(true);
+            }} size="sm" variant="outline">
+              <Folder className="mr-2 h-4 w-4" />
               New Group
+            </Button>
+            
+            <Button onClick={() => {
+              setEditingGroup({ type: 'test' });
+              setParentGroup(null);
+              setGroupEditorOpen(true);
+            }} size="sm">
+              <Plus className="mr-2 h-4 w-4" />
+              New Test
             </Button>
 
             <Dialog onOpenChange={setAiModalOpen} open={aiModalOpen}>
               <DialogTrigger asChild>
-                <Button size="sm">
+                <Button size="sm" variant="outline">
                   <Sparkles className="mr-2 h-4 w-4" />
-                  Generate with AI
+                  AI Generate
                 </Button>
               </DialogTrigger>
               <DialogContent>
@@ -592,12 +649,9 @@ export function Dashboard() {
                       <Edit className="h-4 w-4" />
                     </Button>
                   </div>
-                  <div
-                    className="prose prose-sm mb-2 text-muted-foreground text-sm"
-                    dangerouslySetInnerHTML={{
-                      __html: (selectedTest as any).description,
-                    }}
-                  />
+                  <p className="mb-2 text-muted-foreground text-sm">
+                    {(selectedTest as any).description}
+                  </p>
                   <div className="flex items-center gap-2">
                     <Badge variant="outline">
                       {(selectedTest as any).framework}
@@ -626,10 +680,6 @@ export function Dashboard() {
                   </div>
                 </div>
                 <div className="flex gap-2">
-                  <Button size="sm">
-                    <Play className="mr-1 h-4 w-4" />
-                    Run
-                  </Button>
                   <Button size="sm" variant="outline">
                     <RotateCcw className="mr-1 h-4 w-4" />
                     Re-run
@@ -803,11 +853,25 @@ export function Dashboard() {
           <div className="flex flex-1 items-center justify-center text-muted-foreground">
             <div className="text-center">
               <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
-              <p>Select a test from the tree to view details</p>
-              <Button className="mt-4" onClick={() => setGroupEditorOpen(true)}>
-                <Plus className="mr-2 h-4 w-4" />
-                Create Your First Group
-              </Button>
+              <p>Select a test to view details and code</p>
+              <div className="mt-4 flex gap-2">
+                <Button variant="outline" onClick={() => {
+                  setEditingGroup({ type: 'group' });
+                  setParentGroup(null);
+                  setGroupEditorOpen(true);
+                }}>
+                  <Folder className="mr-2 h-4 w-4" />
+                  Create Group
+                </Button>
+                <Button onClick={() => {
+                  setEditingGroup({ type: 'test' });
+                  setParentGroup(null);
+                  setGroupEditorOpen(true);
+                }}>
+                  <Plus className="mr-2 h-4 w-4" />
+                  Create Test
+                </Button>
+              </div>
             </div>
           </div>
         )}
