@@ -47,7 +47,6 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { GroupEditorModal } from './group-editor-modal';
-import { RichTextEditor } from './rich-text-editor';
 import { TestEditorModal } from './test-editor-modal';
 
 // Mock database structure with simplified test data
