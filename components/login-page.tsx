@@ -16,7 +16,7 @@ export function LoginPage() {
   const [password, setPassword] = useState("")
   const router = useRouter()
 
-  const handleLogin = (e) => {
+  const handleLogin = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault()
     // Mock login - in real app would validate credentials
     router.push("/dashboard")

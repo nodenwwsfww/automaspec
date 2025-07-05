@@ -32,7 +32,7 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
       id: test?.id || `test-${Date.now()}`,
       name: formData.name,
       description: formData.description,
-      requirements: formData.requirements.split("\n").filter((req) => req.trim()),
+      requirements: formData.requirements.split("\n").filter((req: string) => req.trim()),
       playwrightCode: formData.playwrightCode,
       passed: test?.passed || 0,
       total: test?.total || 1,
@@ -88,7 +88,7 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
               <RichTextEditor
                 content={formData.requirements
                   .split("\n")
-                  .map((req) => `<p>${req}</p>`)
+                  .map((req: string) => `<p>${req}</p>`)
                   .join("")}
                 onChange={(content) => {
                   // Convert HTML back to plain text lines
