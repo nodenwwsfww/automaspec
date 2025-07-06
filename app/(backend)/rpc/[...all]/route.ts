@@ -2,13 +2,17 @@ import { OpenAPIHandler } from '@orpc/openapi/fetch'
 import { CORSPlugin } from '@orpc/server/plugins'
 import { onError } from '@orpc/server'
 import { router } from '@/contracts/example'
+import {
+  experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin
+} from '@orpc/zod/zod4'
 
 const handler = new OpenAPIHandler(router, {
     plugins: [new CORSPlugin(
       {
         exposeHeaders: ['Content-Disposition'],
       }
-    )],
+    ),
+    new ZodSmartCoercionPlugin()],
     interceptors: [
     onError(error => console.error(error))
   ],

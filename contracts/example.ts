@@ -8,7 +8,7 @@ const PlanetSchema = z.object({
     description: z.string().optional(),
   })
   
-const listPlanetContract = oc
+const listPlanetContract = oc.route({ method: 'GET', path: '/planets' })
   .input(
     z.object({
       limit: z.number().int().min(1).max(100).optional(),
@@ -17,11 +17,11 @@ const listPlanetContract = oc
   )
   .output(z.array(PlanetSchema))
   
-const findPlanetContract = oc
+const findPlanetContract = oc.route({ method: 'GET', path: '/planets/{id}' })
   .input(PlanetSchema.pick({ id: true }))
   .output(PlanetSchema)
   
-const createPlanetContract = oc
+const createPlanetContract = oc.route({ method: 'POST', path: '/planets' })
   .input(PlanetSchema.omit({ id: true }))
   .output(PlanetSchema)
   
