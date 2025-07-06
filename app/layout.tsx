@@ -1,9 +1,9 @@
 import type { Metadata } from 'next';
 import './globals.css';
-import { ReactPlugin } from '@21st-extension/react';
-import { TwentyFirstToolbar } from '@21st-extension/toolbar-next';
-import { ThemeProvider } from '@/components/theme-provider';
+// import { ReactPlugin } from '@21st-extension/react';
+// import { TwentyFirstToolbar } from '@21st-extension/toolbar-next';
 import '../lib/orpc.server' // for pre-rendering
+import { Providers } from './providers';
 
 export const metadata: Metadata = {
   title: 'Automaspeq',
@@ -18,14 +18,9 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body>
-        <ThemeProvider
-          attribute="class"
-          defaultTheme="system"
-          disableTransitionOnChange
-          enableSystem
-        >
+        <Providers>
           {children}
-        </ThemeProvider>
+        </Providers>
       </body>
       {/* <TwentyFirstToolbar config={{ plugins: [ReactPlugin] }} /> */}
     </html>

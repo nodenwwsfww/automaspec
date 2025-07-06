@@ -3,6 +3,7 @@ import type { JsonifiedClient } from '@orpc/openapi-client'
 import { exampleContract } from '@/contracts/example'
 import { createORPCClient } from '@orpc/client'
 import type { ContractRouterClient } from '@orpc/contract'
+import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 
 declare global {
     var $client: JsonifiedClient<ContractRouterClient<typeof exampleContract>> | undefined
@@ -36,3 +37,5 @@ const link = new OpenAPILink(exampleContract, {
  * Fallback to client-side client if server-side client is not available.
  */
 export const client: JsonifiedClient<ContractRouterClient<typeof exampleContract>> = globalThis.$client ?? createORPCClient(link)
+
+export const orpc = createTanstackQueryUtils(client)
