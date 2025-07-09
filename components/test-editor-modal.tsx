@@ -105,12 +105,12 @@ export function TestEditorModal({
                 Define individual requirements for this test.
               </p>
               <div className="mt-2 space-y-2">
-                {formData.requirements.split('\n').filter(req => req.trim()).map((req, index) => (
+                {formData.requirements.split('\n').filter((req: string) => req.trim()).map((req: string, index: number) => (
                   <div key={index} className="flex items-center gap-2 rounded-lg border p-3">
                     <input
                       className="flex-1 bg-transparent outline-none"
                       onChange={(e) => {
-                        const reqs = formData.requirements.split('\n').filter(r => r.trim());
+                        const reqs = formData.requirements.split('\n').filter((r: string) => r.trim());
                         reqs[index] = e.target.value;
                         setFormData({ ...formData, requirements: reqs.join('\n') });
                       }}
@@ -119,7 +119,7 @@ export function TestEditorModal({
                     />
                     <Button
                       onClick={() => {
-                        const reqs = formData.requirements.split('\n').filter(r => r.trim());
+                        const reqs = formData.requirements.split('\n').filter((r: string) => r.trim());
                         reqs.splice(index, 1);
                         setFormData({ ...formData, requirements: reqs.join('\n') });
                       }}
@@ -132,7 +132,7 @@ export function TestEditorModal({
                 ))}
                 <Button
                   onClick={() => {
-                    const currentReqs = formData.requirements.split('\n').filter(r => r.trim());
+                    const currentReqs = formData.requirements.split('\n').filter((r: string) => r.trim());
                     setFormData({ ...formData, requirements: [...currentReqs, ''].join('\n') });
                   }}
                   size="sm"
