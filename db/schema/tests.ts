@@ -29,8 +29,6 @@ export const test = sqliteTable('test', {
     title: text('title').notNull(),
     description: text('description'),
     status: text('status').notNull().default('pending'),
-    actualResult: text('actual_result'),
-    expectedResult: text('expected_result'),
     framework: text('framework').default('Playwright'),
     code: text('code'),
     testGroupId: text('test_group_id')
