@@ -5,7 +5,7 @@ import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 export const testCategory = sqliteTable('test_category', {
     id: text('id').primaryKey(),
     title: text('title').notNull(),
-    parentId: text('parent_id'),
+    parentCategoryId: text('parent_category_id'),
     order: integer('order').notNull().default(0),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
@@ -50,7 +50,7 @@ export const testInsertSchema = createInsertSchema(test)
 
 export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({
     parent: one(testCategory, {
-        fields: [testCategory.parentId],
+        fields: [testCategory.parentCategoryId],
         references: [testCategory.id]
     }),
     children: many(testCategory),
