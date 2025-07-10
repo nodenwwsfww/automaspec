@@ -2,7 +2,7 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm'
 import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
 
-export const testCategories = sqliteTable('test_categories', {
+export const testCategory = sqliteTable('test_category', {
     id: text('id').primaryKey(),
     title: text('title').notNull(),
     parentId: text('parent_id'),
@@ -10,15 +10,15 @@ export const testCategories = sqliteTable('test_categories', {
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 })
-export const testCategoryInsertSchema = createInsertSchema(testCategories)
+export const testCategoryInsertSchema = createInsertSchema(testCategory)
 
 export const testGroup = sqliteTable('test_group', {
     id: text('id').primaryKey(),
     title: text('title').notNull(),
     description: text('description'),
-    testCategoriesId: text('test_categories_id')
+    testCategoryId: text('test_category_id')
         .notNull()
-        .references(() => testCategories.id),
+        .references(() => testCategory.id),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 })
@@ -48,19 +48,19 @@ export const test = sqliteTable('test', {
 })
 export const testInsertSchema = createInsertSchema(test)
 
-export const testCategoriesRelations = relations(testCategories, ({ one, many }) => ({
-    parent: one(testCategories, {
-        fields: [testCategories.parentId],
-        references: [testCategories.id]
+export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({
+    parent: one(testCategory, {
+        fields: [testCategory.parentId],
+        references: [testCategory.id]
     }),
-    children: many(testCategories),
+    children: many(testCategory),
     testGroups: many(testGroup)
 }))
 
 export const testGroupRelations = relations(testGroup, ({ one, many }) => ({
-    category: one(testCategories, {
-        fields: [testGroup.testCategoriesId],
-        references: [testCategories.id]
+    category: one(testCategory, {
+        fields: [testGroup.testCategoryId],
+        references: [testCategory.id]
     }),
     requirements: many(testRequirement)
 }))
