@@ -4,105 +4,67 @@ import { z } from 'zod/v4'
 import { db } from '@/db'
 import { testCategories, testGroup, test, testRequirement } from '@/db/schema/tests'
 import { eq } from 'drizzle-orm'
+import { createInsertSchema } from 'drizzle-zod'
 
-const TestCategorySchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  parentId: z.string().nullable(),
-  order: z.number().int().default(0),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-})
-
-const TestGroupSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string().nullable(),
-  testCategoriesId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-})
-
-const TestRequirementSchema = z.object({
-  id: z.string(),
-  text: z.string(),
-  status: z.enum(['pending', 'running', 'passed', 'failed']).default('pending'),
-  order: z.number().int().default(0),
-  testId: z.string(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-})
-
-const TestSchema = z.object({
-  id: z.string(),
-  title: z.string(),
-  description: z.string().nullable(),
-  status: z.enum(['pending', 'running', 'passed', 'failed']).default('pending'),
-  actualResult: z.string().nullable(),
-  expectedResult: z.string().nullable(),
-  framework: z.string().nullable().default('Playwright'),
-  code: z.string().nullable(),
-  testGroupId: z.string(),
-  requirements: z.array(TestRequirementSchema).optional(),
-  createdAt: z.date(),
-  updatedAt: z.date(),
-})
+const testCategoryInsertSchema = createInsertSchema(testCategories)
+const testGroupInsertSchema = createInsertSchema(testGroup)
+const testInsertSchema = createInsertSchema(test)
 
 // Test Categories contracts
 const listTestCategoriesContract = oc.route({ method: 'GET', path: '/test-categories' })
   .input(z.object({ parentId: z.string().optional() }))
-  .output(z.array(TestCategorySchema))
+  .output(z.array(testCategoryInsertSchema))
 
 const createTestCategoryContract = oc.route({ method: 'POST', path: '/test-categories' })
-  .input(TestCategorySchema.omit({ id: true, createdAt: true, updatedAt: true }))
-  .output(TestCategorySchema)
+  .input(testCategoryInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+  .output(testCategoryInsertSchema)
 
 const updateTestCategoryContract = oc.route({ method: 'PUT', path: '/test-categories/{id}' })
-  .input(TestCategorySchema.pick({ id: true }).merge(
-    TestCategorySchema.omit({ id: true, createdAt: true, updatedAt: true }).partial()
+  .input(testCategoryInsertSchema.pick({ id: true }).merge(
+    testCategoryInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial()
   ))
-  .output(TestCategorySchema)
+  .output(testCategoryInsertSchema)
 
 const deleteTestCategoryContract = oc.route({ method: 'DELETE', path: '/test-categories/{id}' })
-  .input(TestCategorySchema.pick({ id: true }))
+  .input(testCategoryInsertSchema.pick({ id: true }))
   .output(z.object({ success: z.boolean() }))
 
 // Test Groups contracts
 const listTestGroupsContract = oc.route({ method: 'GET', path: '/test-groups' })
   .input(z.object({ testCategoriesId: z.string().optional() }))
-  .output(z.array(TestGroupSchema))
+  .output(z.array(testGroupInsertSchema))
 
 const createTestGroupContract = oc.route({ method: 'POST', path: '/test-groups' })
-  .input(TestGroupSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-  .output(TestGroupSchema)
+  .input(testGroupInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+  .output(testGroupInsertSchema)
 
 const updateTestGroupContract = oc.route({ method: 'PUT', path: '/test-groups/{id}' })
-  .input(TestGroupSchema.pick({ id: true }).merge(
-    TestGroupSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial()
+  .input(testGroupInsertSchema.pick({ id: true }).merge(
+    testGroupInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial()
   ))
-  .output(TestGroupSchema)
+  .output(testGroupInsertSchema)
 
 const deleteTestGroupContract = oc.route({ method: 'DELETE', path: '/test-groups/{id}' })
-  .input(TestGroupSchema.pick({ id: true }))
+  .input(testGroupInsertSchema.pick({ id: true }))
   .output(z.object({ success: z.boolean() }))
 
 // Tests contracts
 const listTestsContract = oc.route({ method: 'GET', path: '/tests' })
   .input(z.object({ testGroupId: z.string().optional() }))
-  .output(z.array(TestSchema))
+  .output(z.array(testInsertSchema))
 
 const createTestContract = oc.route({ method: 'POST', path: '/tests' })
-  .input(TestSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-  .output(TestSchema)
+  .input(testInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+  .output(testInsertSchema)
 
 const updateTestContract = oc.route({ method: 'PUT', path: '/tests/{id}' })
-  .input(TestSchema.pick({ id: true }).merge(
-    TestSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial()
+  .input(testInsertSchema.pick({ id: true }).merge(
+    testInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial()
   ))
-  .output(TestSchema)
+  .output(testInsertSchema)
 
 const deleteTestContract = oc.route({ method: 'DELETE', path: '/tests/{id}' })
-  .input(TestSchema.pick({ id: true }))
+  .input(testInsertSchema.pick({ id: true }))
   .output(z.object({ success: z.boolean() }))
 
 export const testsContract = {
