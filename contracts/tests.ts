@@ -2,7 +2,7 @@ import { oc } from '@orpc/contract'
 import { implement } from '@orpc/server'   
 import { z } from 'zod/v4'
 import { db } from '@/db'
-import { testCategories, testGroup, test } from '@/db/schema/tests'
+import { testCategories, testGroup, test, testRequirement } from '@/db/schema/tests'
 import { eq } from 'drizzle-orm'
 
 const TestCategorySchema = z.object({
@@ -170,6 +170,27 @@ const updateTestCategory = os.testCategories.update.handler(async ({ input }) =>
 })
 
 const deleteTestCategory = os.testCategories.delete.handler(async ({ input }) => {
+  // First get all groups in this category
+  const groupsInCategory = await db.select({ id: testGroup.id }).from(testGroup).where(eq(testGroup.testCategoriesId, input.id))
+  
+  // For each group, delete all related data
+  for (const group of groupsInCategory) {
+    // Get all tests in this group
+    const testsInGroup = await db.select({ id: test.id }).from(test).where(eq(test.testGroupId, group.id))
+    
+    // Delete all requirements for all tests in this group
+    for (const testItem of testsInGroup) {
+      await db.delete(testRequirement).where(eq(testRequirement.testId, testItem.id))
+    }
+    
+    // Delete all tests in this group
+    await db.delete(test).where(eq(test.testGroupId, group.id))
+  }
+  
+  // Delete all groups in this category
+  await db.delete(testGroup).where(eq(testGroup.testCategoriesId, input.id))
+  
+  // Finally delete the category
   await db.delete(testCategories).where(eq(testCategories.id, input.id))
   return { success: true }
 })
@@ -215,6 +236,18 @@ const updateTestGroup = os.testGroups.update.handler(async ({ input }) => {
 })
 
 const deleteTestGroup = os.testGroups.delete.handler(async ({ input }) => {
+  // First get all tests in this group
+  const testsInGroup = await db.select({ id: test.id }).from(test).where(eq(test.testGroupId, input.id))
+  
+  // Delete all requirements for all tests in this group
+  for (const testItem of testsInGroup) {
+    await db.delete(testRequirement).where(eq(testRequirement.testId, testItem.id))
+  }
+  
+  // Then delete all tests in this group
+  await db.delete(test).where(eq(test.testGroupId, input.id))
+  
+  // Finally delete the group
   await db.delete(testGroup).where(eq(testGroup.id, input.id))
   return { success: true }
 })
@@ -263,6 +296,10 @@ const updateTest = os.tests.update.handler(async ({ input }) => {
 })
 
 const deleteTest = os.tests.delete.handler(async ({ input }) => {
+  // First delete all requirements for this test
+  await db.delete(testRequirement).where(eq(testRequirement.testId, input.id))
+  
+  // Then delete the test
   await db.delete(test).where(eq(test.id, input.id))
   return { success: true }
 })
