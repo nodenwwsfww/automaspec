@@ -20,7 +20,6 @@ import {
   Plus,
   RotateCcw,
   Settings,
-  Sparkles,
   Trash2,
   User,
   XCircle,
@@ -352,15 +351,12 @@ function TreeNode({
 
 export function Dashboard() {
   const [selectedTest, setSelectedTest] = useState<any>(null);
-  const [aiModalOpen, setAiModalOpen] = useState(false);
   const [groupEditorOpen, setGroupEditorOpen] = useState(false);
   const [testEditorOpen, setTestEditorOpen] = useState(false);
   const [groups, setGroups] = useState<any[]>(testDatabase.projects[0]?.groups || []);
   const [editingGroup, setEditingGroup] = useState<any>(null);
   const [editingTest, setEditingTest] = useState<any>(null);
   const [parentGroup, setParentGroup] = useState<any>(null);
-  const [aiPrompt, setAiPrompt] = useState('');
-  const [isGenerating, setIsGenerating] = useState(false);
   const [copied, setCopied] = useState(false);
   const [editingRequirements, setEditingRequirements] = useState(false);
   const [requirementsContent, setRequirementsContent] = useState('');
@@ -438,57 +434,7 @@ export function Dashboard() {
     }
   };
 
-  const generateTestWithAI = async () => {
-    if (!aiPrompt.trim()) {
-      return;
-    }
 
-    setIsGenerating(true);
-    await new Promise((resolve) => setTimeout(resolve, 2000));
-
-    const generatedTest = {
-      id: `generated-${Date.now()}`,
-      name: 'AI Generated Test',
-      type: 'test',
-      icon: FileText,
-      passed: 0,
-      total: 3,
-      status: 'pending',
-      framework: 'Playwright',
-      description: `Generated test based on: "${aiPrompt}"`,
-      requirements: [
-        {
-          id: 'gen-req-1',
-          text: 'Автоматически сгенерированное требование 1',
-          status: 'pending',
-        },
-        {
-          id: 'gen-req-2',
-          text: 'Автоматически сгенерированное требование 2',
-          status: 'pending',
-        },
-        {
-          id: 'gen-req-3',
-          text: 'Автоматически сгенерированное требование 3',
-          status: 'pending',
-        },
-      ],
-      playwrightCode: `describe('AI Generated Test', () => {
-    describe('Generated from prompt: ${aiPrompt}', () => {
-        it('should meet generated requirements', async ({ page }) => {
-            // Generated test code based on your prompt
-            await page.goto('/');
-            // Add more test steps here...
-        });
-    });
-});`,
-    };
-
-    setIsGenerating(false);
-    setAiModalOpen(false);
-    setAiPrompt('');
-    setSelectedTest(generatedTest);
-  };
 
   const saveRequirements = () => {
     // In real app, would save to database
@@ -535,58 +481,7 @@ export function Dashboard() {
               New Test
             </Button>
 
-            <Dialog onOpenChange={setAiModalOpen} open={aiModalOpen}>
-              <DialogTrigger asChild>
-                <Button size="sm" variant="outline">
-                  <Sparkles className="mr-2 h-4 w-4" />
-                  AI Generate
-                </Button>
-              </DialogTrigger>
-              <DialogContent>
-                <DialogHeader>
-                  <DialogTitle>Generate Test with AI</DialogTitle>
-                </DialogHeader>
-                <div className="space-y-4">
-                  <div>
-                    <Label htmlFor="ai-prompt">
-                      Describe what you want to test
-                    </Label>
-                    <Textarea
-                      className="min-h-[100px]"
-                      id="ai-prompt"
-                      onChange={(e) => setAiPrompt(e.target.value)}
-                      placeholder="e.g., 'Test user registration form with email validation and password confirmation'"
-                      value={aiPrompt}
-                    />
-                  </div>
-                  <div className="flex justify-end gap-2">
-                    <Button
-                      disabled={isGenerating}
-                      onClick={() => setAiModalOpen(false)}
-                      variant="outline"
-                    >
-                      Cancel
-                    </Button>
-                    <Button
-                      disabled={isGenerating || !aiPrompt.trim()}
-                      onClick={generateTestWithAI}
-                    >
-                      {isGenerating ? (
-                        <>
-                          <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                          Generating...
-                        </>
-                      ) : (
-                        <>
-                          <Sparkles className="mr-2 h-4 w-4" />
-                          Generate Test
-                        </>
-                      )}
-                    </Button>
-                  </div>
-                </div>
-              </DialogContent>
-            </Dialog>
+
 
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
