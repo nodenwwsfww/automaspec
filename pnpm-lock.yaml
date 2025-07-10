@@ -31,7 +31,7 @@ importers:
         version: 1.6.6(@orpc/client@1.6.6)(@tanstack/query-core@5.81.5)
       '@orpc/zod':
         specifier: ^1.6.6
-        version: 1.6.6(@orpc/contract@1.6.6)(@orpc/server@1.6.6(ws@8.18.3))(ws@8.18.3)(zod@3.25.76)
+        version: 1.6.6(@orpc/contract@1.6.6)(@orpc/server@1.6.6(ws@8.18.3))(ws@8.18.3)(zod@4.0.2)
       '@tanstack/react-form':
         specifier: ^1.14.1
         version: 1.14.1(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
@@ -102,8 +102,8 @@ importers:
         specifier: ^1.1.2
         version: 1.1.2(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
       zod:
-        specifier: ^3.25.76
-        version: 3.25.76
+        specifier: ^4.0.2
+        version: 4.0.2
     devDependencies:
       '@21st-extension/react':
         specifier: ^0.5.14
@@ -2793,6 +2793,9 @@ packages:
   zod@3.25.76:
     resolution: {integrity: sha512-gzUt/qt81nXsFGKIFcC3YnfEAx5NkunCfnDlvuBSSFS02bcXu4Lmea0AFIUwbLWxWPx3d9p8S5QoaujKcNQxcQ==}
 
+  zod@4.0.2:
+    resolution: {integrity: sha512-X2niJNY54MGam4L6Kj0AxeedeDIi/E5QFW0On2faSX5J4/pfLk1tW+cRMIMoojnCavn/u5W/kX17e1CSGnKMxA==}
+
 snapshots:
 
   '@21st-extension/react@0.5.14(@21st-extension/toolbar@0.5.14(@types/react-dom@19.1.6(@types/react@19.1.8))(@types/react@19.1.8)(react-dom@19.1.0(react@19.1.0))(react@19.1.0))':
@@ -3354,7 +3357,7 @@ snapshots:
       '@orpc/shared': 1.6.6
       '@tanstack/query-core': 5.81.5
 
-  '@orpc/zod@1.6.6(@orpc/contract@1.6.6)(@orpc/server@1.6.6(ws@8.18.3))(ws@8.18.3)(zod@3.25.76)':
+  '@orpc/zod@1.6.6(@orpc/contract@1.6.6)(@orpc/server@1.6.6(ws@8.18.3))(ws@8.18.3)(zod@4.0.2)':
     dependencies:
       '@orpc/contract': 1.6.6
       '@orpc/openapi': 1.6.6(ws@8.18.3)
@@ -3362,7 +3365,7 @@ snapshots:
       '@orpc/shared': 1.6.6
       escape-string-regexp: 5.0.0
       wildcard-match: 5.1.4
-      zod: 3.25.76
+      zod: 4.0.2
     transitivePeerDependencies:
       - crossws
       - ws
@@ -5303,3 +5306,5 @@ snapshots:
   yaml@2.8.0: {}
 
   zod@3.25.76: {}
+
+  zod@4.0.2: {}

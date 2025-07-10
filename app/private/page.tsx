@@ -1,6 +1,6 @@
 "use client"
 
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/shared/better-auth"
 import { useQuery } from "@tanstack/react-query"
 import { orpc } from "@/lib/orpc"
 import { redirect } from "next/navigation"
