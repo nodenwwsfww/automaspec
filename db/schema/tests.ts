@@ -27,7 +27,6 @@ export const testGroupInsertSchema = createInsertSchema(testGroup)
 export const testRequirement = sqliteTable('test_requirement', {
     id: text('id').primaryKey(),
     text: text('text').notNull(),
-    status: text('status').notNull().default('pending'),
     order: integer('order').notNull().default(0),
     testGroupId: text('test_group_id')
         .notNull()
@@ -38,7 +37,6 @@ export const testRequirement = sqliteTable('test_requirement', {
 
 export const test = sqliteTable('test', {
     id: text('id').primaryKey(),
-    title: text('title').notNull(),
     status: text('status').notNull().default('pending'),
     framework: text('framework').default('Playwright'),
     code: text('code'),
