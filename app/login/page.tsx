@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/shared/better-auth"
 import { Code } from 'lucide-react';
 import Link from 'next/link';
 import { useState } from 'react';
@@ -25,6 +25,7 @@ export default function LoginPage() {
   return (
     <div className="flex min-h-screen items-center justify-center bg-background p-4">
       <div className="w-full max-w-4xl flex flex-col md:flex-row gap-8 items-center justify-center">
+        {/* Form Section */}
         <div className="w-full max-w-md">
           <div className="mb-8 text-center">
             <Link className="mb-4 inline-flex items-center gap-2" href="/">
@@ -44,45 +45,45 @@ export default function LoginPage() {
             </p>
           </div>
 
-          {/* Already logged in notice */}
-          {session && (
-            <Alert className="mb-6">
-              <AlertDescription>
-                You are already signed in as <strong>{session.user.email}</strong>
-                <div className="flex items-center gap-2">
-                  <Link href="/dashboard" className="text-primary hover:underline">
-                    Go to dashboard
-                  </Link>
-                <span className="text-muted-foreground">or</span>
-                <Button 
-                  variant="link" 
-                  className="p-0 h-auto text-primary hover:underline"
-                  onClick={() => authClient.signOut()}
-                >
-                  sign out
-                </Button>
-                </div>
-              </AlertDescription>
-            </Alert>
-          )}
-
+          {/* Form Component */}
           {isSignUp ? (
             <SignUpForm onToggle={() => setIsSignUp(false)} />
           ) : (
             <SignInForm onToggle={() => setIsSignUp(true)} />
           )}
         </div>
-  
-        <div className="w-full max-w-xs flex-shrink-0">
+
+        {/* Right Column: Already logged in notice + Demo Credentials */}
+        <div className="w-full max-w-xs flex-shrink-0 flex flex-col gap-4">
+          {session && (
+            <Alert className="mb-0">
+              <AlertDescription>
+                You are already signed in as <strong>{session.user.email}</strong>
+                <div className="flex items-center gap-2 mt-2">
+                  <Link href="/dashboard" className="text-primary hover:underline">
+                    Go to dashboard
+                  </Link>
+                  <span className="text-muted-foreground">or</span>
+                  <Button 
+                    variant="link" 
+                    className="p-0 h-auto text-primary hover:underline"
+                    onClick={() => authClient.signOut()}
+                  >
+                    sign out
+                  </Button>
+                </div>
+              </AlertDescription>
+            </Alert>
+          )}
           <Card className="bg-muted/50">
             <CardContent className="pt-4">
               <p className="mb-2 text-center text-muted-foreground text-sm">
                 Demo credentials:
               </p>
-                <div className="space-y-1 text-center text-xs">
-                  <p>Email: demo@testassist.com</p>
-                  <p>Password: demo123</p>
-                </div>
+              <div className="space-y-1 text-center text-xs">
+                <p>Email: demo@testassist.com</p>
+                <p>Password: demo123</p>
+              </div>
             </CardContent>
           </Card>
         </div>

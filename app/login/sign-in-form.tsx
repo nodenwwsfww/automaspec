@@ -1,6 +1,6 @@
 'use client';
 
-import { authClient } from "@/lib/auth-client"
+import { authClient } from "@/lib/shared/better-auth"
 import { useForm } from "@tanstack/react-form"
 import { toast } from "sonner"
 import * as z from "zod";
@@ -19,8 +19,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 import { useRouter } from "next/navigation"
-import { FieldInfo } from "@/lib/common/form"
-  
+import { FieldInfo } from "@/lib/shared/tanstack-form"
+
 const SignInSchema = z.object({
   email: z.string().email("Invalid email address"),
   password: z.string().min(8, "Password must be at least 8 characters")

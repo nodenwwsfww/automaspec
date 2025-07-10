@@ -1,5 +1,5 @@
 import type { NextRequest } from "next/server"
-import { auth } from "./auth"
+import { auth } from "@/lib/shared/better-auth"
 
 // TODO: currently unused, do we need it?
 export async function createContext(req: NextRequest) {

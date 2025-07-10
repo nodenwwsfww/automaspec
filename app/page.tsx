@@ -18,19 +18,15 @@ import {
   CardHeader,
   CardTitle,
 } from '@/components/ui/card';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { headers } from 'next/headers';
-import { auth } from '@/lib/auth';
-import { redirect } from 'next/navigation';
+import { auth } from '@/lib/shared/better-auth';
 
 export default async function LandingPage() {
 
   const session = await auth.api.getSession({
     headers: await headers()
 })
-
-if(!session) {
-    redirect("/login")
-}
 
   return (
     <div className="min-h-screen bg-background">
@@ -56,15 +52,31 @@ if(!session) {
             >
               Pricing
             </Link>
-            <Link
-              className="text-muted-foreground hover:text-foreground"
-              href="/login"
-            >
-              Login
-            </Link>
-            <Link href="/dashboard">
-              <Button>Get Started</Button>
-            </Link>
+            {session ? (
+              <div className="flex items-center gap-4">
+                <Link href="/dashboard">
+                  <Button>Go to App</Button>
+                </Link>
+                <Avatar className="h-8 w-8">
+                  <AvatarImage src={session.user.image || undefined} alt={session.user.name} />
+                  <AvatarFallback>
+                    {session.user.name?.slice(0, 2).toUpperCase() || 'U'}
+                  </AvatarFallback>
+                </Avatar>
+              </div>
+            ) : (
+              <>
+                <Link
+                  className="text-muted-foreground hover:text-foreground"
+                  href="/login"
+                >
+                  Login
+                </Link>
+                <Link href="/dashboard">
+                  <Button>Get Started</Button>
+                </Link>
+              </>
+            )}
           </nav>
         </div>
       </header>
@@ -86,7 +98,7 @@ if(!session) {
           <div className="flex flex-col justify-center gap-4 sm:flex-row">
             <Link href="/dashboard">
               <Button className="px-8 text-lg" size="lg">
-                Start Testing Free
+                {session ? 'Go to App' : 'Start Testing Free'}
                 <ArrowRight className="ml-2 h-5 w-5" />
               </Button>
             </Link>
@@ -216,7 +228,7 @@ if(!session) {
                   </div>
                 </div>
                 <Link className="block" href="/dashboard">
-                  <Button className="w-full">Get Started Free</Button>
+                  <Button className="w-full">{session ? 'Go to App' : 'Get Started Free'}</Button>
                 </Link>
               </CardContent>
             </Card>
@@ -236,7 +248,7 @@ if(!session) {
           </p>
           <Link href="/dashboard">
             <Button className="px-8 text-lg" size="lg" variant="secondary">
-              Start Your Free Trial
+              {session ? 'Go to App' : 'Start Your Free Trial'}
               <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
           </Link>
