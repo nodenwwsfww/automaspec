@@ -245,32 +245,35 @@ export default function Dashboard() {
     )
 
     // Mutations for CRUD operations
-    const deleteTestCategoryMutation = useMutation({
-        mutationFn: (id: string) => orpc.testCategories.delete.mutate({ input: { id } }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-            queryClient.invalidateQueries({ queryKey: ['testGroups'] })
-            queryClient.invalidateQueries({ queryKey: ['tests'] })
-        }
-    })
-
-    const deleteTestGroupMutation = useMutation({
-        mutationFn: (id: string) => orpc.testGroups.delete.mutate({ input: { id } }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['testGroups'] })
-            queryClient.invalidateQueries({ queryKey: ['tests'] })
-        }
-    })
-
-    const deleteTestMutation = useMutation({
-        mutationFn: (id: string) => orpc.tests.delete.mutate({ input: { id } }),
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ['tests'] })
-            if (selectedTest && deleteTestMutation.variables === selectedTest.id) {
-                setSelectedTest(null)
+    const deleteTestCategoryMutation = useMutation(
+        orpc.testCategories.delete.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+                queryClient.invalidateQueries({ queryKey: ['testGroups'] })
+                queryClient.invalidateQueries({ queryKey: ['tests'] })
             }
-        }
-    })
+        })
+    )
+
+    const deleteTestGroupMutation = useMutation(
+        orpc.testGroups.delete.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['testGroups'] })
+                queryClient.invalidateQueries({ queryKey: ['tests'] })
+            }
+        })
+    )
+
+    const deleteTestMutation = useMutation(
+        orpc.tests.delete.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['tests'] })
+                if (selectedTest && deleteTestMutation.variables?.input?.id === selectedTest.id) {
+                    setSelectedTest(null)
+                }
+            }
+        })
+    )
 
     const loading = categoriesLoading || groupsLoading || testsLoading
 
