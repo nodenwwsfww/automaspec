@@ -35,7 +35,7 @@ import { Textarea } from '@/components/ui/textarea'
 import { cn } from '@/lib/utils'
 import { GroupEditorModal } from './group-editor-modal'
 import { TestEditorModal } from './test-editor-modal'
-import { fetchTestData, createSampleData } from '@/lib/test-data'
+import { client } from '@/lib/orpc'
 import type {
     Test,
     TestGroup,
@@ -253,17 +253,32 @@ export function Dashboard() {
     const [requirementsContent, setRequirementsContent] = useState('')
     const [loading, setLoading] = useState(true)
 
+    // Helper function to fetch test data using orpc client
+    const fetchTestData = async (): Promise<TestDataResponse> => {
+        try {
+            const [categories, groups, tests] = await Promise.all([
+                client.testCategories.list({}),
+                client.testGroups.list({}),
+                client.tests.list({})
+            ])
+
+            return {
+                categories,
+                groups,
+                tests,
+                requirements: [] // TODO: Add requirements endpoint
+            }
+        } catch (error) {
+            console.error('Error fetching test data:', error)
+            return { categories: [], groups: [], tests: [], requirements: [] }
+        }
+    }
+
     // Load test data on component mount
     useEffect(() => {
         const loadData = async () => {
             setLoading(true)
-            let data = await fetchTestData()
-
-            // If no data exists, create sample data
-            if (data.categories.length === 0) {
-                data = (await createSampleData()) || data
-            }
-
+            const data = await fetchTestData()
             setTestData(data)
             setLoading(false)
         }

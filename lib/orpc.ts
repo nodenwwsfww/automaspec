@@ -1,13 +1,42 @@
-import { createORPCHandler, createORPCNextHandler } from '@orpc/next'
-import { createORPCReactQueryClient } from '@orpc/react-query'
+import { OpenAPILink } from '@orpc/openapi-client/fetch'
+import type { JsonifiedClient } from '@orpc/openapi-client'
 import { testsContract } from '@/contracts/tests'
+import { createORPCClient } from '@orpc/client'
+import type { ContractRouterClient } from '@orpc/contract'
+import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 
-export const orpcClient = createORPCReactQueryClient(testsContract, {
-    baseURL: '/rpc'
+declare global {
+    var $client: JsonifiedClient<ContractRouterClient<typeof testsContract>> | undefined
+}
+
+const link = new OpenAPILink(testsContract, {
+    url: () => {
+        if (typeof window === 'undefined') {
+            throw new Error('OpenAPILink is not allowed on the server side.')
+        }
+
+        return `${window.location.origin}/rpc`
+    },
+    headers: async () => {
+        if (typeof window !== 'undefined') {
+            return {}
+        }
+
+        const { headers } = await import('next/headers')
+        return Object.fromEntries(await headers())
+    },
+    fetch: (request, init) =>
+        globalThis.fetch(request, {
+            ...init,
+            credentials: 'include',
+            // TODO: check if this is needed in nextjs
+        })
 })
 
-export const testApi = {
-    categories: orpcClient.testCategories,
-    groups: orpcClient.testGroups,
-    tests: orpcClient.tests
-}
+/**
+ * Fallback to client-side client if server-side client is not available.
+ */
+export const client: JsonifiedClient<ContractRouterClient<typeof testsContract>> = 
+    globalThis.$client ?? createORPCClient(link)
+
+export const orpc = createTanstackQueryUtils(client)
