@@ -24,7 +24,7 @@ import {
   XCircle,
 } from 'lucide-react';
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
@@ -46,90 +46,22 @@ import { Textarea } from '@/components/ui/textarea';
 import { cn } from '@/lib/utils';
 import { GroupEditorModal } from './group-editor-modal';
 import { TestEditorModal } from './test-editor-modal';
+import { fetchTestData, createSampleData } from '@/lib/test-data';
+import type { 
+  Test, 
+  TestGroup, 
+  TestCategory, 
+  TestRequirement, 
+  TestDataResponse, 
+  TreeNode, 
+  TestStatus,
+  DisplayStatus,
+  EditableNode,
+  TestGroupWithType
+} from '@/lib/types';
 
-// Mock database structure with simplified test data
-const testDatabase = {
-  projects: [
-    {
-      id: 'main-project',
-      name: 'E-commerce Platform',
-      description: 'Main e-commerce application testing suite',
-      groups: [
-        {
-          id: 'frontend-group',
-          name: 'Frontend Tests',
-          type: 'group',
-          icon: Folder,
-          passed: 143,
-          total: 145,
-          status: 'healthy',
-          description: 'Frontend user interface and interaction tests',
-          children: [
-            {
-              id: 'auth-group',
-              name: 'Authentication',
-              type: 'group',
-              icon: Folder,
-              passed: 49,
-              total: 50,
-              status: 'warning',
-              description: 'User authentication and authorization flows',
-              children: [
-                {
-                  id: 'login-test',
-                  name: 'Login Test',
-                  type: 'test',
-                  icon: FileText,
-                  passed: 9,
-                  total: 9,
-                  status: 'passed',
-                  framework: 'Playwright',
-                  description: 'Login form validation and authentication flow',
-                  requirements: [
-                    {
-                      id: 'req-1',
-                      text: 'Отображается форма логина с полями email и password',
-                      status: 'passed',
-                    },
-                    {
-                      id: 'req-2',
-                      text: 'При вводе валидных данных происходит успешная авторизация',
-                      status: 'passed',
-                    },
-                    {
-                      id: 'req-3',
-                      text: 'При неверных данных показывается ошибка',
-                      status: 'passed',
-                    },
-                    {
-                      id: 'req-4',
-                      text: "Работает функция 'Запомнить меня'",
-                      status: 'failed',
-                    },
-                  ],
-                  playwrightCode: `describe('Authentication', () => {
-    describe('Login Test', () => {
-        it('should display login form correctly', async ({ page }) => {
-        });
 
-        it('should login with valid credentials', async ({ page }) => {
-        });
-
-        it('should show error for invalid credentials', async ({ page }) => {
-        });
-    });
-});`,
-                },
-              ],
-            },
-          ],
-        },
-      ],
-    },
-  ],
-};
-
-function getStatusColor(status: any) {
+function getStatusColor(status: DisplayStatus) {
   switch (status) {
     case 'passed':
     case 'healthy':
@@ -143,7 +75,7 @@ function getStatusColor(status: any) {
   }
 }
 
-function getStatusBadge(status: any) {
+function getStatusBadge(status: DisplayStatus) {
   switch (status) {
     case 'passed':
     case 'healthy':
@@ -167,7 +99,7 @@ function getStatusBadge(status: any) {
   }
 }
 
-function getRequirementStatusIcon(status: string) {
+function getRequirementStatusIcon(status: DisplayStatus) {
   switch (status) {
     case 'passed':
       return <CheckCircle className="h-4 w-4 text-green-600" />;
@@ -182,7 +114,7 @@ function getRequirementStatusIcon(status: string) {
   }
 }
 
-function getRequirementStatusColor(status: string) {
+function getRequirementStatusColor(status: DisplayStatus) {
   switch (status) {
     case 'passed':
       return 'text-green-800 bg-green-50';
@@ -197,6 +129,16 @@ function getRequirementStatusColor(status: string) {
   }
 }
 
+interface TreeNodeProps {
+  node: TreeNode;
+  level?: number;
+  onSelect: (node: TreeNode) => void;
+  selectedId: string | null;
+  onEdit: (node: TreeNode) => void;
+  onAddChild: (node: TreeNode) => void;
+  onDelete: (node: TreeNode) => void;
+}
+
 function TreeNode({
   node,
   level = 0,
@@ -205,9 +147,9 @@ function TreeNode({
   onEdit,
   onAddChild,
   onDelete,
-}: any) {
+}: TreeNodeProps) {
   const [isExpanded, setIsExpanded] = useState(level < 3);
-  const hasChildren = node.children && node.children.length > 0;
+  const hasChildren = (node.children?.length ?? 0) > 0;
   const isLeaf = !hasChildren;
   const isSelected = selectedId === node.id;
 
@@ -316,7 +258,7 @@ function TreeNode({
 
       {hasChildren && isExpanded && (
         <div>
-          {node.children.map((child: any) => (
+          {node.children?.map((child: TreeNode) => (
             <TreeNode
               key={child.id}
               level={level + 1}
@@ -335,16 +277,35 @@ function TreeNode({
 }
 
 export function Dashboard() {
-  const [selectedTest, setSelectedTest] = useState<any>(null);
+  const [selectedTest, setSelectedTest] = useState<Test | null>(null);
   const [groupEditorOpen, setGroupEditorOpen] = useState(false);
   const [testEditorOpen, setTestEditorOpen] = useState(false);
-  const [groups, setGroups] = useState<any[]>(testDatabase.projects[0]?.groups || []);
-  const [editingGroup, setEditingGroup] = useState<any>(null);
-  const [editingTest, setEditingTest] = useState<any>(null);
-  const [parentGroup, setParentGroup] = useState<any>(null);
+  const [testData, setTestData] = useState<TestDataResponse>({ categories: [], groups: [], tests: [], requirements: [] });
+  const [editingGroup, setEditingGroup] = useState<TestGroup | null>(null);
+  const [editingTest, setEditingTest] = useState<Test | null>(null);
+  const [parentGroup, setParentGroup] = useState<TestGroup | null>(null);
   const [copied, setCopied] = useState(false);
   const [editingRequirements, setEditingRequirements] = useState(false);
   const [requirementsContent, setRequirementsContent] = useState('');
+  const [loading, setLoading] = useState(true);
+
+  // Load test data on component mount
+  useEffect(() => {
+    const loadData = async () => {
+      setLoading(true);
+      let data = await fetchTestData();
+      
+      // If no data exists, create sample data
+      if (data.categories.length === 0) {
+        data = await createSampleData() || data;
+      }
+      
+      setTestData(data);
+      setLoading(false);
+    };
+    
+    loadData();
+  }, []);
 
   const handleTestSelect = (test: any) => {
     setSelectedTest(test);
@@ -370,50 +331,66 @@ export function Dashboard() {
     setTestEditorOpen(true);
   };
 
-  const handleDeleteGroup = (_group: any) => {};
-
-  const handleSaveGroup = (item: any) => {
-    const replaceNode = (nodes: any[]): any[] =>
-      nodes.map((n) =>
-        n.id === item.id
-          ? { ...item }
-          : { ...n, children: n.children ? replaceNode(n.children) : n.children }
-      );
-
-    let updated: any[] = groups;
-
-    if (groups.some((n) => n.id === item.id)) {
-      // editing root-level item
-      updated = replaceNode(groups);
-    } else if (editingGroup && editingGroup.id) {
-      // editing nested item
-      updated = replaceNode(groups);
-    } else {
-      if (parentGroup) {
-        // add new item under parent
-        const addChild = (nodes: any[]): any[] =>
-          nodes.map((n) =>
-            n.id === parentGroup.id
-              ? { ...n, children: [...(n.children || []), item] }
-              : { ...n, children: n.children ? addChild(n.children) : n.children }
-          );
-        updated = addChild(groups);
-      } else {
-        // add to root
-        updated = [...groups, item];
-      }
+  const handleDeleteGroup = async (group: any) => {
+    try {
+      await fetch(`/rpc/test-groups/${group.id}`, {
+        method: 'DELETE'
+      });
+      setTestData(await fetchTestData());
+    } catch (error) {
+      console.error('Failed to delete group:', error);
     }
+  };
 
-    setGroups(updated);
+  const handleDeleteCategory = async (category: any) => {
+    try {
+      await fetch(`/rpc/test-categories/${category.id}`, {
+        method: 'DELETE'
+      });
+      setTestData(await fetchTestData());
+    } catch (error) {
+      console.error('Failed to delete category:', error);
+    }
+  };
+
+  const handleDeleteTest = async (test: any) => {
+    try {
+      await fetch(`/rpc/tests/${test.id}`, {
+        method: 'DELETE'
+      });
+      setTestData(await fetchTestData());
+      if (selectedTest?.id === test.id) {
+        setSelectedTest(null);
+      }
+    } catch (error) {
+      console.error('Failed to delete test:', error);
+    }
+  };
+
+  const handleDelete = async (node: any) => {
+    if (node.type === 'category') {
+      await handleDeleteCategory(node);
+    } else if (node.type === 'group') {
+      await handleDeleteGroup(node);
+    } else if (node.type === 'test') {
+      await handleDeleteTest(node);
+    }
+  };
+
+  const handleSaveGroup = async (item: any) => {
+    // For now, just refresh the data after save
+    // In a real implementation, you'd make the API call here
+    const data = await fetchTestData();
+    setTestData(data);
     setEditingGroup(null);
     setParentGroup(null);
   };
 
   const handleSaveTest = (_test: any) => {};
 
-  const copyPlaywrightCode = async () => {
-    if (selectedTest?.playwrightCode) {
-      await navigator.clipboard.writeText(selectedTest.playwrightCode);
+  const copyTestCode = async () => {
+    if (selectedTest?.code) {
+      await navigator.clipboard.writeText(selectedTest.code);
       setCopied(true);
       setTimeout(() => setCopied(false), 2000);
     }
@@ -436,7 +413,97 @@ export function Dashboard() {
     setEditingRequirements(false);
   };
 
-  const allTests = groups;
+  // Build hierarchical structure from flat data for display
+  const buildHierarchy = () => {
+    const { categories, groups, tests, requirements } = testData;
+    
+    // Helper function to calculate test stats
+    const calculateStats = (children: any[]) => {
+      let passed = 0;
+      let total = 0;
+      
+      children.forEach((child: any) => {
+        if (child.type === 'test') {
+          total += 1;
+          if (child.status === 'passed') passed += 1;
+        } else if (child.children) {
+          const childStats = calculateStats(child.children);
+          passed += childStats.passed;
+          total += childStats.total;
+        }
+      });
+      
+      return { passed, total };
+    };
+    
+    // Create a map of categories with their groups
+    const categoriesWithGroups = categories.map((category: any) => {
+      const categoryGroups = groups
+        .filter((group: any) => group.testCategoriesId === category.id)
+        .map((group: any) => {
+          const groupTests = tests
+            .filter((test: any) => test.testGroupId === group.id)
+            .map((test: any) => ({
+              ...test,
+              type: 'test',
+              icon: FileText,
+              name: test.title,
+              passed: test.status === 'passed' ? 1 : 0,
+              total: 1,
+              requirements: requirements
+                .filter((req: any) => req.testId === test.id)
+                .sort((a: any, b: any) => a.order - b.order)
+                .map((req: any) => ({
+                  id: req.id,
+                  text: req.text,
+                  status: req.status,
+                })),
+              code: test.code || 'No code available'
+            }));
+          
+          const groupStats = calculateStats(groupTests);
+          return {
+            ...group,
+            type: 'group',
+            icon: Folder,
+            name: group.title,
+            children: groupTests,
+            passed: groupStats.passed,
+            total: groupStats.total,
+            status: groupStats.passed === groupStats.total ? 'passed' : 
+                   groupStats.passed > 0 ? 'warning' : 'failed'
+          };
+        });
+      
+      const categoryStats = calculateStats(categoryGroups);
+      return {
+        ...category,
+        type: 'category',
+        icon: Folder,
+        name: category.title,
+        children: categoryGroups,
+        passed: categoryStats.passed,
+        total: categoryStats.total,
+        status: categoryStats.passed === categoryStats.total ? 'healthy' : 
+               categoryStats.passed > 0 ? 'warning' : 'failed'
+      };
+    });
+    
+    return categoriesWithGroups;
+  };
+
+  const allTests = buildHierarchy();
+
+  if (loading) {
+    return (
+      <div className="flex h-screen items-center justify-center bg-background">
+        <div className="flex items-center gap-2">
+          <Loader2 className="h-6 w-6 animate-spin" />
+          <span>Loading test data...</span>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex h-screen bg-background">
@@ -500,7 +567,7 @@ export function Dashboard() {
               key={node.id}
               node={node}
               onAddChild={handleAddChild}
-              onDelete={handleDeleteGroup}
+              onDelete={handleDelete}
               onEdit={handleEditGroup}
               onSelect={handleTestSelect}
               selectedId={(selectedTest as any)?.id}
@@ -752,8 +819,8 @@ export function Dashboard() {
                 <TabsContent className="mt-4" value="playwright">
                   <div className="space-y-4">
                     <div className="flex items-center justify-between">
-                      <h3 className="font-medium">Generated Playwright Code</h3>
-                      <Button onClick={copyPlaywrightCode} size="sm">
+                                              <h3 className="font-medium">Generated Test Code</h3>
+                      <Button onClick={copyTestCode} size="sm">
                         {copied ? (
                           <>
                             <Check className="mr-1 h-4 w-4" />
@@ -762,14 +829,14 @@ export function Dashboard() {
                         ) : (
                           <>
                             <Copy className="mr-1 h-4 w-4" />
-                            Copy as Playwright
+                            Copy Test Code
                           </>
                         )}
                       </Button>
                     </div>
                     <div className="max-h-[500px] overflow-auto rounded-lg bg-slate-950 p-4 font-mono text-slate-50 text-sm">
                       <pre className="whitespace-pre-wrap">
-                        {(selectedTest as any).playwrightCode}
+                        {(selectedTest as any).code}
                       </pre>
                     </div>
                   </div>

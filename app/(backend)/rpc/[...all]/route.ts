@@ -1,12 +1,15 @@
 import { OpenAPIHandler } from '@orpc/openapi/fetch' 
 import { CORSPlugin } from '@orpc/server/plugins'
 import { onError } from '@orpc/server'
-import { router } from '@/contracts/example'
+import { router as exampleRouter } from '@/contracts/example'
+import { testsRouter } from '@/contracts/tests'
 import {
   experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin
 } from '@orpc/zod/zod4'
 
-const handler = new OpenAPIHandler(router, {
+const combinedRouter = testsRouter
+
+const handler = new OpenAPIHandler(combinedRouter, {
     plugins: [new CORSPlugin(
       {
         exposeHeaders: ['Content-Disposition'],

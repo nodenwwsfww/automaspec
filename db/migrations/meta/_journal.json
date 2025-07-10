@@ -8,6 +8,27 @@
       "when": 1749950400404,
       "tag": "0000_first_george_stacy",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1752151728661,
+      "tag": "0001_living_giant_girl",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "6",
+      "when": 1752155115363,
+      "tag": "0002_flat_kulan_gath",
+      "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "6",
+      "when": 1752155735598,
+      "tag": "0003_common_white_tiger",
+      "breakpoints": true
     }
   ]
 }
