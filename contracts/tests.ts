@@ -2,7 +2,7 @@ import { oc } from '@orpc/contract'
 import { implement } from '@orpc/server'
 import { z } from 'zod/v4'
 import {
-    testCategories,
+    testCategory,
     testGroup,
     test,
     testRequirement,
@@ -113,7 +113,7 @@ const os = implement(testsContract)
 
 // Database implementations
 const listTestCategories = os.testCategories.list.handler(async ({ input }) => {
-    const categories = await db().select().from(testCategories)
+    const categories = await db().select().from(testCategory)
     return categories.map((cat) => ({
         ...cat,
         createdAt: new Date(cat.createdAt),
@@ -129,7 +129,7 @@ const createTestCategory = os.testCategories.create.handler(async ({ input }) =>
         updatedAt: new Date()
     }
 
-    const result = await db().insert(testCategories).values(newCategory).returning()
+    const result = await db().insert(testCategory).values(newCategory).returning()
     return {
         ...result[0],
         createdAt: new Date(result[0].createdAt),
@@ -140,9 +140,9 @@ const createTestCategory = os.testCategories.create.handler(async ({ input }) =>
 const updateTestCategory = os.testCategories.update.handler(async ({ input }) => {
     const { id, ...updates } = input
     const result = await db()
-        .update(testCategories)
+        .update(testCategory)
         .set({ ...updates, updatedAt: new Date() })
-        .where(eq(testCategories.id, id))
+        .where(eq(testCategory.id, id))
         .returning()
 
     return {
@@ -157,27 +157,27 @@ const deleteTestCategory = os.testCategories.delete.handler(async ({ input }) =>
     const groupsInCategory = await db()
         .select({ id: testGroup.id })
         .from(testGroup)
-        .where(eq(testGroup.testCategoriesId, input.id))
+        .where(eq(testGroup.testCategoryId, input.id))
 
     // For each group, delete all related data
     for (const group of groupsInCategory) {
         // Get all tests in this group
-        const testsInGroup = await db().select({ id: test.id }).from(test).where(eq(test.testGroupId, group.id))
+        const testsInGroup = await db().select({ id: test.id }).from(test).where(eq(test.testRequirementId, group.id))
 
         // Delete all requirements for all tests in this group
         for (const testItem of testsInGroup) {
-            await db().delete(testRequirement).where(eq(testRequirement.testId, testItem.id))
+            await db().delete(testRequirement).where(eq(testRequirement.id, testItem.id))
         }
 
         // Delete all tests in this group
-        await db().delete(test).where(eq(test.testGroupId, group.id))
+        await db().delete(test).where(eq(test.testRequirementId, group.id))
     }
 
     // Delete all groups in this category
-    await db().delete(testGroup).where(eq(testGroup.testCategoriesId, input.id))
+    await db().delete(testGroup).where(eq(testGroup.testCategoryId, input.id))
 
     // Finally delete the category
-    await db().delete(testCategories).where(eq(testCategories.id, input.id))
+    await db().delete(testCategory).where(eq(testCategory.id, input.id))
     return { success: true }
 })
 
@@ -223,15 +223,15 @@ const updateTestGroup = os.testGroups.update.handler(async ({ input }) => {
 
 const deleteTestGroup = os.testGroups.delete.handler(async ({ input }) => {
     // First get all tests in this group
-    const testsInGroup = await db().select({ id: test.id }).from(test).where(eq(test.testGroupId, input.id))
+    const testsInGroup = await db().select({ id: test.id }).from(test).where(eq(test.testRequirementId, input.id))
 
     // Delete all requirements for all tests in this group
     for (const testItem of testsInGroup) {
-        await db().delete(testRequirement).where(eq(testRequirement.testId, testItem.id))
+        await db().delete(testRequirement).where(eq(testRequirement.id, testItem.id))
     }
 
     // Then delete all tests in this group
-    await db().delete(test).where(eq(test.testGroupId, input.id))
+    await db().delete(test).where(eq(test.testRequirementId, input.id))
 
     // Finally delete the group
     await db().delete(testGroup).where(eq(testGroup.id, input.id))
@@ -283,7 +283,7 @@ const updateTest = os.tests.update.handler(async ({ input }) => {
 
 const deleteTest = os.tests.delete.handler(async ({ input }) => {
     // First delete all requirements for this test
-    await db().delete(testRequirement).where(eq(testRequirement.testId, input.id))
+    await db().delete(testRequirement).where(eq(testRequirement.id, input.id))
 
     // Then delete the test
     await db().delete(test).where(eq(test.id, input.id))
