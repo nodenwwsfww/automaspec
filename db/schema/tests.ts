@@ -24,31 +24,31 @@ export const testGroup = sqliteTable('test_group', {
 })
 export const testGroupInsertSchema = createInsertSchema(testGroup)
 
-export const test = sqliteTable('test', {
+export const testRequirement = sqliteTable('test_requirement', {
     id: text('id').primaryKey(),
-    title: text('title').notNull(),
+    text: text('text').notNull(),
     status: text('status').notNull().default('pending'),
-    framework: text('framework').default('Playwright'),
-    code: text('code'),
+    order: integer('order').notNull().default(0),
     testGroupId: text('test_group_id')
         .notNull()
         .references(() => testGroup.id),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 })
-export const testInsertSchema = createInsertSchema(test)
 
-export const testRequirement = sqliteTable('test_requirement', {
+export const test = sqliteTable('test', {
     id: text('id').primaryKey(),
-    text: text('text').notNull(),
+    title: text('title').notNull(),
     status: text('status').notNull().default('pending'),
-    order: integer('order').notNull().default(0),
-    testId: text('test_id')
+    framework: text('framework').default('Playwright'),
+    code: text('code'),
+    testRequirementId: text('test_requirement_id')
         .notNull()
-        .references(() => test.id),
+        .references(() => testRequirement.id),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 })
+export const testInsertSchema = createInsertSchema(test)
 
 export const testCategoriesRelations = relations(testCategories, ({ one, many }) => ({
     parent: one(testCategories, {
@@ -64,20 +64,20 @@ export const testGroupRelations = relations(testGroup, ({ one, many }) => ({
         fields: [testGroup.testCategoriesId],
         references: [testCategories.id]
     }),
-    tests: many(test)
-}))
-
-export const testRelations = relations(test, ({ one, many }) => ({
-    group: one(testGroup, {
-        fields: [test.testGroupId],
-        references: [testGroup.id]
-    }),
     requirements: many(testRequirement)
 }))
 
-export const testRequirementRelations = relations(testRequirement, ({ one }) => ({
-    test: one(test, {
-        fields: [testRequirement.testId],
-        references: [test.id]
+export const testRequirementRelations = relations(testRequirement, ({ one, many }) => ({
+    group: one(testGroup, {
+        fields: [testRequirement.testGroupId],
+        references: [testGroup.id]
+    }),
+    tests: many(test)
+}))
+
+export const testRelations = relations(test, ({ one }) => ({
+    requirement: one(testRequirement, {
+        fields: [test.testRequirementId],
+        references: [testRequirement.id]
     })
 }))

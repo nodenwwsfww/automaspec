@@ -29,13 +29,6 @@
       "when": 1752155735598,
       "tag": "0003_common_white_tiger",
       "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1752166783963,
-      "tag": "0004_late_meteorite",
-      "breakpoints": true
     }
   ]
 }
