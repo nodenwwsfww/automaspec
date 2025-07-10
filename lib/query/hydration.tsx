@@ -9,10 +9,6 @@ export const getQueryClient = cache(createQueryClient)
  * @see https://orpc.unnoq.com/docs/integrations/tanstack-query#hydration for updates
  * @see https://tanstack.com/query/latest/docs/framework/react/guides/ssr
  */
-export function HydrateClient(props: { children: React.ReactNode, client: QueryClient }) {
-  return (
-    <HydrationBoundary state={dehydrate(props.client)}>
-      {props.children}
-    </HydrationBoundary>
-  )
+export function HydrateClient(props: { children: React.ReactNode; client: QueryClient }) {
+    return <HydrationBoundary state={dehydrate(props.client)}>{props.children}</HydrationBoundary>
 }

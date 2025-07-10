@@ -1,33 +1,29 @@
-import { OpenAPIHandler } from '@orpc/openapi/fetch' 
+import { OpenAPIHandler } from '@orpc/openapi/fetch'
 import { CORSPlugin } from '@orpc/server/plugins'
 import { onError } from '@orpc/server'
 import { router as exampleRouter } from '@/contracts/example'
 import { testsRouter } from '@/contracts/tests'
-import {
-  experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin
-} from '@orpc/zod/zod4'
+import { experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin } from '@orpc/zod/zod4'
 
 const combinedRouter = testsRouter
 
 const handler = new OpenAPIHandler(combinedRouter, {
-    plugins: [new CORSPlugin(
-      {
-        exposeHeaders: ['Content-Disposition'],
-      }
-    ),
-    new ZodSmartCoercionPlugin()],
-    interceptors: [
-    onError(error => console.error(error))
-  ],
+    plugins: [
+        new CORSPlugin({
+            exposeHeaders: ['Content-Disposition']
+        }),
+        new ZodSmartCoercionPlugin()
+    ],
+    interceptors: [onError((error) => console.error(error))]
 })
 
 async function handleRequest(request: Request) {
-  const { response } = await handler.handle(request, {
-    prefix: '/rpc',
-    context: {}, // Provide initial context if needed
-  })
+    const { response } = await handler.handle(request, {
+        prefix: '/rpc',
+        context: {} // Provide initial context if needed
+    })
 
-  return response ?? new Response('Not found', { status: 404 })
+    return response ?? new Response('Not found', { status: 404 })
 }
 
 export const HEAD = handleRequest

@@ -1,98 +1,98 @@
-import type { TestDataResponse } from '@/lib/types';
+import type { TestDataResponse } from '@/lib/types'
 
 export const fetchTestData = async (): Promise<TestDataResponse> => {
-  try {
-    const response = await fetch('/api/tests');
-    if (!response.ok) {
-      throw new Error('Failed to fetch test data');
+    try {
+        const response = await fetch('/api/tests')
+        if (!response.ok) {
+            throw new Error('Failed to fetch test data')
+        }
+        return await response.json()
+    } catch (error) {
+        console.error('Error fetching test data:', error)
+        return { categories: [], groups: [], tests: [], requirements: [] }
     }
-    return await response.json();
-  } catch (error) {
-    console.error('Error fetching test data:', error);
-    return { categories: [], groups: [], tests: [], requirements: [] };
-  }
-};
+}
 
 export const createSampleData = async (): Promise<TestDataResponse> => {
-  try {
-    // Create main category
-    const categoryResponse = await fetch('/api/tests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'category',
-        data: {
-          title: 'Authentication & User Management',
-          parentId: null,
-          order: 0
-        }
-      })
-    });
-    
-    if (!categoryResponse.ok) return;
-    const category = await categoryResponse.json();
-    
-    // Create Login group
-    const loginGroupResponse = await fetch('/api/tests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'group',
-        data: {
-          title: 'Login Flow',
-          description: 'User login functionality tests',
-          testCategoriesId: category.id
-        }
-      })
-    });
-    
-    if (!loginGroupResponse.ok) return;
-    const loginGroup = await loginGroupResponse.json();
+    try {
+        // Create main category
+        const categoryResponse = await fetch('/api/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'category',
+                data: {
+                    title: 'Authentication & User Management',
+                    parentId: null,
+                    order: 0
+                }
+            })
+        })
 
-    // Create Registration group  
-    const registrationGroupResponse = await fetch('/api/tests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'group',
-        data: {
-          title: 'Registration Flow',
-          description: 'User registration functionality tests',
-          testCategoriesId: category.id
-        }
-      })
-    });
-    
-    if (!registrationGroupResponse.ok) return;
-    const registrationGroup = await registrationGroupResponse.json();
+        if (!categoryResponse.ok) return
+        const category = await categoryResponse.json()
 
-    // Create Password Management group
-    const passwordGroupResponse = await fetch('/api/tests', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        type: 'group',
-        data: {
-          title: 'Password Management',
-          description: 'Password reset and security tests',
-          testCategoriesId: category.id
-        }
-      })
-    });
-    
-    if (!passwordGroupResponse.ok) return;
-    const passwordGroup = await passwordGroupResponse.json();
+        // Create Login group
+        const loginGroupResponse = await fetch('/api/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'group',
+                data: {
+                    title: 'Login Flow',
+                    description: 'User login functionality tests',
+                    testCategoriesId: category.id
+                }
+            })
+        })
 
-    // Define individual tests with focused functionality
-    const tests = [
-      // Login Flow Tests
-      {
-        title: 'Login Form Display',
-        description: 'Verify login form elements are displayed correctly',
-        status: 'passed',
-        framework: 'Playwright',
-        testGroupId: loginGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+        if (!loginGroupResponse.ok) return
+        const loginGroup = await loginGroupResponse.json()
+
+        // Create Registration group
+        const registrationGroupResponse = await fetch('/api/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'group',
+                data: {
+                    title: 'Registration Flow',
+                    description: 'User registration functionality tests',
+                    testCategoriesId: category.id
+                }
+            })
+        })
+
+        if (!registrationGroupResponse.ok) return
+        const registrationGroup = await registrationGroupResponse.json()
+
+        // Create Password Management group
+        const passwordGroupResponse = await fetch('/api/tests', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                type: 'group',
+                data: {
+                    title: 'Password Management',
+                    description: 'Password reset and security tests',
+                    testCategoriesId: category.id
+                }
+            })
+        })
+
+        if (!passwordGroupResponse.ok) return
+        const passwordGroup = await passwordGroupResponse.json()
+
+        // Define individual tests with focused functionality
+        const tests = [
+            // Login Flow Tests
+            {
+                title: 'Login Form Display',
+                description: 'Verify login form elements are displayed correctly',
+                status: 'passed',
+                framework: 'Playwright',
+                testGroupId: loginGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Login Form Display', () => {
   test('should display all login form elements', async ({ page }) => {
@@ -109,18 +109,18 @@ test.describe('Login Form Display', () => {
     await expect(page.locator('label[for="password"]')).toContainText('Password');
   });
 });`,
-        requirements: [
-          { text: 'Login form displays email input field', status: 'passed', order: 1 },
-          { text: 'Login form displays password input field', status: 'passed', order: 2 }
-        ]
-      },
-      {
-        title: 'Valid Login',
-        description: 'Test successful login with valid credentials',
-        status: 'passed',
-        framework: 'Playwright',
-        testGroupId: loginGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'Login form displays email input field', status: 'passed', order: 1 },
+                    { text: 'Login form displays password input field', status: 'passed', order: 2 }
+                ]
+            },
+            {
+                title: 'Valid Login',
+                description: 'Test successful login with valid credentials',
+                status: 'passed',
+                framework: 'Playwright',
+                testGroupId: loginGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Valid Login', () => {
   test('should login successfully with valid credentials', async ({ page }) => {
@@ -139,18 +139,18 @@ test.describe('Valid Login', () => {
     await expect(page).toHaveURL(/.*dashboard/);
   });
 });`,
-        requirements: [
-          { text: 'User can login with valid email and password', status: 'passed', order: 1 },
-          { text: 'User is redirected to dashboard after successful login', status: 'passed', order: 2 }
-        ]
-      },
-      {
-        title: 'Invalid Login',
-        description: 'Test login failure with invalid credentials',
-        status: 'passed',
-        framework: 'Playwright',
-        testGroupId: loginGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'User can login with valid email and password', status: 'passed', order: 1 },
+                    { text: 'User is redirected to dashboard after successful login', status: 'passed', order: 2 }
+                ]
+            },
+            {
+                title: 'Invalid Login',
+                description: 'Test login failure with invalid credentials',
+                status: 'passed',
+                framework: 'Playwright',
+                testGroupId: loginGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Invalid Login', () => {
   test('should show error for invalid credentials', async ({ page }) => {
@@ -170,17 +170,15 @@ test.describe('Invalid Login', () => {
     await expect(page.locator('#email')).toBeVisible();
   });
 });`,
-        requirements: [
-          { text: 'Error message displays for invalid credentials', status: 'passed', order: 1 }
-        ]
-      },
-      {
-        title: 'Remember Me Functionality',
-        description: 'Test remember me checkbox functionality',
-        status: 'failed',
-        framework: 'Playwright',
-        testGroupId: loginGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [{ text: 'Error message displays for invalid credentials', status: 'passed', order: 1 }]
+            },
+            {
+                title: 'Remember Me Functionality',
+                description: 'Test remember me checkbox functionality',
+                status: 'failed',
+                framework: 'Playwright',
+                testGroupId: loginGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Remember Me', () => {
   test('should remember user when checkbox is checked', async ({ page }) => {
@@ -203,18 +201,18 @@ test.describe('Remember Me', () => {
     await expect(page.locator('.dashboard')).toBeVisible();
   });
 });`,
-        requirements: [
-          { text: 'Remember me checkbox keeps user logged in across sessions', status: 'failed', order: 1 }
-        ]
-      },
-      // Registration Flow Tests
-      {
-        title: 'Registration Form Display',
-        description: 'Verify registration form elements',
-        status: 'passed',
-        framework: 'Playwright',
-        testGroupId: registrationGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'Remember me checkbox keeps user logged in across sessions', status: 'failed', order: 1 }
+                ]
+            },
+            // Registration Flow Tests
+            {
+                title: 'Registration Form Display',
+                description: 'Verify registration form elements',
+                status: 'passed',
+                framework: 'Playwright',
+                testGroupId: registrationGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Registration Form', () => {
   test('should display all registration form elements', async ({ page }) => {
@@ -232,17 +230,17 @@ test.describe('Registration Form', () => {
     await expect(page.locator('.password-strength')).toBeVisible();
   });
 });`,
-        requirements: [
-          { text: 'Registration form displays all required input fields', status: 'passed', order: 1 }
-        ]
-      },
-      {
-        title: 'Email Uniqueness Check',
-        description: 'Test email uniqueness validation',
-        status: 'passed',
-        framework: 'Playwright',
-        testGroupId: registrationGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'Registration form displays all required input fields', status: 'passed', order: 1 }
+                ]
+            },
+            {
+                title: 'Email Uniqueness Check',
+                description: 'Test email uniqueness validation',
+                status: 'passed',
+                framework: 'Playwright',
+                testGroupId: registrationGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Email Uniqueness', () => {
   test('should prevent registration with existing email', async ({ page }) => {
@@ -262,17 +260,17 @@ test.describe('Email Uniqueness', () => {
     await expect(page).toHaveURL(/.*register/);
   });
 });`,
-        requirements: [
-          { text: 'System prevents registration with duplicate email addresses', status: 'passed', order: 1 }
-        ]
-      },
-      {
-        title: 'Password Strength Validation',
-        description: 'Test password strength requirements',
-        status: 'failed',
-        framework: 'Playwright',
-        testGroupId: registrationGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'System prevents registration with duplicate email addresses', status: 'passed', order: 1 }
+                ]
+            },
+            {
+                title: 'Password Strength Validation',
+                description: 'Test password strength requirements',
+                status: 'failed',
+                framework: 'Playwright',
+                testGroupId: registrationGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Password Strength', () => {
   test('should validate password strength requirements', async ({ page }) => {
@@ -299,18 +297,18 @@ test.describe('Password Strength', () => {
     await expect(page.locator('.error-message')).toContainText('Password too weak');
   });
 });`,
-        requirements: [
-          { text: 'Password strength indicator shows real-time feedback', status: 'failed', order: 1 },
-          { text: 'Weak passwords are rejected during registration', status: 'failed', order: 2 }
-        ]
-      },
-      {
-        title: 'Password Confirmation',
-        description: 'Test password confirmation matching',
-        status: 'passed',
-        framework: 'Playwright',
-        testGroupId: registrationGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'Password strength indicator shows real-time feedback', status: 'failed', order: 1 },
+                    { text: 'Weak passwords are rejected during registration', status: 'failed', order: 2 }
+                ]
+            },
+            {
+                title: 'Password Confirmation',
+                description: 'Test password confirmation matching',
+                status: 'passed',
+                framework: 'Playwright',
+                testGroupId: registrationGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Password Confirmation', () => {
   test('should validate password confirmation matches', async ({ page }) => {
@@ -331,18 +329,18 @@ test.describe('Password Confirmation', () => {
     await expect(page.locator('.password-match-success')).toBeVisible();
   });
 });`,
-        requirements: [
-          { text: 'Password confirmation field must match password field', status: 'passed', order: 1 }
-        ]
-      },
-      // Password Management Tests
-      {
-        title: 'Password Reset Request',
-        description: 'Test password reset request functionality',
-        status: 'pending',
-        framework: 'Playwright',
-        testGroupId: passwordGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'Password confirmation field must match password field', status: 'passed', order: 1 }
+                ]
+            },
+            // Password Management Tests
+            {
+                title: 'Password Reset Request',
+                description: 'Test password reset request functionality',
+                status: 'pending',
+                framework: 'Playwright',
+                testGroupId: passwordGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Password Reset Request', () => {
   test('should send password reset email', async ({ page }) => {
@@ -359,17 +357,17 @@ test.describe('Password Reset Request', () => {
     await expect(page.locator('.email-status')).toContainText('Email sent to user@example.com');
   });
 });`,
-        requirements: [
-          { text: 'Password reset email is sent to valid email addresses', status: 'pending', order: 1 }
-        ]
-      },
-      {
-        title: 'Password Reset Security',
-        description: 'Test password reset security measures',
-        status: 'pending',
-        framework: 'Playwright',
-        testGroupId: passwordGroup.id,
-        code: `import { test, expect } from '@playwright/test';
+                requirements: [
+                    { text: 'Password reset email is sent to valid email addresses', status: 'pending', order: 1 }
+                ]
+            },
+            {
+                title: 'Password Reset Security',
+                description: 'Test password reset security measures',
+                status: 'pending',
+                framework: 'Playwright',
+                testGroupId: passwordGroup.id,
+                code: `import { test, expect } from '@playwright/test';
 
 test.describe('Password Reset Security', () => {
   test('should implement rate limiting for reset requests', async ({ page }) => {
@@ -389,59 +387,59 @@ test.describe('Password Reset Security', () => {
     await expect(page.locator('.error-message')).toContainText('Too many requests');
   });
 });`,
-        requirements: [
-          { text: 'Password reset requests are rate limited to prevent abuse', status: 'pending', order: 1 }
-        ]
-      }
-    ];
-
-    // Create all tests
-    const createdTests = [];
-    for (const testData of tests) {
-      const testResponse = await fetch('/api/tests', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          type: 'test',
-          data: {
-            title: testData.title,
-            description: testData.description,
-            status: testData.status,
-            framework: testData.framework,
-            code: testData.code,
-            testGroupId: testData.testGroupId
-          }
-        })
-      });
-      
-      if (testResponse.ok) {
-        const createdTest = await testResponse.json();
-        createdTests.push({ ...createdTest, requirements: testData.requirements });
-      }
-    }
-
-    // Create requirements for each test
-    for (const test of createdTests) {
-      for (const req of test.requirements) {
-        await fetch('/api/tests', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({
-            type: 'requirement',
-            data: {
-              text: req.text,
-              status: req.status,
-              order: req.order,
-              testId: test.id
+                requirements: [
+                    { text: 'Password reset requests are rate limited to prevent abuse', status: 'pending', order: 1 }
+                ]
             }
-          })
-        });
-      }
-    }
+        ]
 
-    return await fetchTestData();
-  } catch (error) {
-    console.error('Failed to create sample data:', error);
-    return { categories: [], groups: [], tests: [], requirements: [] };
-  }
-}; 
+        // Create all tests
+        const createdTests = []
+        for (const testData of tests) {
+            const testResponse = await fetch('/api/tests', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({
+                    type: 'test',
+                    data: {
+                        title: testData.title,
+                        description: testData.description,
+                        status: testData.status,
+                        framework: testData.framework,
+                        code: testData.code,
+                        testGroupId: testData.testGroupId
+                    }
+                })
+            })
+
+            if (testResponse.ok) {
+                const createdTest = await testResponse.json()
+                createdTests.push({ ...createdTest, requirements: testData.requirements })
+            }
+        }
+
+        // Create requirements for each test
+        for (const test of createdTests) {
+            for (const req of test.requirements) {
+                await fetch('/api/tests', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({
+                        type: 'requirement',
+                        data: {
+                            text: req.text,
+                            status: req.status,
+                            order: req.order,
+                            testId: test.id
+                        }
+                    })
+                })
+            }
+        }
+
+        return await fetchTestData()
+    } catch (error) {
+        console.error('Failed to create sample data:', error)
+        return { categories: [], groups: [], tests: [], requirements: [] }
+    }
+}
