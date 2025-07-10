@@ -1,5 +1,48 @@
-# EXAMPLE USAGE:
-#
-#   Refer for explanation to following link:
-#   https://lefthook.dev/configuration/
-#
+pre-commit:
+  commands:
+    # eslint:
+    #   glob: "*.{ts,tsx}"
+    #   run: npx eslint {staged_files} --fix --max-warnings 0
+    #   stage_fixed: true
+
+    prettier:
+      glob: "*.{ts,tsx,js,jsx}"
+      run: npx prettier --write {staged_files}
+      stage_fixed: true
+
+    # Check for TODO/FIXME comments
+    # todo-check:
+    #   glob: "*.{ts,tsx,js,jsx}"
+    #   run: |
+    #     if grep -n "TODO\|FIXME" {staged_files}; then
+    #       echo "⚠️  TODO/FIXME comments found. Consider addressing them."
+    #       echo "If intentional, add --no-verify to bypass this check."
+    #     fi
+
+  # Lint staged for additional file processing
+  scripts:
+    "lint-staged":
+      runner: npx lint-staged
+
+pre-push:
+  commands:
+    # typescript:
+    #   run: npx tsc --noEmit
+    #   fail_text: "❌ TypeScript type checking failed"
+
+    # eslint-all:
+    #   run: npm run lint
+    #   fail_text: "❌ ESLint failed"
+
+    db-check:
+      glob: "db/schema/*.{ts,js}"
+      run: npx drizzle-kit check
+      fail_text: "❌ Database schema validation failed"
+
+  parallel: true
+
+skip_output:
+  - meta
+  - execution
+
+colors: true
