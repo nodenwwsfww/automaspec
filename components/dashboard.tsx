@@ -18,7 +18,6 @@ import {
   MinusCircle,
   MoreHorizontal,
   Plus,
-  RotateCcw,
   Settings,
   Trash2,
   User,
@@ -111,26 +110,12 @@ const testDatabase = {
                   playwrightCode: `describe('Authentication', () => {
     describe('Login Test', () => {
         it('should display login form correctly', async ({ page }) => {
-            await page.goto('/login');
-            await expect(page.locator('#email')).toBeVisible();
-            await expect(page.locator('#password')).toBeVisible();
-            await expect(page.locator('#login-btn')).toBeVisible();
         });
 
         it('should login with valid credentials', async ({ page }) => {
-            await page.goto('/login');
-            await page.fill('#email', 'user@example.com');
-            await page.fill('#password', 'password123');
-            await page.click('#login-btn');
-            await expect(page.locator('.dashboard')).toBeVisible();
         });
 
         it('should show error for invalid credentials', async ({ page }) => {
-            await page.goto('/login');
-            await page.fill('#email', 'wrong@example.com');
-            await page.fill('#password', 'wrongpass');
-            await page.click('#login-btn');
-            await expect(page.locator('.error-message')).toBeVisible();
         });
     });
 });`,
@@ -573,12 +558,7 @@ export function Dashboard() {
                     </span>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button size="sm" variant="outline">
-                    <RotateCcw className="mr-1 h-4 w-4" />
-                    Re-run
-                  </Button>
-                </div>
+
               </div>
             </div>
 
