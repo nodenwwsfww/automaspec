@@ -4,7 +4,9 @@ import { createInsertSchema } from 'drizzle-zod'
 
 export const testCategory = sqliteTable('test_category', {
     id: text('id').primaryKey(),
-    title: text('title').notNull(),
+    name: text('name').notNull(),
+    title: text('title'),
+    description: text('description'),
     parentCategoryId: text('parent_category_id'),
     order: integer('order').notNull().default(0),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
@@ -12,9 +14,10 @@ export const testCategory = sqliteTable('test_category', {
 })
 export const testCategoryInsertSchema = createInsertSchema(testCategory)
 
-export const testGroup = sqliteTable('test_group', {
+export const testSpec = sqliteTable('test_spec', {
     id: text('id').primaryKey(),
-    title: text('title').notNull(),
+    name: text('name').notNull(),
+    title: text('title'),
     description: text('description'),
     testCategoryId: text('test_category_id')
         .notNull()
@@ -22,18 +25,20 @@ export const testGroup = sqliteTable('test_group', {
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 })
-export const testGroupInsertSchema = createInsertSchema(testGroup)
+export const testSpecInsertSchema = createInsertSchema(testSpec)
 
 export const testRequirement = sqliteTable('test_requirement', {
     id: text('id').primaryKey(),
     text: text('text').notNull(),
+    description: text('description'),
     order: integer('order').notNull().default(0),
-    testGroupId: text('test_group_id')
+    testSpecId: text('test_spec_id')
         .notNull()
-        .references(() => testGroup.id),
+        .references(() => testSpec.id),
     createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
     updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
 })
+export const testRequirementInsertSchema = createInsertSchema(testRequirement)
 
 export const test = sqliteTable('test', {
     id: text('id').primaryKey(),
@@ -54,21 +59,21 @@ export const testCategoryRelations = relations(testCategory, ({ one, many }) => 
         references: [testCategory.id]
     }),
     children: many(testCategory),
-    testGroups: many(testGroup)
+    testSpecs: many(testSpec)
 }))
 
-export const testGroupRelations = relations(testGroup, ({ one, many }) => ({
+export const testSpecRelations = relations(testSpec, ({ one, many }) => ({
     category: one(testCategory, {
-        fields: [testGroup.testCategoryId],
+        fields: [testSpec.testCategoryId],
         references: [testCategory.id]
     }),
     requirements: many(testRequirement)
 }))
 
 export const testRequirementRelations = relations(testRequirement, ({ one, many }) => ({
-    group: one(testGroup, {
-        fields: [testRequirement.testGroupId],
-        references: [testGroup.id]
+    spec: one(testSpec, {
+        fields: [testRequirement.testSpecId],
+        references: [testSpec.id]
     }),
     tests: many(test)
 }))

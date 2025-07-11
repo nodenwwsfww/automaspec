@@ -10,7 +10,7 @@ const TestCategorySchema = z.object({
     updatedAt: z.date()
 })
 
-const TestGroupSchema = z.object({
+const TestSpecSchema = z.object({
     id: z.string(),
     title: z.string(),
     description: z.string().nullable(),
@@ -46,21 +46,21 @@ const TestSchema = z.object({
 
 // Export inferred types
 export type TestCategory = z.infer<typeof TestCategorySchema>
-export type TestGroup = z.infer<typeof TestGroupSchema>
+export type TestSpec = z.infer<typeof TestSpecSchema>
 export type TestRequirement = z.infer<typeof TestRequirementSchema>
 export type Test = z.infer<typeof TestSchema>
 
 // API response types
 export interface TestDataResponse {
     categories: TestCategory[]
-    groups: TestGroup[]
+    specs: TestSpec[]
     tests: Test[]
     requirements: TestRequirement[]
 }
 
 // Extended types for UI components
-export interface TestGroupWithType extends TestGroup {
-    type: 'group'
+export interface TestSpecWithType extends TestSpec {
+    type: 'spec'
 }
 
 export interface TestCategoryWithType extends TestCategory {
@@ -75,7 +75,7 @@ export interface TestWithType extends Test {
 export interface TreeNode {
     id: string
     name: string
-    type: 'category' | 'group' | 'test'
+    type: 'category' | 'spec' | 'requirement' | 'test'
     children?: TreeNode[]
     icon?: any
     passed: number
@@ -83,22 +83,23 @@ export interface TreeNode {
     status: 'passed' | 'failed' | 'pending' | 'running'
     // Original data
     category?: TestCategory
-    group?: TestGroup
+    spec?: TestSpec
+    requirement?: TestRequirement
     test?: Test
 }
 
 // Union type for editing different node types
-export type EditableNode = TestGroupWithType | TestCategoryWithType | TestWithType
+export type EditableNode = TestSpecWithType | TestCategoryWithType | TestWithType
 
 // Form input types
 export type CreateTestCategoryInput = Omit<TestCategory, 'id' | 'createdAt' | 'updatedAt'>
-export type CreateTestGroupInput = Omit<TestGroup, 'id' | 'createdAt' | 'updatedAt'>
+export type CreateTestSpecInput = Omit<TestSpec, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestInput = Omit<Test, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestRequirementInput = Omit<TestRequirement, 'id' | 'createdAt' | 'updatedAt'>
 
 // Update input types
 export type UpdateTestCategoryInput = { id: string } & Partial<CreateTestCategoryInput>
-export type UpdateTestGroupInput = { id: string } & Partial<CreateTestGroupInput>
+export type UpdateTestSpecInput = { id: string } & Partial<CreateTestSpecInput>
 export type UpdateTestInput = { id: string } & Partial<CreateTestInput>
 
 // Status types

@@ -3,12 +3,13 @@ import { implement } from '@orpc/server'
 import { z } from 'zod/v4'
 import {
     testCategory,
-    testGroup,
+    testSpec,
     test,
     testRequirement,
     testCategoryInsertSchema,
-    testGroupInsertSchema,
-    testInsertSchema
+    testSpecInsertSchema,
+    testInsertSchema,
+    testRequirementInsertSchema
 } from '@/db/schema/tests'
 import { eq } from 'drizzle-orm'
 import { db } from '@/db'
@@ -38,35 +39,60 @@ const deleteTestCategoryContract = oc
     .input(testCategoryInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
-// Test Groups contracts
-const listTestGroupsContract = oc
-    .route({ method: 'GET', path: '/test-groups' })
+// Test Specs contracts
+const listTestSpecsContract = oc
+    .route({ method: 'GET', path: '/test-specs' })
     .input(z.object({ testCategoriesId: z.string().optional() }))
-    .output(z.array(testGroupInsertSchema))
+    .output(z.array(testSpecInsertSchema))
 
-const createTestGroupContract = oc
-    .route({ method: 'POST', path: '/test-groups' })
-    .input(testGroupInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-    .output(testGroupInsertSchema)
+const createTestSpecContract = oc
+    .route({ method: 'POST', path: '/test-specs' })
+    .input(testSpecInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+    .output(testSpecInsertSchema)
 
-const updateTestGroupContract = oc
-    .route({ method: 'PUT', path: '/test-groups/{id}' })
+const updateTestSpecContract = oc
+    .route({ method: 'PUT', path: '/test-specs/{id}' })
     .input(
-        testGroupInsertSchema
+        testSpecInsertSchema
             .pick({ id: true })
-            .merge(testGroupInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
+            .merge(testSpecInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
     )
-    .output(testGroupInsertSchema)
+    .output(testSpecInsertSchema)
 
-const deleteTestGroupContract = oc
-    .route({ method: 'DELETE', path: '/test-groups/{id}' })
-    .input(testGroupInsertSchema.pick({ id: true }))
+const deleteTestSpecContract = oc
+    .route({ method: 'DELETE', path: '/test-specs/{id}' })
+    .input(testSpecInsertSchema.pick({ id: true }))
+    .output(z.object({ success: z.boolean() }))
+
+// Test Requirements contracts
+const listTestRequirementsContract = oc
+    .route({ method: 'GET', path: '/test-requirements' })
+    .input(z.object({ testGroupId: z.string().optional() }))
+    .output(z.array(testRequirementInsertSchema))
+
+const createTestRequirementContract = oc
+    .route({ method: 'POST', path: '/test-requirements' })
+    .input(testRequirementInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+    .output(testRequirementInsertSchema)
+
+const updateTestRequirementContract = oc
+    .route({ method: 'PUT', path: '/test-requirements/{id}' })
+    .input(
+        testRequirementInsertSchema
+            .pick({ id: true })
+            .merge(testRequirementInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
+    )
+    .output(testRequirementInsertSchema)
+
+const deleteTestRequirementContract = oc
+    .route({ method: 'DELETE', path: '/test-requirements/{id}' })
+    .input(testRequirementInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
 // Tests contracts
 const listTestsContract = oc
     .route({ method: 'GET', path: '/tests' })
-    .input(z.object({ testGroupId: z.string().optional() }))
+    .input(z.object({ testRequirementId: z.string().optional() }))
     .output(z.array(testInsertSchema))
 
 const createTestContract = oc
@@ -95,11 +121,17 @@ export const testsContract = {
         update: updateTestCategoryContract,
         delete: deleteTestCategoryContract
     },
-    testGroups: {
-        list: listTestGroupsContract,
-        create: createTestGroupContract,
-        update: updateTestGroupContract,
-        delete: deleteTestGroupContract
+    testSpecs: {
+        list: listTestSpecsContract,
+        create: createTestSpecContract,
+        update: updateTestSpecContract,
+        delete: deleteTestSpecContract
+    },
+    testRequirements: {
+        list: listTestRequirementsContract,
+        create: createTestRequirementContract,
+        update: updateTestRequirementContract,
+        delete: deleteTestRequirementContract
     },
     tests: {
         list: listTestsContract,
@@ -153,52 +185,55 @@ const updateTestCategory = os.testCategories.update.handler(async ({ input }) =>
 })
 
 const deleteTestCategory = os.testCategories.delete.handler(async ({ input }) => {
-    // First get all groups in this category
-    const groupsInCategory = await db()
-        .select({ id: testGroup.id })
-        .from(testGroup)
-        .where(eq(testGroup.testCategoryId, input.id))
+    // First get all specs in this category
+    const specsInCategory = await db()
+        .select({ id: testSpec.id })
+        .from(testSpec)
+        .where(eq(testSpec.testCategoryId, input.id))
 
-    // For each group, delete all related data
-    for (const group of groupsInCategory) {
-        // Get all tests in this group
-        const testsInGroup = await db().select({ id: test.id }).from(test).where(eq(test.testRequirementId, group.id))
+    // For each spec, delete all related data
+    for (const spec of specsInCategory) {
+        // Get all requirements in this spec
+        const requirementsInSpec = await db()
+            .select({ id: testRequirement.id })
+            .from(testRequirement)
+            .where(eq(testRequirement.testSpecId, spec.id))
 
-        // Delete all requirements for all tests in this group
-        for (const testItem of testsInGroup) {
-            await db().delete(testRequirement).where(eq(testRequirement.id, testItem.id))
+        // Delete all tests for each requirement
+        for (const requirement of requirementsInSpec) {
+            await db().delete(test).where(eq(test.testRequirementId, requirement.id))
         }
 
-        // Delete all tests in this group
-        await db().delete(test).where(eq(test.testRequirementId, group.id))
+        // Delete all requirements in this spec
+        await db().delete(testRequirement).where(eq(testRequirement.testSpecId, spec.id))
     }
 
-    // Delete all groups in this category
-    await db().delete(testGroup).where(eq(testGroup.testCategoryId, input.id))
+    // Delete all specs in this category
+    await db().delete(testSpec).where(eq(testSpec.testCategoryId, input.id))
 
     // Finally delete the category
     await db().delete(testCategory).where(eq(testCategory.id, input.id))
     return { success: true }
 })
 
-const listTestGroups = os.testGroups.list.handler(async ({ input }) => {
-    const groups = await db().select().from(testGroup)
-    return groups.map((group) => ({
-        ...group,
-        createdAt: new Date(group.createdAt),
-        updatedAt: new Date(group.updatedAt)
+const listTestSpecs = os.testSpecs.list.handler(async ({ input }) => {
+    const specs = await db().select().from(testSpec)
+    return specs.map((spec) => ({
+        ...spec,
+        createdAt: new Date(spec.createdAt),
+        updatedAt: new Date(spec.updatedAt)
     }))
 })
 
-const createTestGroup = os.testGroups.create.handler(async ({ input }) => {
-    const newGroup = {
+const createTestSpec = os.testSpecs.create.handler(async ({ input }) => {
+    const newSpec = {
         id: crypto.randomUUID(),
         ...input,
         createdAt: new Date(),
         updatedAt: new Date()
     }
 
-    const result = await db().insert(testGroup).values(newGroup).returning()
+    const result = await db().insert(testSpec).values(newSpec).returning()
     return {
         ...result[0],
         createdAt: new Date(result[0].createdAt),
@@ -206,12 +241,12 @@ const createTestGroup = os.testGroups.create.handler(async ({ input }) => {
     }
 })
 
-const updateTestGroup = os.testGroups.update.handler(async ({ input }) => {
+const updateTestSpec = os.testSpecs.update.handler(async ({ input }) => {
     const { id, ...updates } = input
     const result = await db()
-        .update(testGroup)
+        .update(testSpec)
         .set({ ...updates, updatedAt: new Date() })
-        .where(eq(testGroup.id, id))
+        .where(eq(testSpec.id, id))
         .returning()
 
     return {
@@ -221,20 +256,23 @@ const updateTestGroup = os.testGroups.update.handler(async ({ input }) => {
     }
 })
 
-const deleteTestGroup = os.testGroups.delete.handler(async ({ input }) => {
-    // First get all tests in this group
-    const testsInGroup = await db().select({ id: test.id }).from(test).where(eq(test.testRequirementId, input.id))
+const deleteTestSpec = os.testSpecs.delete.handler(async ({ input }) => {
+    // Get all requirements in this spec
+    const requirementsInSpec = await db()
+        .select({ id: testRequirement.id })
+        .from(testRequirement)
+        .where(eq(testRequirement.testSpecId, input.id))
 
-    // Delete all requirements for all tests in this group
-    for (const testItem of testsInGroup) {
-        await db().delete(testRequirement).where(eq(testRequirement.id, testItem.id))
+    // Delete all tests for each requirement
+    for (const requirement of requirementsInSpec) {
+        await db().delete(test).where(eq(test.testRequirementId, requirement.id))
     }
 
-    // Then delete all tests in this group
-    await db().delete(test).where(eq(test.testRequirementId, input.id))
+    // Delete all requirements in this spec
+    await db().delete(testRequirement).where(eq(testRequirement.testSpecId, input.id))
 
-    // Finally delete the group
-    await db().delete(testGroup).where(eq(testGroup.id, input.id))
+    // Finally delete the spec
+    await db().delete(testSpec).where(eq(testSpec.id, input.id))
     return { success: true }
 })
 
@@ -282,11 +320,57 @@ const updateTest = os.tests.update.handler(async ({ input }) => {
 })
 
 const deleteTest = os.tests.delete.handler(async ({ input }) => {
-    // First delete all requirements for this test
-    await db().delete(testRequirement).where(eq(testRequirement.id, input.id))
-
     // Then delete the test
     await db().delete(test).where(eq(test.id, input.id))
+    return { success: true }
+})
+
+const listTestRequirements = os.testRequirements.list.handler(async ({ input }) => {
+    const requirements = await db().select().from(testRequirement)
+    return requirements.map((req) => ({
+        ...req,
+        createdAt: new Date(req.createdAt),
+        updatedAt: new Date(req.updatedAt)
+    }))
+})
+
+const createTestRequirement = os.testRequirements.create.handler(async ({ input }) => {
+    const newRequirement = {
+        id: crypto.randomUUID(),
+        ...input,
+        createdAt: new Date(),
+        updatedAt: new Date()
+    }
+
+    const result = await db().insert(testRequirement).values(newRequirement).returning()
+    return {
+        ...result[0],
+        createdAt: new Date(result[0].createdAt),
+        updatedAt: new Date(result[0].updatedAt)
+    }
+})
+
+const updateTestRequirement = os.testRequirements.update.handler(async ({ input }) => {
+    const { id, ...updates } = input
+    const result = await db()
+        .update(testRequirement)
+        .set({ ...updates, updatedAt: new Date() })
+        .where(eq(testRequirement.id, id))
+        .returning()
+
+    return {
+        ...result[0],
+        createdAt: new Date(result[0].createdAt),
+        updatedAt: new Date(result[0].updatedAt)
+    }
+})
+
+const deleteTestRequirement = os.testRequirements.delete.handler(async ({ input }) => {
+    // First delete all tests for this requirement
+    await db().delete(test).where(eq(test.testRequirementId, input.id))
+
+    // Then delete the requirement
+    await db().delete(testRequirement).where(eq(testRequirement.id, input.id))
     return { success: true }
 })
 
@@ -297,11 +381,17 @@ export const testsRouter = os.router({
         update: updateTestCategory,
         delete: deleteTestCategory
     },
-    testGroups: {
-        list: listTestGroups,
-        create: createTestGroup,
-        update: updateTestGroup,
-        delete: deleteTestGroup
+    testSpecs: {
+        list: listTestSpecs,
+        create: createTestSpec,
+        update: updateTestSpec,
+        delete: deleteTestSpec
+    },
+    testRequirements: {
+        list: listTestRequirements,
+        create: createTestRequirement,
+        update: updateTestRequirement,
+        delete: deleteTestRequirement
     },
     tests: {
         list: listTests,

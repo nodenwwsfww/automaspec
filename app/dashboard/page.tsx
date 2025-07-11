@@ -22,7 +22,7 @@ import { cn } from '@/lib/utils'
 import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { orpc } from '@/lib/orpc'
-import { Test, TestGroup, TreeNode } from '@/lib/types'
+import { Test, TestSpec, TreeNode } from '@/lib/types'
 import { Link, ChevronDown, ChevronRight, AlertTriangle, FileText, Trash2, Check, Copy, Loader2 } from 'lucide-react'
 import { GroupEditorModal } from '@/components/group-editor-modal'
 import { TestEditorModal } from '@/components/test-editor-modal'
@@ -111,8 +111,8 @@ function TreeNodeComponent({ node, level = 0, onSelect, selectedId, onEdit, onAd
         if (hasChildren) {
             setIsExpanded(!isExpanded)
         }
-        // Only allow selecting test items (not groups)
-        if (node.type === 'test') {
+        // Allow selecting both tests and specs
+        if (node.type === 'test' || node.type === 'spec') {
             onSelect(node)
         }
     }
@@ -173,11 +173,11 @@ function TreeNodeComponent({ node, level = 0, onSelect, selectedId, onEdit, onAd
                             <Edit className="mr-2 h-4 w-4" />
                             Edit
                         </DropdownMenuItem>
-                        {node.type === 'group' && (
+                        {node.type === 'spec' && (
                             <>
-                                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'group' })}>
+                                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'spec' })}>
                                     <Folder className="mr-2 h-4 w-4" />
-                                    Add Group
+                                    Add Spec
                                 </DropdownMenuItem>
                                 <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'test' })}>
                                     <FileText className="mr-2 h-4 w-4" />
@@ -218,9 +218,9 @@ export default function Dashboard() {
     const [selectedTest, setSelectedTest] = useState<Test | null>(null)
     const [groupEditorOpen, setGroupEditorOpen] = useState(false)
     const [testEditorOpen, setTestEditorOpen] = useState(false)
-    const [editingGroup, setEditingGroup] = useState<TestGroup | null>(null)
+    const [editingGroup, setEditingGroup] = useState<TestSpec | null>(null)
     const [editingTest, setEditingTest] = useState<Test | null>(null)
-    const [parentGroup, setParentGroup] = useState<TestGroup | null>(null)
+    const [parentGroup, setParentGroup] = useState<TestSpec | null>(null)
     const [copied, setCopied] = useState(false)
     const [editingRequirements, setEditingRequirements] = useState(false)
     const [requirementsContent, setRequirementsContent] = useState('')
@@ -232,8 +232,14 @@ export default function Dashboard() {
         })
     )
 
-    const { data: groups = [], isLoading: groupsLoading } = useQuery(
-        orpc.testGroups.list.queryOptions({
+    const { data: specs = [], isLoading: specsLoading } = useQuery(
+        orpc.testSpecs.list.queryOptions({
+            input: {}
+        })
+    )
+
+    const { data: requirements = [], isLoading: requirementsLoading } = useQuery(
+        orpc.testRequirements.list.queryOptions({
             input: {}
         })
     )
@@ -249,16 +255,16 @@ export default function Dashboard() {
         orpc.testCategories.delete.mutationOptions({
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-                queryClient.invalidateQueries({ queryKey: ['testGroups'] })
+                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
                 queryClient.invalidateQueries({ queryKey: ['tests'] })
             }
         })
     )
 
-    const deleteTestGroupMutation = useMutation(
-        orpc.testGroups.delete.mutationOptions({
+    const deleteTestSpecMutation = useMutation(
+        orpc.testSpecs.delete.mutationOptions({
             onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testGroups'] })
+                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
                 queryClient.invalidateQueries({ queryKey: ['tests'] })
             }
         })
@@ -275,11 +281,41 @@ export default function Dashboard() {
         })
     )
 
-    const loading = categoriesLoading || groupsLoading || testsLoading
+    const handleTestSelect = (node: any) => {
+        if (node.type === 'spec') {
+            // When spec is selected, show spec info and all its requirements
+            const specRequirements = requirements.filter((req: any) => req.testSpecId === node.id)
 
-    const handleTestSelect = (test: any) => {
-        setSelectedTest(test.test)
-        setRequirementsContent(test.test?.requirements?.map((req: any) => req.text || req).join('\n') || '')
+            // Attach test data and status to each requirement
+            const requirementsWithTests = specRequirements.map((req: any) => {
+                const test = tests.find((test: any) => test.testRequirementId === req.id)
+                return {
+                    ...req,
+                    test: test,
+                    status: test?.status || 'pending'
+                }
+            })
+
+            setSelectedTest({
+                id: node.id,
+                title: node.name,
+                description: node.spec?.description || '',
+                status: node.status,
+                framework: 'Spec',
+                code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
+                requirements: requirementsWithTests as any
+            } as any)
+            setRequirementsContent(specRequirements.map((req: any) => req.text).join('\n'))
+        } else if (node.type === 'test') {
+            // When test is selected, show test info and its requirement
+            setSelectedTest({
+                ...node.test,
+                title: node.requirement?.text || node.name,
+                description: node.requirement?.description || '',
+                requirements: node.requirement ? [node.requirement] : []
+            })
+            setRequirementsContent(node.requirement?.text || '')
+        }
     }
 
     const handleEditGroup = (group: any) => {
@@ -302,8 +338,8 @@ export default function Dashboard() {
     const handleDelete = async (node: any) => {
         if (node.type === 'category') {
             deleteTestCategoryMutation.mutate(node.id)
-        } else if (node.type === 'group') {
-            deleteTestGroupMutation.mutate(node.id)
+        } else if (node.type === 'spec') {
+            deleteTestSpecMutation.mutate(node.id)
         } else if (node.type === 'test') {
             deleteTestMutation.mutate(node.id)
         }
@@ -312,7 +348,7 @@ export default function Dashboard() {
     const handleSaveGroup = async (item: any) => {
         // Refresh queries after save
         queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-        queryClient.invalidateQueries({ queryKey: ['testGroups'] })
+        queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
         setEditingGroup(null)
         setParentGroup(null)
     }
@@ -339,7 +375,7 @@ export default function Dashboard() {
                 .map((req: string, index: number) => ({
                     id: `req-${index + 1}`,
                     text: req,
-                    status: 'pending',
+                    status: 'pending' as 'pending' | 'running' | 'passed' | 'failed',
                     order: index,
                     testId: selectedTest.id,
                     createdAt: new Date(),
@@ -360,6 +396,10 @@ export default function Dashboard() {
                 if (child.type === 'test') {
                     total += 1
                     if (child.status === 'passed') passed += 1
+                } else if (child.type === 'spec') {
+                    // For specs, use their pre-calculated stats
+                    passed += child.passed || 0
+                    total += child.total || 0
                 } else if (child.children) {
                     const childStats = calculateStats(child.children)
                     passed += childStats.passed
@@ -370,47 +410,43 @@ export default function Dashboard() {
             return { passed, total }
         }
 
-        // Create a map of categories with their groups
-        const categoriesWithGroups = categories.map((category: any) => {
-            const categoryGroups = groups
-                .filter((group: any) => group.testCategoryId === category.id)
-                .map((group: any) => {
-                    const groupTests = tests
-                        .filter((test: any) => test.testGroupId === group.id)
-                        .map((test: any) => ({
-                            id: test.id,
-                            name: test.title || 'Untitled Test',
-                            type: 'test' as const,
-                            icon: FileText,
-                            passed: test.status === 'passed' ? 1 : 0,
-                            total: 1,
-                            status: test.status as any,
-                            test: test
-                        }))
+        // Create a map of categories with their specs
+        const categoriesWithSpecs = categories.map((category: any) => {
+            const categorySpecs = specs
+                .filter((spec: any) => spec.testCategoryId === category.id)
+                .map((spec: any) => {
+                    // Calculate stats for the spec based on its requirements
+                    const specRequirements = requirements.filter((req: any) => req.testSpecId === spec.id)
+                    let passed = 0
+                    let total = specRequirements.length
 
-                    const groupStats = calculateStats(groupTests)
+                    specRequirements.forEach((requirement: any) => {
+                        const test = tests.find((test: any) => test.testRequirementId === requirement.id)
+                        if (test?.status === 'passed') passed += 1
+                    })
+
                     return {
-                        id: group.id,
-                        name: group.title || 'Untitled Group',
-                        type: 'group' as const,
-                        icon: Folder,
-                        children: groupTests,
-                        passed: groupStats.passed,
-                        total: groupStats.total,
-                        status: (groupStats.passed === groupStats.total ? 'passed'
-                        : groupStats.passed > 0 ? 'warning'
+                        id: spec.id,
+                        name: spec.name || spec.title || 'Untitled Spec',
+                        type: 'spec' as const,
+                        icon: FileText,
+                        children: [], // No children - requirements shown in right panel
+                        passed: passed,
+                        total: total,
+                        status: (passed === total && total > 0 ? 'passed'
+                        : passed > 0 ? 'warning'
                         : 'failed') as any,
-                        group: group
+                        spec: spec
                     }
                 })
 
-            const categoryStats = calculateStats(categoryGroups)
+            const categoryStats = calculateStats(categorySpecs)
             return {
                 id: category.id,
-                name: category.title || 'Untitled Category',
+                name: category.name || category.title || 'Untitled Category',
                 type: 'category' as const,
                 icon: Folder,
-                children: categoryGroups,
+                children: categorySpecs,
                 passed: categoryStats.passed,
                 total: categoryStats.total,
                 status: (categoryStats.passed === categoryStats.total ? 'healthy'
@@ -420,9 +456,10 @@ export default function Dashboard() {
             }
         })
 
-        return categoriesWithGroups
+        return categoriesWithSpecs
     }
 
+    const loading = categoriesLoading || specsLoading || requirementsLoading || testsLoading
     const allTests = buildHierarchy()
 
     if (loading) {
