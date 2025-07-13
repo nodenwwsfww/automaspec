@@ -1,55 +1,76 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
-import { relations } from 'drizzle-orm'
+import { relations, sql } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
+import { TestFramework, TestStatus } from '@/lib/types'
 
 export const testCategory = sqliteTable('test_category', {
-    id: text('id').primaryKey(),
-    name: text('name').notNull(),
-    title: text('title'),
-    description: text('description'),
-    parentCategoryId: text('parent_category_id'),
-    order: integer('order').notNull().default(0),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+    id: text().primaryKey(),
+    name: text().notNull(),
+    title: text(),
+    description: text(),
+    parentCategoryId: text(),
+    order: integer().notNull().default(0),
+    createdAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`),
+    updatedAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 export const testCategoryInsertSchema = createInsertSchema(testCategory)
 
 export const testSpec = sqliteTable('test_spec', {
-    id: text('id').primaryKey(),
-    name: text('name').notNull(),
-    title: text('title'),
-    description: text('description'),
-    testCategoryId: text('test_category_id')
+    id: text().primaryKey(),
+    name: text().notNull(),
+    title: text(),
+    description: text(),
+    testCategoryId: text()
         .notNull()
-        .references(() => testCategory.id),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+        .references(() => testCategory.id, { onDelete: 'cascade' }),
+    createdAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`),
+    updatedAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 export const testSpecInsertSchema = createInsertSchema(testSpec)
 
 export const testRequirement = sqliteTable('test_requirement', {
-    id: text('id').primaryKey(),
-    text: text('text').notNull(),
-    description: text('description'),
-    order: integer('order').notNull().default(0),
-    testSpecId: text('test_spec_id')
+    id: text().primaryKey(),
+    text: text().notNull(),
+    description: text(),
+    order: integer().notNull().default(0),
+    testSpecId: text()
         .notNull()
-        .references(() => testSpec.id),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+        .references(() => testSpec.id, { onDelete: 'cascade' }),
+    createdAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`),
+    updatedAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 export const testRequirementInsertSchema = createInsertSchema(testRequirement)
 
 export const test = sqliteTable('test', {
-    id: text('id').primaryKey(),
-    status: text('status').notNull().default('pending'),
-    framework: text('framework').default('Playwright'),
-    code: text('code'),
-    testRequirementId: text('test_requirement_id')
+    id: text().primaryKey(),
+    status: text().$type<TestStatus>().default('pending'),
+    framework: text().$type<TestFramework>().default('Playwright'),
+    code: text(),
+    testRequirementId: text()
         .notNull()
-        .references(() => testRequirement.id),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+        .references(() => testRequirement.id, { onDelete: 'cascade' }),
+    createdAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`),
+    updatedAt: integer({ mode: 'timestamp' })
+        .notNull()
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 export const testInsertSchema = createInsertSchema(test)
 
@@ -58,7 +79,6 @@ export const testCategoryRelations = relations(testCategory, ({ one, many }) => 
         fields: [testCategory.parentCategoryId],
         references: [testCategory.id]
     }),
-    children: many(testCategory),
     testSpecs: many(testSpec)
 }))
 

@@ -3,7 +3,7 @@ import { CORSPlugin } from '@orpc/server/plugins'
 import { onError } from '@orpc/server'
 import { testsRouter } from '@/contracts/tests'
 import { experimental_ZodSmartCoercionPlugin as ZodSmartCoercionPlugin } from '@orpc/zod/zod4'
-
+//import { experimental_ZodToJsonSchemaConverter as ZodToJsonSchemaConverter } from '@orpc/zod/zod4'
 const combinedRouter = testsRouter
 
 const handler = new OpenAPIHandler(combinedRouter, {
@@ -12,6 +12,9 @@ const handler = new OpenAPIHandler(combinedRouter, {
             exposeHeaders: ['Content-Disposition']
         }),
         new ZodSmartCoercionPlugin()
+        //   new SmartCoercionPlugin({
+        //       schemaConverters: [new ZodToJsonSchemaConverter()]
+        //   }
     ],
     interceptors: [onError((error) => console.error(error))]
 })

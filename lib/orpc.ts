@@ -28,7 +28,7 @@ const link = new OpenAPILink(testsContract, {
     fetch: (request, init) =>
         globalThis.fetch(request, {
             ...init,
-            credentials: 'include',
+            credentials: 'include'
             // TODO: check if this is needed in nextjs
         })
 })
@@ -36,7 +36,7 @@ const link = new OpenAPILink(testsContract, {
 /**
  * Fallback to client-side client if server-side client is not available.
  */
-export const client: JsonifiedClient<ContractRouterClient<typeof testsContract>> = 
+export const client: JsonifiedClient<ContractRouterClient<typeof testsContract>> =
     globalThis.$client ?? createORPCClient(link)
 
 export const orpc = createTanstackQueryUtils(client)

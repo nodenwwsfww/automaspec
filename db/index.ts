@@ -1,11 +1,9 @@
-import { drizzle } from 'drizzle-orm/libsql/web'
+import { drizzle } from 'drizzle-orm/libsql'
 
-// FIXME: This is a hack to get the database working in the browser.
-// We need to find a better way to do this.
-export const db = () =>
-    drizzle({
-        connection: {
-            url: process.env.DATABASE_URL || '',
-            authToken: process.env.DATABASE_AUTH_TOKEN
-        }
-    })
+export const db = drizzle({
+    connection: {
+        url: process.env.NEXT_PUBLIC_DATABASE_URL!,
+        authToken: process.env.DATABASE_AUTH_TOKEN
+    },
+    casing: 'snake_case'
+})

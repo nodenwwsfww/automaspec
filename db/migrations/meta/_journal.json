@@ -36,6 +36,34 @@
       "when": 1752230430909,
       "tag": "0004_daily_star_brand",
       "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "6",
+      "when": 1752374229528,
+      "tag": "0005_peaceful_turbo",
+      "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "6",
+      "when": 1752374865685,
+      "tag": "0006_charming_fabian_cortez",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "6",
+      "when": 1752376706575,
+      "tag": "0007_closed_nebula",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "6",
+      "when": 1752377807722,
+      "tag": "0008_lean_satana",
+      "breakpoints": true
     }
   ]
 }

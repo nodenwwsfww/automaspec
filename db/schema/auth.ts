@@ -1,55 +1,75 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
+import { relations } from 'drizzle-orm/relations'
 
 export const user = sqliteTable('user', {
-    id: text('id').primaryKey(),
-    name: text('name').notNull(),
-    email: text('email').notNull().unique(),
-    emailVerified: integer('email_verified', { mode: 'boolean' }).notNull(),
-    image: text('image'),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+    id: text().primaryKey(),
+    name: text().notNull(),
+    email: text().notNull().unique(),
+    emailVerified: integer({ mode: 'boolean' }).notNull(),
+    image: text(),
+    createdAt: integer({ mode: 'timestamp' }).notNull(),
+    updatedAt: integer({ mode: 'timestamp' }).notNull()
 })
 
 export const session = sqliteTable('session', {
-    id: text('id').primaryKey(),
-    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-    token: text('token').notNull().unique(),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull(),
-    ipAddress: text('ip_address'),
-    userAgent: text('user_agent'),
-    userId: text('user_id')
+    id: text().primaryKey(),
+    expiresAt: integer({ mode: 'timestamp' }).notNull(),
+    token: text().notNull().unique(),
+    createdAt: integer({ mode: 'timestamp' }).notNull(),
+    updatedAt: integer({ mode: 'timestamp' }).notNull(),
+    ipAddress: text(),
+    userAgent: text(),
+    userId: text()
         .notNull()
-        .references(() => user.id)
+        .references(() => user.id, { onDelete: 'cascade' })
 })
 
 export const account = sqliteTable('account', {
-    id: text('id').primaryKey(),
-    accountId: text('account_id').notNull(),
-    providerId: text('provider_id').notNull(),
-    userId: text('user_id')
+    id: text().primaryKey(),
+    accountId: text().notNull(),
+    providerId: text().notNull(),
+    userId: text()
         .notNull()
-        .references(() => user.id),
-    accessToken: text('access_token'),
-    refreshToken: text('refresh_token'),
-    idToken: text('id_token'),
-    accessTokenExpiresAt: integer('access_token_expires_at', {
+        .references(() => user.id, { onDelete: 'cascade' }),
+    accessToken: text(),
+    refreshToken: text(),
+    idToken: text(),
+    accessTokenExpiresAt: integer({
         mode: 'timestamp'
     }),
-    refreshTokenExpiresAt: integer('refresh_token_expires_at', {
+    refreshTokenExpiresAt: integer({
         mode: 'timestamp'
     }),
-    scope: text('scope'),
-    password: text('password'),
-    createdAt: integer('created_at', { mode: 'timestamp' }).notNull(),
-    updatedAt: integer('updated_at', { mode: 'timestamp' }).notNull()
+    scope: text(),
+    password: text(),
+    createdAt: integer({ mode: 'timestamp' }).notNull(),
+    updatedAt: integer({ mode: 'timestamp' }).notNull()
 })
 
 export const verification = sqliteTable('verification', {
-    id: text('id').primaryKey(),
-    identifier: text('identifier').notNull(),
-    value: text('value').notNull(),
-    expiresAt: integer('expires_at', { mode: 'timestamp' }).notNull(),
-    createdAt: integer('created_at', { mode: 'timestamp' }),
-    updatedAt: integer('updated_at', { mode: 'timestamp' })
+    id: text().primaryKey(),
+    identifier: text().notNull(),
+    value: text().notNull(),
+    expiresAt: integer({ mode: 'timestamp' }).notNull(),
+    createdAt: integer({ mode: 'timestamp' }),
+    updatedAt: integer({ mode: 'timestamp' })
 })
+
+export const accountRelations = relations(account, ({ one }) => ({
+    user: one(user, {
+        fields: [account.userId],
+        references: [user.id]
+    })
+}))
+
+export const userRelations = relations(user, ({ many }) => ({
+    accounts: many(account),
+    sessions: many(session)
+}))
+
+export const sessionRelations = relations(session, ({ one }) => ({
+    user: one(user, {
+        fields: [session.userId],
+        references: [user.id]
+    })
+}))
