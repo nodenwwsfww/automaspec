@@ -13,7 +13,6 @@ import { Link, ChevronDown, ChevronRight, AlertTriangle, FileText, Trash2, Check
 import { GroupEditorModal } from '@/components/group-editor-modal'
 import { TestEditorModal } from '@/components/test-editor-modal'
 import { getStatusColor, getStatusBadge, getRequirementStatusIcon, getRequirementStatusColor } from './utils'
-
 interface TreeNodeProps {
     node: TreeNode
     level?: number

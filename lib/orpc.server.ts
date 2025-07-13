@@ -2,9 +2,9 @@
 
 import { headers } from 'next/headers'
 import { createJsonifiedRouterClient } from '@orpc/openapi'
-import { testsRouter } from '@/contracts/tests'
+import { router } from '@/orpc/routes'
 
-globalThis.$client = createJsonifiedRouterClient(testsRouter, {
+globalThis.$client = createJsonifiedRouterClient(router, {
     /**
      * Provide initial context if needed.
      *

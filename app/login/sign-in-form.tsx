@@ -3,7 +3,7 @@
 import { authClient } from '@/lib/shared/better-auth'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 import { Eye, EyeOff, Chrome, Github } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'
@@ -16,7 +16,7 @@ import { useRouter } from 'next/navigation'
 import { FieldInfo } from '@/lib/shared/tanstack-form'
 
 const SignInSchema = z.object({
-    email: z.string().email('Invalid email address'),
+    email: z.email('Invalid email address'),
     password: z.string().min(8, 'Password must be at least 8 characters')
 })
 
@@ -68,11 +68,11 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
                 },
                 {
                     onSuccess: () => {
-                        router.push('/dashboard')
                         toast.success('Sign in successful')
+                        router.push('/dashboard')
                     },
-                    onError: (error) => {
-                        toast.error(error.error.message)
+                    onError: (ctx) => {
+                        toast.error(ctx.error.message)
                     }
                 }
             )

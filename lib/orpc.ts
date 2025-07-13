@@ -1,15 +1,15 @@
 import { OpenAPILink } from '@orpc/openapi-client/fetch'
 import type { JsonifiedClient } from '@orpc/openapi-client'
-import { testsContract } from '@/contracts/tests'
+import { contract } from '@/orpc/contracts'
 import { createORPCClient } from '@orpc/client'
 import type { ContractRouterClient } from '@orpc/contract'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 
 declare global {
-    var $client: JsonifiedClient<ContractRouterClient<typeof testsContract>> | undefined
+    var $client: JsonifiedClient<ContractRouterClient<typeof contract>> | undefined
 }
 
-const link = new OpenAPILink(testsContract, {
+const link = new OpenAPILink(contract, {
     url: () => {
         if (typeof window === 'undefined') {
             throw new Error('OpenAPILink is not allowed on the server side.')
@@ -36,7 +36,7 @@ const link = new OpenAPILink(testsContract, {
 /**
  * Fallback to client-side client if server-side client is not available.
  */
-export const client: JsonifiedClient<ContractRouterClient<typeof testsContract>> =
+export const client: JsonifiedClient<ContractRouterClient<typeof contract>> =
     globalThis.$client ?? createORPCClient(link)
 
 export const orpc = createTanstackQueryUtils(client)

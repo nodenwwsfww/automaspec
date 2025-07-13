@@ -3,7 +3,7 @@
 import { authClient } from '@/lib/shared/better-auth'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
-import * as z from 'zod'
+import { z } from 'zod'
 import { Eye, EyeOff, Chrome, Github } from 'lucide-react'
 import { useState } from 'react'
 import { Button } from '@/components/ui/button'
@@ -70,11 +70,11 @@ export default function SignUpForm({ onToggle }: AuthFormProps) {
                 },
                 {
                     onSuccess: () => {
-                        router.push('/dashboard')
                         toast.success('Sign up successful')
+                        router.push('/dashboard')
                     },
-                    onError: (error) => {
-                        toast.error(error.error.message)
+                    onError: (ctx) => {
+                        toast.error(ctx.error.message)
                     }
                 }
             )

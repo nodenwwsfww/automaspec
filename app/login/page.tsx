@@ -72,7 +72,7 @@ export default function LoginPage() {
                             <p className="mb-2 text-center text-muted-foreground text-sm">Demo credentials:</p>
                             <div className="space-y-1 text-center text-xs">
                                 <p>Email: demo@testassist.com</p>
-                                <p>Password: demo123</p>
+                                <p>Password: demo1234</p>
                             </div>
                         </CardContent>
                     </Card>
