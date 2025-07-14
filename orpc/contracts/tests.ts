@@ -1,5 +1,5 @@
 import { oc } from '@orpc/contract'
-import { z } from 'zod/v4'
+import * as z from 'zod'
 import {
     testCategoryInsertSchema,
     testSpecInsertSchema,

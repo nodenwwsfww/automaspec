@@ -91,7 +91,7 @@ const updateTestSpec = os.testSpecs.update.handler(async ({ input }) => {
 })
 
 const deleteTestSpec = os.testSpecs.delete.handler(async ({ input }) => {
-    // TODO: I guess this is unnecessary, because specs are cascade deleted on category deletion
+    // TODO: This is unnecessary, because specs are cascade deleted on category deletion
     // Get all requirements in this spec
     const requirementsInSpec = await db
         .select({ id: testRequirement.id })

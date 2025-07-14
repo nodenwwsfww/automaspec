@@ -3,7 +3,7 @@
 import { authClient } from '@/lib/shared/better-auth'
 import { useForm } from '@tanstack/react-form'
 import { toast } from 'sonner'
-import { z } from 'zod'
+import * as z from 'zod'
 import { Eye, EyeOff, Chrome, Github } from 'lucide-react'
 import Link from 'next/link'
 import { useState } from 'react'

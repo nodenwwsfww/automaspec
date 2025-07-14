@@ -6,8 +6,8 @@ import '../lib/orpc.server' // for pre-rendering
 import { Providers } from './providers'
 
 export const metadata: Metadata = {
-    title: 'Automaspeq',
-    description: 'Automaspeq - Your AI-powered solution for automating your business processes'
+    title: 'Automaspec',
+    description: 'Automaspec - Your AI-powered solution for automating your business processes'
 }
 
 export default function RootLayout({
@@ -17,6 +17,9 @@ export default function RootLayout({
 }>) {
     return (
         <html lang="en" suppressHydrationWarning>
+            <head>
+                <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" />
+            </head>
             <body>
                 <Providers>{children}</Providers>
             </body>
