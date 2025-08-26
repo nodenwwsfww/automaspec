@@ -2,7 +2,7 @@ PRAGMA foreign_keys=OFF;--> statement-breakpoint
 CREATE TABLE `__new_test` (
 	`id` text PRIMARY KEY NOT NULL,
 	`status` text DEFAULT 'pending',
-	`framework` text DEFAULT 'Playwright',
+	`framework` text DEFAULT 'Vitest',
 	`code` text,
 	`test_requirement_id` text NOT NULL,
 	`created_at` integer DEFAULT (unixepoch() * 1000) NOT NULL,

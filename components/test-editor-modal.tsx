@@ -21,7 +21,7 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
         name: test?.name || '',
         description: test?.description || '',
         requirements: test?.requirements?.join('\n') || '',
-        playwrightCode: test?.playwrightCode || ''
+        code: test?.code || ''
     })
 
     const isEditing = !!test
@@ -33,11 +33,11 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
             name: formData.name,
             description: formData.description,
             requirements: formData.requirements.split('\n').filter((req: string) => req.trim()),
-            playwrightCode: formData.playwrightCode,
+            code: formData.code,
             passed: test?.passed || 0,
             total: test?.total || 1,
             status: test?.status || 'not_run',
-            framework: test?.framework || 'Playwright'
+            framework: test?.framework || 'Vitest'
         }
 
         onSave(newTest)
@@ -55,7 +55,7 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
                     <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="details">Test Details</TabsTrigger>
                         <TabsTrigger value="requirements">Requirements</TabsTrigger>
-                        <TabsTrigger value="code">Playwright Code</TabsTrigger>
+                        <TabsTrigger value="code">Vitest Code</TabsTrigger>
                     </TabsList>
 
                     <TabsContent className="space-y-4" value="details">
@@ -138,13 +138,13 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
 
                     <TabsContent className="space-y-4" value="code">
                         <div>
-                            <Label htmlFor="playwright-code">Playwright Code</Label>
+                            <Label htmlFor="vitest-code">Vitest Code</Label>
                             <Textarea
                                 className="min-h-[300px] font-mono text-sm"
-                                id="playwright-code"
-                                onChange={(e) => setFormData({ ...formData, playwrightCode: e.target.value })}
+                                id="vitest-code"
+                                onChange={(e) => setFormData({ ...formData, code: e.target.value })}
                                 placeholder="describe('Test Suite', () => {&#10;  it('should do something', async ({ page }) => {&#10;    // Test code here&#10;  });&#10;});"
-                                value={formData.playwrightCode}
+                                value={formData.code}
                             />
                         </div>
                     </TabsContent>

@@ -1,5 +1,5 @@
 export type TestStatus = 'pending' | 'passed' | 'failed' | 'warning' | 'skipped'
-export type TestFramework = 'Playwright' | 'Vitest'
+export type TestFramework = 'Vitest'
 
 // Inferred types from database schema
 export type TestCategory = {

@@ -96,7 +96,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                 <Tabs className="h-full" defaultValue="requirements">
                     <TabsList className="grid w-full grid-cols-2">
                         <TabsTrigger value="requirements">Functional Requirements</TabsTrigger>
-                        <TabsTrigger value="playwright">Playwright Code</TabsTrigger>
+                        <TabsTrigger value="vitest">Vitest Code</TabsTrigger>
                     </TabsList>
 
                     <TabsContent className="mt-4 space-y-4" value="requirements">
@@ -252,7 +252,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                         </div>
                     </TabsContent>
 
-                    <TabsContent className="mt-4" value="playwright">
+                    <TabsContent className="mt-4" value="vitest">
                         <div className="space-y-4">
                             <div className="flex items-center justify-between">
                                 <h3 className="font-medium">Generated Test Code</h3>

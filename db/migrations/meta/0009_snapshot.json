@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "f5e50745-838c-43fd-aec2-2a16bd10965f",
-  "prevId": "827863a7-0b48-48fb-af4e-8ce1dcf2e2d0",
+  "id": "b3298f97-1244-4752-b3be-6b9c34b5baf8",
+  "prevId": "84b502ad-5934-4617-a785-ac29189c049b",
   "tables": {
     "account": {
       "name": "account",
@@ -111,7 +111,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -199,7 +199,7 @@
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -336,41 +336,13 @@
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "status": {
           "name": "status",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
+          "notNull": false,
           "autoincrement": false,
           "default": "'pending'"
-        },
-        "actual_result": {
-          "name": "actual_result",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "expected_result": {
-          "name": "expected_result",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
         },
         "framework": {
           "name": "framework",
@@ -380,15 +352,15 @@
           "autoincrement": false,
           "default": "'Vitest'"
         },
-        "playwright_code": {
-          "name": "playwright_code",
+        "code": {
+          "name": "code",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false
         },
-        "test_group_id": {
-          "name": "test_group_id",
+        "test_requirement_id": {
+          "name": "test_requirement_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -399,29 +371,31 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "test_test_group_id_test_group_id_fk": {
-          "name": "test_test_group_id_test_group_id_fk",
+        "test_test_requirement_id_test_requirement_id_fk": {
+          "name": "test_test_requirement_id_test_requirement_id_fk",
           "tableFrom": "test",
-          "tableTo": "test_group",
+          "tableTo": "test_requirement",
           "columnsFrom": [
-            "test_group_id"
+            "test_requirement_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },
@@ -429,8 +403,8 @@
       "uniqueConstraints": {},
       "checkConstraints": {}
     },
-    "test_categories": {
-      "name": "test_categories",
+    "test_category": {
+      "name": "test_category",
       "columns": {
         "id": {
           "name": "id",
@@ -439,15 +413,29 @@
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
+        "name": {
+          "name": "name",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false
         },
-        "parent_id": {
-          "name": "parent_id",
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "parent_category_id": {
+          "name": "parent_category_id",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -466,91 +454,20 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
       "foreignKeys": {},
-      "compositePrimaryKeys": {},
-      "uniqueConstraints": {},
-      "checkConstraints": {}
-    },
-    "test_group": {
-      "name": "test_group",
-      "columns": {
-        "id": {
-          "name": "id",
-          "type": "text",
-          "primaryKey": true,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "description": {
-          "name": "description",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "tests_json": {
-          "name": "tests_json",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
-        "test_categories_id": {
-          "name": "test_categories_id",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "created_at": {
-          "name": "created_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        },
-        "updated_at": {
-          "name": "updated_at",
-          "type": "integer",
-          "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false
-        }
-      },
-      "indexes": {},
-      "foreignKeys": {
-        "test_group_test_categories_id_test_categories_id_fk": {
-          "name": "test_group_test_categories_id_test_categories_id_fk",
-          "tableFrom": "test_group",
-          "tableTo": "test_categories",
-          "columnsFrom": [
-            "test_categories_id"
-          ],
-          "columnsTo": [
-            "id"
-          ],
-          "onDelete": "no action",
-          "onUpdate": "no action"
-        }
-      },
       "compositePrimaryKeys": {},
       "uniqueConstraints": {},
       "checkConstraints": {}
@@ -572,13 +489,12 @@
           "notNull": true,
           "autoincrement": false
         },
-        "status": {
-          "name": "status",
+        "description": {
+          "name": "description",
           "type": "text",
           "primaryKey": false,
-          "notNull": true,
-          "autoincrement": false,
-          "default": "'pending'"
+          "notNull": false,
+          "autoincrement": false
         },
         "order": {
           "name": "order",
@@ -588,8 +504,8 @@
           "autoincrement": false,
           "default": 0
         },
-        "test_id": {
-          "name": "test_id",
+        "test_spec_id": {
+          "name": "test_spec_id",
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -600,29 +516,106 @@
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
           "type": "integer",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
       "foreignKeys": {
-        "test_requirement_test_id_test_id_fk": {
-          "name": "test_requirement_test_id_test_id_fk",
+        "test_requirement_test_spec_id_test_spec_id_fk": {
+          "name": "test_requirement_test_spec_id_test_spec_id_fk",
           "tableFrom": "test_requirement",
-          "tableTo": "test",
+          "tableTo": "test_spec",
           "columnsFrom": [
-            "test_id"
+            "test_spec_id"
           ],
           "columnsTo": [
             "id"
           ],
-          "onDelete": "no action",
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "checkConstraints": {}
+    },
+    "test_spec": {
+      "name": "test_spec",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "text",
+          "primaryKey": true,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "name": {
+          "name": "name",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "title": {
+          "name": "title",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "description": {
+          "name": "description",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": false,
+          "autoincrement": false
+        },
+        "test_category_id": {
+          "name": "test_category_id",
+          "type": "text",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false
+        },
+        "created_at": {
+          "name": "created_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(CURRENT_TIMESTAMP)"
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "test_spec_test_category_id_test_category_id_fk": {
+          "name": "test_spec_test_category_id_test_category_id_fk",
+          "tableFrom": "test_spec",
+          "tableTo": "test_category",
+          "columnsFrom": [
+            "test_category_id"
+          ],
+          "columnsTo": [
+            "id"
+          ],
+          "onDelete": "cascade",
           "onUpdate": "no action"
         }
       },

@@ -64,6 +64,13 @@
       "when": 1752377807722,
       "tag": "0008_lean_satana",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "6",
+      "when": 1756229704536,
+      "tag": "0009_abnormal_scarlet_witch",
+      "breakpoints": true
     }
   ]
 }

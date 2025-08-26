@@ -41,7 +41,7 @@ CREATE TABLE IF NOT EXISTS test_requirement (
 CREATE TABLE IF NOT EXISTS test (
     id TEXT PRIMARY KEY,
     status TEXT NOT NULL DEFAULT 'pending',
-    framework TEXT DEFAULT 'Playwright',
+    framework TEXT DEFAULT 'Vitest',
     code TEXT,
     test_requirement_id TEXT NOT NULL,
     created_at INTEGER NOT NULL,
@@ -123,63 +123,63 @@ INSERT INTO test_requirement (id, text, description, 'order', test_spec_id, crea
 
 -- Insert tests (one test per requirement)
 INSERT INTO test (id, status, framework, code, test_requirement_id, created_at, updated_at) VALUES 
-('test-1', 'passed', 'Playwright', 'test("should add item to cart", async ({ page }) => {
+('test-1', 'passed', 'Vitest', 'test("should add item to cart", async ({ page }) => {
   await page.goto("/products");
   await page.click("[data-testid=add-to-cart-btn]");
   await expect(page.locator("[data-testid=cart-count]")).toHaveText("1");
 });', 'req-1', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-2', 'failed', 'Playwright', 'test("should remove item from cart", async ({ page }) => {
+('test-2', 'failed', 'Vitest', 'test("should remove item from cart", async ({ page }) => {
   await page.goto("/cart");
   await page.click("[data-testid=remove-item-btn]");
   await expect(page.locator("[data-testid=cart-empty]")).toBeVisible();
 });', 'req-2', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-3', 'pending', 'Playwright', 'test("should update item quantity", async ({ page }) => {
+('test-3', 'pending', 'Vitest', 'test("should update item quantity", async ({ page }) => {
   // TODO: Implement quantity update test
 });', 'req-3', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-4', 'passed', 'Playwright', 'test("should persist cart across sessions", async ({ page }) => {
+('test-4', 'passed', 'Vitest', 'test("should persist cart across sessions", async ({ page }) => {
   await page.goto("/products");
   await page.click("[data-testid=add-to-cart-btn]");
   await page.reload();
   await expect(page.locator("[data-testid=cart-count]")).toHaveText("1");
 });', 'req-4', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-5', 'passed', 'Playwright', 'test("should show correct total price", async ({ page }) => {
+('test-5', 'passed', 'Vitest', 'test("should show correct total price", async ({ page }) => {
   await page.goto("/cart");
   await expect(page.locator("[data-testid=total-price]")).toContainText("$");
 });', 'req-5', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-6', 'passed', 'Playwright', 'test("should select payment method", async ({ page }) => {
+('test-6', 'passed', 'Vitest', 'test("should select payment method", async ({ page }) => {
   await page.goto("/checkout");
   await page.click("[data-testid=payment-method-card]");
   await expect(page.locator("[data-testid=payment-method-card]")).toBeChecked();
 });', 'req-6', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-7', 'failed', 'Playwright', 'test("should enter payment details", async ({ page }) => {
+('test-7', 'failed', 'Vitest', 'test("should enter payment details", async ({ page }) => {
   await page.goto("/checkout");
   await page.fill("[data-testid=card-number]", "4111111111111111");
   // Test fails due to validation issues
 });', 'req-7', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-8', 'pending', 'Playwright', 'test("should process payment successfully", async ({ page }) => {
+('test-8', 'pending', 'Vitest', 'test("should process payment successfully", async ({ page }) => {
   // TODO: Implement payment processing test
 });', 'req-8', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-9', 'passed', 'Playwright', 'test("should receive payment confirmation", async ({ page }) => {
+('test-9', 'passed', 'Vitest', 'test("should receive payment confirmation", async ({ page }) => {
   await page.goto("/order-confirmation");
   await expect(page.locator("[data-testid=confirmation-message]")).toBeVisible();
 });', 'req-9', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-10', 'failed', 'Playwright', 'test("should handle failed payments", async ({ page }) => {
+('test-10', 'failed', 'Vitest', 'test("should handle failed payments", async ({ page }) => {
   await page.goto("/checkout");
   await page.fill("[data-testid=card-number]", "4000000000000002");
   await page.click("[data-testid=submit-payment]");
   await expect(page.locator("[data-testid=error-message]")).toBeVisible();
 });', 'req-10', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-11', 'passed', 'Playwright', 'test("should login with email and password", async ({ page }) => {
+('test-11', 'passed', 'Vitest', 'test("should login with email and password", async ({ page }) => {
   await page.goto("/login");
   await page.fill("[data-testid=email]", "test@example.com");
   await page.fill("[data-testid=password]", "password123");
@@ -187,21 +187,21 @@ INSERT INTO test (id, status, framework, code, test_requirement_id, created_at, 
   await expect(page).toHaveURL("/dashboard");
 });', 'req-11', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-12', 'pending', 'Playwright', 'test("should reset password", async ({ page }) => {
+('test-12', 'pending', 'Vitest', 'test("should reset password", async ({ page }) => {
   // TODO: Implement password reset test
 });', 'req-12', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-13', 'failed', 'Playwright', 'test("should expire session after inactivity", async ({ page }) => {
+('test-13', 'failed', 'Vitest', 'test("should expire session after inactivity", async ({ page }) => {
   // Session timeout test - currently failing
 });', 'req-13', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-14', 'passed', 'Playwright', 'test("should logout user", async ({ page }) => {
+('test-14', 'passed', 'Vitest', 'test("should logout user", async ({ page }) => {
   await page.goto("/dashboard");
   await page.click("[data-testid=logout-btn]");
   await expect(page).toHaveURL("/login");
 });', 'req-14', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-15', 'passed', 'Playwright', 'test("should register new account", async ({ page }) => {
+('test-15', 'passed', 'Vitest', 'test("should register new account", async ({ page }) => {
   await page.goto("/register");
   await page.fill("[data-testid=email]", "new@example.com");
   await page.fill("[data-testid=password]", "newpassword123");
@@ -209,54 +209,54 @@ INSERT INTO test (id, status, framework, code, test_requirement_id, created_at, 
   await expect(page.locator("[data-testid=success-message]")).toBeVisible();
 });', 'req-15', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-16', 'failed', 'Playwright', 'test("should validate email format", async ({ page }) => {
+('test-16', 'failed', 'Vitest', 'test("should validate email format", async ({ page }) => {
   await page.goto("/register");
   await page.fill("[data-testid=email]", "invalid-email");
   await expect(page.locator("[data-testid=error-message]")).toBeVisible();
 });', 'req-16', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-17', 'passed', 'Playwright', 'test("API should create new user", async ({ request }) => {
+('test-17', 'passed', 'Vitest', 'test("API should create new user", async ({ request }) => {
   const response = await request.post("/api/users", {
     data: { email: "test@example.com", name: "Test User" }
   });
   expect(response.status()).toBe(201);
 });', 'req-17', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-18', 'passed', 'Playwright', 'test("API should retrieve user by ID", async ({ request }) => {
+('test-18', 'passed', 'Vitest', 'test("API should retrieve user by ID", async ({ request }) => {
   const response = await request.get("/api/users/1");
   expect(response.status()).toBe(200);
 });', 'req-18', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-19', 'failed', 'Playwright', 'test("API should update user profile", async ({ request }) => {
+('test-19', 'failed', 'Vitest', 'test("API should update user profile", async ({ request }) => {
   const response = await request.put("/api/users/1", {
     data: { name: "Updated Name" }
   });
   expect(response.status()).toBe(200);
 });', 'req-19', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-20', 'pending', 'Playwright', 'test("API should delete user account", async ({ request }) => {
+('test-20', 'pending', 'Vitest', 'test("API should delete user account", async ({ request }) => {
   // TODO: Implement user deletion test
 });', 'req-20', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-21', 'passed', 'Playwright', 'test("API should list all products", async ({ request }) => {
+('test-21', 'passed', 'Vitest', 'test("API should list all products", async ({ request }) => {
   const response = await request.get("/api/products");
   expect(response.status()).toBe(200);
 });', 'req-21', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-22', 'failed', 'Playwright', 'test("API should create new product", async ({ request }) => {
+('test-22', 'failed', 'Vitest', 'test("API should create new product", async ({ request }) => {
   const response = await request.post("/api/products", {
     data: { name: "New Product", price: 99.99 }
   });
   expect(response.status()).toBe(201);
 });', 'req-22', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-23', 'passed', 'Playwright', 'test("API should update product details", async ({ request }) => {
+('test-23', 'passed', 'Vitest', 'test("API should update product details", async ({ request }) => {
   const response = await request.put("/api/products/1", {
     data: { price: 89.99 }
   });
   expect(response.status()).toBe(200);
 });', 'req-23', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('test-24', 'pending', 'Playwright', 'test("API should delete product", async ({ request }) => {
+('test-24', 'pending', 'Vitest', 'test("API should delete product", async ({ request }) => {
   // TODO: Implement product deletion test
 });', 'req-24', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000); 

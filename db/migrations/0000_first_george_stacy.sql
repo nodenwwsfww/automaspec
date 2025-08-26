@@ -52,63 +52,63 @@ INSERT INTO test_requirement (text, description, "order", test_spec_id, created_
 
 -- Insert tests (one test per requirement, assuming requirement IDs are 1..24)
 INSERT INTO test (status, framework, code, test_requirement_id, created_at, updated_at) VALUES
-('passed', 'Playwright', 'test("should add item to cart", async ({ page }) => {
+('passed', 'Vitest', 'test("should add item to cart", async ({ page }) => {
   await page.goto("/products");
   await page.click("[data-testid=add-to-cart-btn]");
   await expect(page.locator("[data-testid=cart-count]")).toHaveText("1");
 });', 1, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("should remove item from cart", async ({ page }) => {
+('failed', 'Vitest', 'test("should remove item from cart", async ({ page }) => {
   await page.goto("/cart");
   await page.click("[data-testid=remove-item-btn]");
   await expect(page.locator("[data-testid=cart-empty]")).toBeVisible();
 });', 2, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('pending', 'Playwright', 'test("should update item quantity", async ({ page }) => {
+('pending', 'Vitest', 'test("should update item quantity", async ({ page }) => {
   // TODO: Implement quantity update test
 });', 3, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should persist cart across sessions", async ({ page }) => {
+('passed', 'Vitest', 'test("should persist cart across sessions", async ({ page }) => {
   await page.goto("/products");
   await page.click("[data-testid=add-to-cart-btn]");
   await page.reload();
   await expect(page.locator("[data-testid=cart-count]")).toHaveText("1");
 });', 4, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should show correct total price", async ({ page }) => {
+('passed', 'Vitest', 'test("should show correct total price", async ({ page }) => {
   await page.goto("/cart");
   await expect(page.locator("[data-testid=total-price]")).toContainText("$");
 });', 5, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should select payment method", async ({ page }) => {
+('passed', 'Vitest', 'test("should select payment method", async ({ page }) => {
   await page.goto("/checkout");
   await page.click("[data-testid=payment-method-card]");
   await expect(page.locator("[data-testid=payment-method-card]")).toBeChecked();
 });', 6, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("should enter payment details", async ({ page }) => {
+('failed', 'Vitest', 'test("should enter payment details", async ({ page }) => {
   await page.goto("/checkout");
   await page.fill("[data-testid=card-number]", "4111111111111111");
   // Test fails due to validation issues
 });', 7, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('pending', 'Playwright', 'test("should process payment successfully", async ({ page }) => {
+('pending', 'Vitest', 'test("should process payment successfully", async ({ page }) => {
   // TODO: Implement payment processing test
 });', 8, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should receive payment confirmation", async ({ page }) => {
+('passed', 'Vitest', 'test("should receive payment confirmation", async ({ page }) => {
   await page.goto("/order-confirmation");
   await expect(page.locator("[data-testid=confirmation-message]")).toBeVisible();
 });', 9, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("should handle failed payments", async ({ page }) => {
+('failed', 'Vitest', 'test("should handle failed payments", async ({ page }) => {
   await page.goto("/checkout");
   await page.fill("[data-testid=card-number]", "4000000000000002");
   await page.click("[data-testid=submit-payment]");
   await expect(page.locator("[data-testid=error-message]")).toBeVisible();
 });', 10, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should login with email and password", async ({ page }) => {
+('passed', 'Vitest', 'test("should login with email and password", async ({ page }) => {
   await page.goto("/login");
   await page.fill("[data-testid=email]", "test@example.com");
   await page.fill("[data-testid=password]", "password123");
@@ -116,21 +116,21 @@ INSERT INTO test (status, framework, code, test_requirement_id, created_at, upda
   await expect(page).toHaveURL("/dashboard");
 });', 11, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('pending', 'Playwright', 'test("should reset password", async ({ page }) => {
+('pending', 'Vitest', 'test("should reset password", async ({ page }) => {
   // TODO: Implement password reset test
 });', 12, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("should expire session after inactivity", async ({ page }) => {
+('failed', 'Vitest', 'test("should expire session after inactivity", async ({ page }) => {
   // Session timeout test - currently failing
 });', 13, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should logout user", async ({ page }) => {
+('passed', 'Vitest', 'test("should logout user", async ({ page }) => {
   await page.goto("/dashboard");
   await page.click("[data-testid=logout-btn]");
   await expect(page).toHaveURL("/login");
 });', 14, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("should register new account", async ({ page }) => {
+('passed', 'Vitest', 'test("should register new account", async ({ page }) => {
   await page.goto("/register");
   await page.fill("[data-testid=email]", "new@example.com");
   await page.fill("[data-testid=password]", "newpassword123");
@@ -138,54 +138,54 @@ INSERT INTO test (status, framework, code, test_requirement_id, created_at, upda
   await expect(page.locator("[data-testid=success-message]")).toBeVisible();
 });', 15, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("should validate email format", async ({ page }) => {
+('failed', 'Vitest', 'test("should validate email format", async ({ page }) => {
   await page.goto("/register");
   await page.fill("[data-testid=email]", "invalid-email");
   await expect(page.locator("[data-testid=error-message]")).toBeVisible();
 });', 16, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("API should create new user", async ({ request }) => {
+('passed', 'Vitest', 'test("API should create new user", async ({ request }) => {
   const response = await request.post("/api/users", {
     data: { email: "test@example.com", name: "Test User" }
   });
   expect(response.status()).toBe(201);
 });', 17, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("API should retrieve user by ID", async ({ request }) => {
+('passed', 'Vitest', 'test("API should retrieve user by ID", async ({ request }) => {
   const response = await request.get("/api/users/1");
   expect(response.status()).toBe(200);
 });', 18, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("API should update user profile", async ({ request }) => {
+('failed', 'Vitest', 'test("API should update user profile", async ({ request }) => {
   const response = await request.put("/api/users/1", {
     data: { name: "Updated Name" }
   });
   expect(response.status()).toBe(200);
 });', 19, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('pending', 'Playwright', 'test("API should delete user account", async ({ request }) => {
+('pending', 'Vitest', 'test("API should delete user account", async ({ request }) => {
   // TODO: Implement user deletion test
 });', 20, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("API should list all products", async ({ request }) => {
+('passed', 'Vitest', 'test("API should list all products", async ({ request }) => {
   const response = await request.get("/api/products");
   expect(response.status()).toBe(200);
 });', 21, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('failed', 'Playwright', 'test("API should create new product", async ({ request }) => {
+('failed', 'Vitest', 'test("API should create new product", async ({ request }) => {
   const response = await request.post("/api/products", {
     data: { name: "New Product", price: 99.99 }
   });
   expect(response.status()).toBe(201);
 });', 22, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('passed', 'Playwright', 'test("API should update product details", async ({ request }) => {
+('passed', 'Vitest', 'test("API should update product details", async ({ request }) => {
   const response = await request.put("/api/products/1", {
     data: { price: 89.99 }
   });
   expect(response.status()).toBe(200);
 });', 23, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
 
-('pending', 'Playwright', 'test("API should delete product", async ({ request }) => {
+('pending', 'Vitest', 'test("API should delete product", async ({ request }) => {
   // TODO: Implement product deletion test
 });', 24, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000);

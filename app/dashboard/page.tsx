@@ -47,7 +47,7 @@ export default function Dashboard() {
                 title: node.name,
                 description: node.spec?.description || '',
                 status: node.status,
-                framework: 'Playwright' as const,
+                framework: 'Vitest' as const,
                 code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
                 requirements: requirementsWithTests as any,
                 testRequirementId: '',

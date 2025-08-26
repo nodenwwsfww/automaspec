@@ -59,7 +59,7 @@ export const testRequirementInsertSchema = createInsertSchema(testRequirement)
 export const test = sqliteTable('test', {
     id: text().primaryKey(),
     status: text().$type<TestStatus>().default('pending'),
-    framework: text().$type<TestFramework>().default('Playwright'),
+    framework: text().$type<TestFramework>().default('Vitest'),
     code: text(),
     testRequirementId: text()
         .notNull()

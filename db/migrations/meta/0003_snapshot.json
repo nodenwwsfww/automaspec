@@ -378,7 +378,7 @@
           "primaryKey": false,
           "notNull": false,
           "autoincrement": false,
-          "default": "'Playwright'"
+          "default": "'Vitest'"
         },
         "playwright_code": {
           "name": "playwright_code",

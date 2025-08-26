@@ -9,5 +9,5 @@ CREATE TABLE `test_requirement` (
 	FOREIGN KEY (`test_id`) REFERENCES `test`(`id`) ON UPDATE no action ON DELETE no action
 );
 --> statement-breakpoint
-ALTER TABLE `test` ADD `framework` text DEFAULT 'Playwright';--> statement-breakpoint
+ALTER TABLE `test` ADD `framework` text DEFAULT 'Vitest';--> statement-breakpoint
 ALTER TABLE `test` ADD `playwright_code` text;

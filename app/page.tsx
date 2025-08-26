@@ -59,7 +59,7 @@ export default async function LandingPage() {
             <section className="px-4 py-20">
                 <div className="container mx-auto max-w-4xl text-center">
                     <Badge className="mb-4" variant="secondary">
-                        🚀 Supporting Playwright, Vitest
+                        🚀 Supporting Vitest
                     </Badge>
                     <h1 className="mb-6 bg-linear-to-r from-primary to-blue-600 bg-clip-text font-bold text-5xl text-transparent leading-tight">
                         Testing Made Simple
@@ -95,8 +95,7 @@ export default async function LandingPage() {
                                 <Code className="mb-2 h-10 w-10 text-primary" />
                                 <CardTitle>Code Generation</CardTitle>
                                 <CardDescription>
-                                    Generate Playwright, Jest, and VTest code from your test specifications with one
-                                    click.
+                                    Generate Vitest code from your test specifications with one click.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
@@ -148,7 +147,7 @@ export default async function LandingPage() {
                                 <Chrome className="mb-2 h-10 w-10 text-primary" />
                                 <CardTitle>Cross-browser Testing</CardTitle>
                                 <CardDescription>
-                                    Test across different browsers and devices with built-in Playwright integration.
+                                    Test across different browsers and devices with built-in Vitest integration.
                                 </CardDescription>
                             </CardHeader>
                         </Card>

@@ -57,7 +57,7 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGrou
             name: formData.name,
             type: formData.type,
             description: formData.description,
-            framework: 'Playwright',
+            framework: 'Vitest',
             icon: selectedType?.icon,
             passed: group?.passed || 0,
             total: group?.total || 0,
