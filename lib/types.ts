@@ -1,4 +1,7 @@
-export type TestStatus = 'pending' | 'passed' | 'failed' | 'warning' | 'skipped'
+import type { JsonAssertionResult } from 'vitest/reporters'
+
+export type TestStatus = JsonAssertionResult['status']
+
 export type TestFramework = 'vitest'
 
 // Inferred types from database schema
