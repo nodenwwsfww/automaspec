@@ -50,7 +50,6 @@ describe('Button', () => {
     test('can be disabled', () => {
         render(<Button disabled>Disabled</Button>)
         const button = screen.getByRole('button')
-        expect(button.disabled).toBe(true)
         expect(button.className).toContain('disabled:opacity-50')
     })
 

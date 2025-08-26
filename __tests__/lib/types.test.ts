@@ -13,7 +13,7 @@ describe('Types', () => {
     })
 
     test('TestFramework type has correct values', () => {
-        const framework: TestFramework = 'Vitest'
+        const framework: TestFramework = 'vitest'
         expect(framework).toBe('Vitest')
     })
 
