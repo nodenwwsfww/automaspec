@@ -2,8 +2,12 @@ import type { NextConfig } from 'next'
 
 const nextConfig: NextConfig = {
     experimental: {
-        browserDebugInfoInTerminal: true
+        browserDebugInfoInTerminal: true,
+        typedEnv: true,
+        // useLightningcss: true,
+        devtoolSegmentExplorer: true
     },
+    typedRoutes: true,
     eslint: {
         ignoreDuringBuilds: true
     },
@@ -11,7 +15,7 @@ const nextConfig: NextConfig = {
         ignoreBuildErrors: false
     },
     images: {
-        unoptimized: true
+        unoptimized: true // FIXME
     }
 }
 
