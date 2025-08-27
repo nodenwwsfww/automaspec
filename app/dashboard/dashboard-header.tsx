@@ -36,13 +36,17 @@ export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeader
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent align="end">
-                        <DropdownMenuItem>
-                            <User className="mr-2 h-4 w-4" />
-                            Profile
+                        <DropdownMenuItem asChild>
+                            <Link href="/profile">
+                                <User className="mr-2 h-4 w-4" />
+                                Profile
+                            </Link>
                         </DropdownMenuItem>
-                        <DropdownMenuItem>
-                            <Settings className="mr-2 h-4 w-4" />
-                            Settings
+                        <DropdownMenuItem asChild>
+                            <Link href="/settings">
+                                <Settings className="mr-2 h-4 w-4" />
+                                Settings
+                            </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                             <Link href="/">
