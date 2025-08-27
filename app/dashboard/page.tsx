@@ -48,12 +48,16 @@ export default function Dashboard() {
                 }
             })
 
+            // Get framework from the first test, or default to 'vitest'
+            const firstTest = requirementsWithTests.find((req: any) => req.test)?.test
+            const framework = firstTest?.framework || 'vitest'
+
             setSelectedTest({
                 id: node.id,
                 title: node.name,
                 description: node.spec?.description || '',
                 status: node.status,
-                framework: 'vitest',
+                framework: framework,
                 code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
                 requirements: requirementsWithTests as any,
                 testRequirementId: '',

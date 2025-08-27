@@ -69,7 +69,7 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEdi
             type: formData.type,
             description: formData.description,
             status: formData.status,
-            framework: 'Vitest',
+            framework: 'vitest',
             icon: selectedType?.icon,
             passed: group?.passed || 0,
             total: group?.total || 0,
