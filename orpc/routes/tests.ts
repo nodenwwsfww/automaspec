@@ -3,7 +3,7 @@ import { testsContract } from '@/orpc/contracts/tests'
 import { db } from '@/db'
 import { testCategory, testSpec, testRequirement, test } from '@/db/schema'
 import { eq } from 'drizzle-orm'
-import { TestStatus, TestFramework } from '@/lib/types'
+import { TestStatus, TestFramework, SpecStatus } from '@/lib/types'
 
 const os = implement(testsContract)
 
@@ -78,7 +78,7 @@ const createTestSpec = os.testSpecs.create.handler(async ({ input }) => {
         .insert(testSpec)
         .values({
             ...newSpec,
-            status: newSpec.status as TestStatus
+            status: newSpec.status as SpecStatus
         })
         .returning()
     return result[0]
@@ -88,7 +88,7 @@ const updateTestSpec = os.testSpecs.update.handler(async ({ input }) => {
     const { id, ...updates } = input
     const result = await db
         .update(testSpec)
-        .set({ ...updates, status: updates.status as TestStatus })
+        .set({ ...updates, status: updates.status as SpecStatus })
         .where(eq(testSpec.id, id))
         .returning()
 

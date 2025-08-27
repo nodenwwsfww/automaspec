@@ -6,7 +6,7 @@
     "build": "next build",
     "dev": "next dev --turbopack",
     "lint": "next lint",
-    "format": "prettier --write \"**/*.{ts,tsx}\"",
+    "format": "prettier --write \"**/*.{ts,tsx,mts}\"",
     "typecheck": "tsc --noEmit",
     "start": "next start",
     "test": "vitest",
@@ -15,6 +15,7 @@
     "db:studio": "drizzle-kit studio",
     "db:generate": "drizzle-kit generate",
     "db:migrate": "drizzle-kit migrate",
+    "db:check": "drizzle-kit check",
     "postinstall": "lefthook install"
   },
   "dependencies": {
@@ -82,8 +83,7 @@
     "vitest": "^3.2.4"
   },
   "lint-staged": {
-    "*.{ts,tsx,js,jsx}": [
-      "eslint --fix",
+    "*.{ts,tsx,js,jsx,mts}": [
       "prettier --write"
     ]
   }
