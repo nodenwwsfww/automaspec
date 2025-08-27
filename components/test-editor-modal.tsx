@@ -55,7 +55,7 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
                     <TabsList className="grid w-full grid-cols-3">
                         <TabsTrigger value="details">Test Details</TabsTrigger>
                         <TabsTrigger value="requirements">Requirements</TabsTrigger>
-                        <TabsTrigger value="code">Vitest Code</TabsTrigger>
+                        <TabsTrigger value="code">Code</TabsTrigger>
                     </TabsList>
 
                     <TabsContent className="space-y-4" value="details">
@@ -138,7 +138,7 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
 
                     <TabsContent className="space-y-4" value="code">
                         <div>
-                            <Label htmlFor="vitest-code">Vitest Code</Label>
+                            <Label htmlFor="vitest-code">Code</Label>
                             <Textarea
                                 className="min-h-[300px] font-mono text-sm"
                                 id="vitest-code"

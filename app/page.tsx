@@ -95,7 +95,7 @@ export default async function LandingPage() {
                                 <Code className="mb-2 h-10 w-10 text-primary" />
                                 <CardTitle>Code Generation</CardTitle>
                                 <CardDescription>
-                                    Generate Vitest code from your test specifications with one click.
+                                    Generate code from your test specifications with one click.
                                 </CardDescription>
                             </CardHeader>
                         </Card>
