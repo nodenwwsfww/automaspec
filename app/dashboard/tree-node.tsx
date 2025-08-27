@@ -4,7 +4,7 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
 import { cn } from '@/lib/utils'
-import { ChevronDown, ChevronRight, AlertTriangle, FileText, MoreHorizontal, Edit, Folder, Trash2 } from 'lucide-react'
+import { ChevronDown, ChevronRight, FileText, MoreHorizontal, Edit, Folder, Trash2 } from 'lucide-react'
 import { TreeNode } from '@/lib/types'
 import { getStatusColor, getStatusBadge } from './utils'
 
@@ -31,10 +31,6 @@ export function TreeNodeComponent({
     const hasChildren = (node.children?.length ?? 0) > 0
     const isLeaf = !hasChildren
     const isSelected = selectedId === node.id
-
-    const percentage = node.total ? Math.round(((node.passed ?? 0) / node.total) * 100) : 100
-    const hasFailures = node.total && (node.passed ?? 0) < node.total
-    const failureCount = node.total ? node.total - (node.passed ?? 0) : 0
 
     const IconComponent = node.icon || FileText
 
@@ -75,20 +71,10 @@ export function TreeNodeComponent({
                         <div className="flex-shrink-0">{getStatusBadge(node.status)}</div>
                     )}
 
-                    {hasFailures && (
-                        <div className="flex items-center gap-1">
-                            <AlertTriangle className="h-3 w-3 text-orange-500" />
-                            <span className="text-orange-500 text-xs">{failureCount}</span>
-                        </div>
-                    )}
-
                     {node.total && (
-                        <div className="flex items-center gap-2 text-muted-foreground text-xs">
-                            <span>
-                                {node.passed ?? 0} / {node.total}
-                            </span>
+                        <div className="flex items-center gap-2 text-xs">
                             <span className={cn('font-medium', getStatusColor(node.status ?? 'pending'))}>
-                                {percentage}%
+                                {node.passed ?? 0} / {node.total}
                             </span>
                         </div>
                     )}
