@@ -60,11 +60,43 @@ export function useDashboardMutations(
         })
     )
 
+    const createTestCategoryMutation = useMutation(
+        orpc.testCategories.create.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+            }
+        })
+    )
+
+    const updateTestCategoryMutation = useMutation(
+        orpc.testCategories.update.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+            }
+        })
+    )
+
     const deleteTestSpecMutation = useMutation(
         orpc.testSpecs.delete.mutationOptions({
             onSuccess: () => {
                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
                 queryClient.invalidateQueries({ queryKey: ['tests'] })
+            }
+        })
+    )
+
+    const createTestSpecMutation = useMutation(
+        orpc.testSpecs.create.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
+            }
+        })
+    )
+
+    const updateTestSpecMutation = useMutation(
+        orpc.testSpecs.update.mutationOptions({
+            onSuccess: () => {
+                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
             }
         })
     )
@@ -92,7 +124,11 @@ export function useDashboardMutations(
 
     return {
         deleteTestCategoryMutation,
+        createTestCategoryMutation,
+        updateTestCategoryMutation,
         deleteTestSpecMutation,
+        createTestSpecMutation,
+        updateTestSpecMutation,
         deleteTestMutation,
         handleDelete
     }

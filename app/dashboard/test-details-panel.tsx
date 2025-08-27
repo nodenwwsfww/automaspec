@@ -84,9 +84,6 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                         <div className="flex items-center gap-2">
                             <Badge variant="outline">{selectedTest.framework}</Badge>
                             {getStatusBadge(selectedTest.status ?? 'pending')}
-                            <span className="text-muted-foreground text-sm">
-                                Status: <span className="capitalize">{selectedTest.status}</span>
-                            </span>
                         </div>
                     </div>
                 </div>

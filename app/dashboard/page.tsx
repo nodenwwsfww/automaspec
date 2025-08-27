@@ -25,7 +25,13 @@ export default function Dashboard() {
     const { categories, specs, requirements, tests, loading } = useDashboardData()
 
     // Use custom hooks for mutations
-    const { handleDelete } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
+    const {
+        handleDelete,
+        createTestCategoryMutation,
+        updateTestCategoryMutation,
+        createTestSpecMutation,
+        updateTestSpecMutation
+    } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
 
     const handleTestSelect = (node: TreeNode) => {
         if (node.type === 'spec') {
@@ -95,9 +101,48 @@ export default function Dashboard() {
     }
 
     const handleSaveGroup = async (item: any) => {
-        // Refresh queries after save
-        queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-        queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
+        if (item.type === 'group') {
+            if (editingGroup) {
+                // Update existing category
+                await updateTestCategoryMutation.mutateAsync({
+                    id: editingGroup.id,
+                    name: item.name,
+                    title: item.title,
+                    description: item.description
+                })
+            } else {
+                // Create new category
+                await createTestCategoryMutation.mutateAsync({
+                    name: item.name,
+                    title: item.title,
+                    description: item.description,
+                    parentCategoryId: parentGroup?.id || null,
+                    order: 0
+                })
+            }
+        } else if (item.type === 'spec') {
+            if (editingGroup) {
+                // Update existing spec
+                await updateTestSpecMutation.mutateAsync({
+                    id: editingGroup.id,
+                    name: item.name,
+                    title: item.title,
+                    description: item.description,
+                    status: item.status,
+                    testCategoryId: editingGroup.testCategoryId
+                })
+            } else {
+                // Create new spec
+                await createTestSpecMutation.mutateAsync({
+                    name: item.name,
+                    title: item.title,
+                    description: item.description,
+                    status: item.status,
+                    testCategoryId: parentGroup?.id || categories[0]?.id
+                })
+            }
+        }
+
         setEditingGroup(null)
         setParentGroup(null)
     }
@@ -158,7 +203,6 @@ export default function Dashboard() {
                 onOpenChange={setGroupEditorOpen}
                 onSave={handleSaveGroup}
                 open={groupEditorOpen}
-                parentGroup={parentGroup}
             />
 
             <TestEditorModal

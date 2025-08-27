@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, AlertTriangle, FileText, MoreHorizontal, Edit, Folder, Trash2 } from 'lucide-react'
 import { TreeNode } from '@/lib/types'
-import { getStatusColor } from './utils'
+import { getStatusColor, getStatusBadge } from './utils'
 
 interface TreeNodeProps {
     node: TreeNode
@@ -70,6 +70,10 @@ export function TreeNodeComponent({
                     <IconComponent className="h-4 w-4 text-muted-foreground" />
 
                     <span className={cn('flex-1 text-sm', isLeaf && 'font-medium')}>{node.name}</span>
+
+                    {node.type === 'spec' && node.status && (
+                        <div className="flex-shrink-0">{getStatusBadge(node.status)}</div>
+                    )}
 
                     {hasFailures && (
                         <div className="flex items-center gap-1">

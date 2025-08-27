@@ -19,8 +19,9 @@ export type TestCategory = {
 export type TestSpec = {
     id: string
     name: string
-    title?: string | null
-    description?: string | null
+    title: string | null
+    description: string | null
+    status: TestStatus
     testCategoryId: string
     createdAt: Date
     updatedAt: Date

@@ -25,7 +25,7 @@ export const testSpec = sqliteTable('test_spec', {
     name: text().notNull(),
     title: text(),
     description: text(),
-    status: text().$type<TestStatus>().default('skipped'),
+    status: text().$type<TestStatus>().default('skipped').notNull(),
     testCategoryId: text()
         .notNull()
         .references(() => testCategory.id, { onDelete: 'cascade' }),
@@ -59,7 +59,7 @@ export const testRequirementInsertSchema = createInsertSchema(testRequirement)
 
 export const test = sqliteTable('test', {
     id: text().primaryKey(),
-    status: text().$type<TestStatus>().default('skipped'),
+    status: text().$type<TestStatus>().default('skipped').notNull(),
     framework: text().$type<TestFramework>().default('vitest'),
     code: text(),
     testRequirementId: text()

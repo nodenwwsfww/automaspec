@@ -21,6 +21,7 @@ CREATE TABLE IF NOT EXISTS test_spec (
     name TEXT NOT NULL,
     title TEXT,
     description TEXT,
+    status TEXT DEFAULT 'skipped',
     test_category_id TEXT NOT NULL,
     created_at INTEGER NOT NULL,
     updated_at INTEGER NOT NULL,
@@ -63,15 +64,15 @@ INSERT INTO test_category (id, name, title, description, parent_category_id, 'or
 ('cat-4', 'API Tests', 'API Tests', 'Backend API testing', NULL, 4, strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000);
 
 -- Insert test specs (файлики) - конкретные тестовые файлы
-INSERT INTO test_spec (id, name, title, description, test_category_id, created_at, updated_at) VALUES 
-('spec-1', 'add-to-cart.spec.ts', 'Add to Cart Tests', 'Tests for adding items to cart', 'cat-1', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-2', 'cart-persistence.spec.ts', 'Cart Persistence Tests', 'Tests for cart data persistence', 'cat-1', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-3', 'payment-methods.spec.ts', 'Payment Method Tests', 'Tests for payment method selection', 'cat-2', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-4', 'payment-processing.spec.ts', 'Payment Processing Tests', 'Tests for payment processing flow', 'cat-2', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-5', 'login.spec.ts', 'Login Tests', 'User login functionality tests', 'cat-3', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-6', 'registration.spec.ts', 'Registration Tests', 'User registration tests', 'cat-3', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-7', 'users-api.spec.ts', 'Users API Tests', 'API tests for user management', 'cat-4', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
-('spec-8', 'products-api.spec.ts', 'Products API Tests', 'API tests for product management', 'cat-4', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000);
+INSERT INTO test_spec (id, name, title, description, status, test_category_id, created_at, updated_at) VALUES 
+('spec-1', 'add-to-cart.spec.ts', 'Add to Cart Tests', 'Tests for adding items to cart', 'skipped', 'cat-1', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-2', 'cart-persistence.spec.ts', 'Cart Persistence Tests', 'Tests for cart data persistence', 'passed', 'cat-1', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-3', 'payment-methods.spec.ts', 'Payment Method Tests', 'Tests for payment method selection', 'failed', 'cat-2', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-4', 'payment-processing.spec.ts', 'Payment Processing Tests', 'Tests for payment processing flow', 'pending', 'cat-2', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-5', 'login.spec.ts', 'Login Tests', 'User login functionality tests', 'passed', 'cat-3', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-6', 'registration.spec.ts', 'Registration Tests', 'User registration tests', 'failed', 'cat-3', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-7', 'users-api.spec.ts', 'Users API Tests', 'API tests for user management', 'passed', 'cat-4', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000),
+('spec-8', 'products-api.spec.ts', 'Products API Tests', 'API tests for product management', 'skipped', 'cat-4', strftime('%s', 'now') * 1000, strftime('%s', 'now') * 1000);
 
 -- Insert test requirements for add-to-cart.spec.ts
 INSERT INTO test_requirement (id, text, description, 'order', test_spec_id, created_at, updated_at) VALUES 

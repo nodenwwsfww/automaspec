@@ -8,10 +8,19 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
+import { TestStatus } from '@/lib/types'
 
 const groupTypes = [
     { value: 'group', label: 'Group', icon: Folder, description: 'Container for organizing tests' },
+    { value: 'spec', label: 'Spec', icon: FileText, description: 'Test specification' },
     { value: 'test', label: 'Test', icon: FileText, description: 'Individual test case' }
+]
+
+const statusOptions: { value: TestStatus; label: string; description: string }[] = [
+    { value: 'passed', label: 'Passed', description: 'All tests passed successfully' },
+    { value: 'failed', label: 'Failed', description: 'Some tests failed' },
+    { value: 'skipped', label: 'Skipped', description: 'Tests were skipped' },
+    { value: 'pending', label: 'Pending', description: 'Tests are waiting to run' }
 ]
 
 interface GroupEditorModalProps {
@@ -19,14 +28,14 @@ interface GroupEditorModalProps {
     onOpenChange: (open: boolean) => void
     group?: any
     onSave: (group: any) => void
-    parentGroup?: any
 }
 
-export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGroup }: GroupEditorModalProps) {
+export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEditorModalProps) {
     const [formData, setFormData] = useState({
         name: '',
         type: 'group',
-        description: ''
+        description: '',
+        status: 'pending' as TestStatus
     })
 
     const isEditing = !!group && !group.type // If group.type is passed, it's for creating new item
@@ -38,13 +47,15 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGrou
             setFormData({
                 name: group.name || '',
                 type: group.type || 'group',
-                description: group.description || ''
+                description: group.description || '',
+                status: group.status || 'pending'
             })
         } else {
             setFormData({
                 name: '',
                 type: presetType || 'group',
-                description: ''
+                description: '',
+                status: 'pending'
             })
         }
     }, [group, presetType, open])
@@ -57,11 +68,11 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGrou
             name: formData.name,
             type: formData.type,
             description: formData.description,
+            status: formData.status,
             framework: 'Vitest',
             icon: selectedType?.icon,
             passed: group?.passed || 0,
             total: group?.total || 0,
-            status: group?.status || 'pending',
             children: group?.children || []
         }
 
@@ -149,6 +160,35 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave, parentGrou
                             value={formData.description}
                         />
                     </div>
+
+                    {/* Status - only show for specs */}
+                    {formData.type === 'spec' && (
+                        <div>
+                            <Label htmlFor="status" className="mb-1 block">
+                                Status
+                            </Label>
+                            <Select
+                                onValueChange={(value) => setFormData({ ...formData, status: value as TestStatus })}
+                                value={formData.status}
+                            >
+                                <SelectTrigger>
+                                    <SelectValue />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    {statusOptions.map((status) => (
+                                        <SelectItem key={status.value} value={status.value}>
+                                            <div>
+                                                <div className="font-medium">{status.label}</div>
+                                                <div className="text-xs text-muted-foreground">
+                                                    {status.description}
+                                                </div>
+                                            </div>
+                                        </SelectItem>
+                                    ))}
+                                </SelectContent>
+                            </Select>
+                        </div>
+                    )}
 
                     {/* Actions */}
                     <div className="flex justify-end gap-2 pt-4">

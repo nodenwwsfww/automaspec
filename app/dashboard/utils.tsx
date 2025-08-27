@@ -6,10 +6,12 @@ function getStatusColor(status: TestStatus) {
     switch (status) {
         case 'passed':
             return 'text-green-600'
-        case 'warning':
-            return 'text-yellow-600'
         case 'failed':
             return 'text-red-600'
+        case 'skipped':
+            return 'text-gray-600'
+        case 'pending':
+            return 'text-yellow-600'
         default:
             return 'text-gray-600'
     }
@@ -18,11 +20,13 @@ function getStatusColor(status: TestStatus) {
 function getStatusBadge(status: TestStatus) {
     switch (status) {
         case 'passed':
-            return <Badge className="border-green-200 bg-green-100 text-green-800">Healthy</Badge>
-        case 'warning':
-            return <Badge className="border-yellow-200 bg-yellow-100 text-yellow-800">Warning</Badge>
+            return <Badge className="border-green-200 bg-green-100 text-green-800">Passed</Badge>
         case 'failed':
             return <Badge className="border-red-200 bg-red-100 text-red-800">Failed</Badge>
+        case 'skipped':
+            return <Badge className="border-gray-200 bg-gray-100 text-gray-800">Skipped</Badge>
+        case 'pending':
+            return <Badge className="border-yellow-200 bg-yellow-100 text-yellow-800">Pending</Badge>
         default:
             return <Badge variant="secondary">Unknown</Badge>
     }
