@@ -6,8 +6,14 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { CheckCircle, XCircle, Clock, Edit, FileText, Trash2, Check, Copy, Plus, Folder } from 'lucide-react'
-import { Test } from '@/lib/types'
+import { Test, TestRequirement } from '@/lib/types'
 import { getStatusBadge, getRequirementStatusIcon, getRequirementStatusColor } from './utils'
+import { TEST_STATUSES, getStatusConfig } from '@/lib/constants'
+
+interface RequirementWithTest extends TestRequirement {
+    test?: Test
+    status?: string
+}
 
 interface TestDetailsPanelProps {
     selectedTest: Test | null
@@ -113,39 +119,25 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                             {(selectedTest.requirements || []).length > 0 && (
                                 <div className="mb-4 rounded-lg bg-muted/30 p-3">
                                     <div className="flex items-center gap-4 text-sm">
-                                        <div className="flex items-center gap-1">
-                                            <CheckCircle className="h-4 w-4 text-green-600" />
-                                            <span className="font-medium">
-                                                {
-                                                    (selectedTest.requirements || []).filter(
-                                                        (req: any) => req.status === 'passed'
-                                                    ).length
-                                                }{' '}
-                                                Passed
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <XCircle className="h-4 w-4 text-red-600" />
-                                            <span className="font-medium">
-                                                {
-                                                    (selectedTest.requirements || []).filter(
-                                                        (req: any) => req.status === 'failed'
-                                                    ).length
-                                                }{' '}
-                                                Failed
-                                            </span>
-                                        </div>
-                                        <div className="flex items-center gap-1">
-                                            <Clock className="h-4 w-4 text-yellow-600" />
-                                            <span className="font-medium">
-                                                {
-                                                    (selectedTest.requirements || []).filter(
-                                                        (req: any) => req.status === 'pending'
-                                                    ).length
-                                                }{' '}
-                                                Pending
-                                            </span>
-                                        </div>
+                                        {TEST_STATUSES.map((status) => {
+                                            const count = (selectedTest.requirements || []).filter(
+                                                (req: RequirementWithTest) => req.status === status
+                                            ).length
+
+                                            if (count === 0) return null
+
+                                            const statusConfig = getStatusConfig(status)
+                                            const IconComponent = statusConfig.icon
+
+                                            return (
+                                                <div key={status} className="flex items-center gap-1">
+                                                    <IconComponent className={`h-4 w-4 ${statusConfig.color}`} />
+                                                    <span className="font-medium">
+                                                        {count} {statusConfig.label}
+                                                    </span>
+                                                </div>
+                                            )
+                                        })}
                                     </div>
                                 </div>
                             )}
@@ -153,44 +145,48 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                             {editingRequirements ?
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        {(selectedTest.requirements || []).map((req: any, index: number) => (
-                                            <div
-                                                key={req.id || index}
-                                                className="flex items-center gap-2 rounded-lg border p-3"
-                                            >
-                                                <input
-                                                    className="flex-1 bg-transparent outline-none"
-                                                    onChange={(e) => {
-                                                        const updatedReqs = [...(selectedTest.requirements || [])]
-                                                        updatedReqs[index] = {
-                                                            ...req,
-                                                            text: e.target.value
-                                                        }
-                                                        selectedTest.requirements = updatedReqs
-                                                        setRequirementsContent(
-                                                            updatedReqs.map((r: any) => r.text).join('\n')
-                                                        )
-                                                    }}
-                                                    placeholder="Enter requirement..."
-                                                    value={req.text || ''}
-                                                />
-                                                <Button
-                                                    onClick={() => {
-                                                        const updatedReqs = (selectedTest.requirements || []).filter(
-                                                            (_: any, i: number) => i !== index
-                                                        )
-                                                        selectedTest.requirements = updatedReqs
-                                                        setRequirementsContent(
-                                                            updatedReqs.map((r: any) => r.text).join('\n')
-                                                        )
-                                                    }}
-                                                    size="sm"
-                                                    variant="ghost"
+                                        {(selectedTest.requirements || []).map(
+                                            (req: RequirementWithTest, index: number) => (
+                                                <div
+                                                    key={req.id || index}
+                                                    className="flex items-center gap-2 rounded-lg border p-3"
                                                 >
-                                                    <Trash2 className="h-4 w-4" />
-                                                </Button>
-                                            </div>
-                                        ))}
+                                                    <input
+                                                        className="flex-1 bg-transparent outline-none"
+                                                        onChange={(e) => {
+                                                            const updatedReqs = [...(selectedTest.requirements || [])]
+                                                            updatedReqs[index] = {
+                                                                ...req,
+                                                                text: e.target.value
+                                                            }
+                                                            selectedTest.requirements = updatedReqs
+                                                            setRequirementsContent(
+                                                                updatedReqs
+                                                                    .map((r: RequirementWithTest) => r.text)
+                                                                    .join('\n')
+                                                            )
+                                                        }}
+                                                        placeholder="Enter requirement..."
+                                                        value={req.text || ''}
+                                                    />
+                                                    <Button
+                                                        onClick={() => {
+                                                            const updatedReqs = (
+                                                                selectedTest.requirements || []
+                                                            ).filter((_: any, i: number) => i !== index)
+                                                            selectedTest.requirements = updatedReqs
+                                                            setRequirementsContent(
+                                                                updatedReqs.map((r: any) => r.text).join('\n')
+                                                            )
+                                                        }}
+                                                        size="sm"
+                                                        variant="ghost"
+                                                    >
+                                                        <Trash2 className="h-4 w-4" />
+                                                    </Button>
+                                                </div>
+                                            )
+                                        )}
                                         <Button
                                             onClick={() => {
                                                 const newReq = {

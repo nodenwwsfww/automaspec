@@ -1,9 +1,10 @@
 import type { TestStatus, TestFramework, TreeNode } from '@/lib/types'
+import { TEST_STATUSES } from '@/lib/constants'
 import { expect, test, describe } from 'vitest'
 
 describe('Types', () => {
     test('TestStatus type has correct values', () => {
-        const validStatuses: TestStatus[] = ['pending', 'passed', 'failed', 'skipped', 'todo']
+        const validStatuses: TestStatus[] = TEST_STATUSES
 
         // Test that each status is a valid string
         validStatuses.forEach((status) => {
