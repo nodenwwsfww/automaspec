@@ -1,7 +1,7 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
-import { TestFramework, TestStatus } from '@/lib/types'
+import { TestFramework, TestStatus, SpecStatus } from '@/lib/types'
 
 export const testCategory = sqliteTable('test_category', {
     id: text().primaryKey(),
@@ -25,7 +25,7 @@ export const testSpec = sqliteTable('test_spec', {
     name: text().notNull(),
     title: text(),
     description: text(),
-    status: text().$type<TestStatus>().default('todo').notNull(),
+    status: text().$type<SpecStatus>().default('default').notNull(),
     testCategoryId: text()
         .notNull()
         .references(() => testCategory.id, { onDelete: 'cascade' }),

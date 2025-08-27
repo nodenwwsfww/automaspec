@@ -2,6 +2,8 @@ import type { JsonAssertionResult } from 'vitest/reporters'
 
 export type TestStatus = JsonAssertionResult['status']
 
+export type SpecStatus = 'skipped' | 'todo' | 'default'
+
 export type TestFramework = 'vitest'
 
 // Inferred types from database schema
@@ -21,7 +23,7 @@ export type TestSpec = {
     name: string
     title: string | null
     description: string | null
-    status: TestStatus
+    status: SpecStatus
     testCategoryId: string
     createdAt: Date
     updatedAt: Date
@@ -59,7 +61,7 @@ export interface TreeNode {
     children?: TreeNode[]
     passed?: number
     total?: number
-    status?: TestStatus
+    status?: TestStatus | SpecStatus
     icon?: React.ElementType
     spec?: TestSpec
     category?: TestCategory

@@ -1,8 +1,8 @@
-import { TestStatus } from '@/lib/types'
+import { TestStatus, SpecStatus } from '@/lib/types'
 import { Badge } from '@/components/ui/badge'
 import { CheckCircle, XCircle, MinusCircle, Clock } from 'lucide-react'
 
-function getStatusColor(status: TestStatus) {
+function getStatusColor(status: TestStatus | SpecStatus) {
     switch (status) {
         case 'passed':
             return 'text-emerald-600'
@@ -14,12 +14,14 @@ function getStatusColor(status: TestStatus) {
             return 'text-orange-600'
         case 'pending':
             return 'text-amber-600'
+        case 'default':
+            return 'text-gray-600'
         default:
             return 'text-gray-600'
     }
 }
 
-function getStatusBadge(status: TestStatus) {
+function getStatusBadge(status: TestStatus | SpecStatus) {
     switch (status) {
         case 'passed':
             return <Badge className="border-emerald-200 bg-emerald-100 text-emerald-800">Passed</Badge>
@@ -31,6 +33,8 @@ function getStatusBadge(status: TestStatus) {
             return <Badge className="border-orange-200 bg-orange-100 text-orange-800">Todo</Badge>
         case 'pending':
             return <Badge className="border-amber-200 bg-amber-100 text-amber-800">Pending</Badge>
+        case 'default':
+            return <Badge variant="secondary">Default</Badge>
         default:
             return <Badge variant="secondary">Unknown</Badge>
     }

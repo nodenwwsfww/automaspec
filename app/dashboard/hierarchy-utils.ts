@@ -1,4 +1,4 @@
-import { TreeNode, TestStatus } from '@/lib/types'
+import { TreeNode, TestStatus, SpecStatus } from '@/lib/types'
 import { FileText, Folder } from 'lucide-react'
 
 export function buildHierarchy(
@@ -62,7 +62,7 @@ export function buildHierarchy(
                     children: [], // No children - requirements shown in right panel
                     passed: passed,
                     total: total,
-                    status: ((spec as { status?: string }).status as TestStatus) || 'todo',
+                    status: ((spec as { status?: string }).status as SpecStatus) || 'default',
                     spec: spec as any
                 }
             })
