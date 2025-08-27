@@ -1,0 +1,4 @@
+---
+alwaysApply: true
+---
+Before runnning any scripts always look if they are already implemented in package.json

@@ -1,9 +1,0 @@
-# Cursor Rules for Automaspec Project
-
-## Linting and Code Quality
-
-### ESLint Usage
-- **NEVER** run `npx eslint` directly
-- **ALWAYS** use `pnpm run lint` instead
-- The project uses `next lint` which is configured in package.json
-- This ensures consistent linting configuration across the project

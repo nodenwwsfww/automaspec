@@ -4,7 +4,6 @@ import { testsRouter } from './tests'
 
 const os = implement(contract)
 
-// TODO: lazy loading
 export const router = os.router({
     ...testsRouter
 })

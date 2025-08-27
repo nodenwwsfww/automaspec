@@ -74,8 +74,13 @@ const createTestSpec = os.testSpecs.create.handler(async ({ input }) => {
         id: crypto.randomUUID(),
         ...input
     }
-
-    const result = await db.insert(testSpec).values(newSpec).returning()
+    const result = await db
+        .insert(testSpec)
+        .values({
+            ...newSpec,
+            status: newSpec.status as TestStatus
+        })
+        .returning()
     return result[0]
 })
 
@@ -83,7 +88,7 @@ const updateTestSpec = os.testSpecs.update.handler(async ({ input }) => {
     const { id, ...updates } = input
     const result = await db
         .update(testSpec)
-        .set({ ...updates })
+        .set({ ...updates, status: updates.status as TestStatus })
         .where(eq(testSpec.id, id))
         .returning()
 
