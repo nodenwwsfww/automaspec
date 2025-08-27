@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react'
 import { Badge } from '@/components/ui/badge'
 import { expect, test, describe } from 'vitest'
-import { vi } from 'vitest'
+import Link from 'next/link'
 
 describe('Badge', () => {
     test('renders with default props', () => {
@@ -36,7 +36,7 @@ describe('Badge', () => {
     test('renders with asChild prop', () => {
         render(
             <Badge asChild>
-                <a href="/test">Link Badge</a>
+                <Link href="/dashboard">Link Badge</Link>
             </Badge>
         )
         const link = screen.getByRole('link', { name: 'Link Badge' })

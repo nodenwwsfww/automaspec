@@ -151,7 +151,7 @@ export default function Dashboard() {
         setParentGroup(null)
     }
 
-    const handleSaveTest = (test: any) => {
+    const handleSaveTest = (_test: any) => {
         queryClient.invalidateQueries({ queryKey: ['tests'] })
         setEditingTest(null)
     }

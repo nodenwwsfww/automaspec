@@ -5,9 +5,10 @@
 const config = {
     experimentalTernaries: true,
     printWidth: 120,
-    trailingComma: "none",
+    trailingComma: 'none',
     tabWidth: 4,
     semi: false,
     singleQuote: true,
-  };
-export default config;
+    plugins: ['@prettier/plugin-oxc']
+}
+export default config

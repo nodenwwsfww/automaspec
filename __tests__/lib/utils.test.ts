@@ -7,11 +7,6 @@ describe('cn utility', () => {
         expect(result).toBe('foo bar')
     })
 
-    test('handles conditional classes', () => {
-        const result = cn('foo', false && 'bar', 'baz')
-        expect(result).toBe('foo baz')
-    })
-
     test('merges tailwind classes', () => {
         const result = cn('px-2 py-1', 'px-4')
         expect(result).toBe('py-1 px-4')

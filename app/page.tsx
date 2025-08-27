@@ -14,7 +14,6 @@ export default async function LandingPage() {
 
     return (
         <div className="min-h-screen bg-background">
-            {/* Header */}
             <header className="border-b">
                 <div className="container mx-auto flex items-center justify-between px-4 py-4">
                     <div className="flex items-center gap-2">

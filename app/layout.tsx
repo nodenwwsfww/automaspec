@@ -1,7 +1,5 @@
 import type { Metadata } from 'next'
 import './globals.css'
-// import { ReactPlugin } from '@21st-extension/react';
-// import { TwentyFirstToolbar } from '@21st-extension/toolbar-next';
 import '../lib/orpc.server' // for pre-rendering
 import { Providers } from './providers'
 
@@ -18,12 +16,13 @@ export default function RootLayout({
     return (
         <html lang="en" suppressHydrationWarning>
             <head>
-                <script crossOrigin="anonymous" src="//unpkg.com/react-scan/dist/auto.global.js" />
+                {process.env.NODE_ENV === 'development' && (
+                    <script crossOrigin="anonymous" async src="//unpkg.com/react-scan/dist/auto.global.js" />
+                )}
             </head>
             <body>
                 <Providers>{children}</Providers>
             </body>
-            {/* <TwentyFirstToolbar config={{ plugins: [ReactPlugin] }} /> */}
         </html>
     )
 }
