@@ -62,11 +62,7 @@ export function buildHierarchy(
                     children: [], // No children - requirements shown in right panel
                     passed: passed,
                     total: total,
-                    status:
-                        ((spec as { status?: string }).status as TestStatus) ||
-                        ((passed === total && total > 0 ? 'passed'
-                        : passed > 0 ? 'todo'
-                        : 'failed') as TestStatus),
+                    status: ((spec as { status?: string }).status as TestStatus) || 'todo',
                     spec: spec as any
                 }
             })
@@ -84,7 +80,7 @@ export function buildHierarchy(
             passed: categoryStats.passed,
             total: categoryStats.total,
             status: (categoryStats.passed === categoryStats.total ? 'passed'
-            : categoryStats.passed > 0 ? 'todo'
+            : categoryStats.passed > 0 ? 'pending'
             : 'failed') as TestStatus,
             category: category as any
         }

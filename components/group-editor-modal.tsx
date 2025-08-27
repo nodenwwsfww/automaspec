@@ -19,6 +19,7 @@ const groupTypes = [
 const statusOptions: { value: TestStatus; label: string; description: string }[] = [
     { value: 'passed', label: 'Passed', description: 'All tests passed successfully' },
     { value: 'failed', label: 'Failed', description: 'Some tests failed' },
+    { value: 'skipped', label: 'Skipped', description: 'Tests were skipped' },
     { value: 'todo', label: 'Todo', description: 'Tests are marked as todo' },
     { value: 'pending', label: 'Pending', description: 'Tests are waiting to run' }
 ]

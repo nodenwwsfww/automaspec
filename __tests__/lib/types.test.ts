@@ -3,7 +3,7 @@ import { expect, test, describe } from 'vitest'
 
 describe('Types', () => {
     test('TestStatus type has correct values', () => {
-        const validStatuses: TestStatus[] = ['pending', 'passed', 'failed', 'todo']
+        const validStatuses: TestStatus[] = ['pending', 'passed', 'failed', 'skipped', 'todo']
 
         // Test that each status is a valid string
         validStatuses.forEach((status) => {
