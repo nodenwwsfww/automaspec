@@ -71,7 +71,7 @@ export function TreeNodeComponent({
                         <div className="flex-shrink-0">{getStatusBadge(node.status)}</div>
                     )}
 
-                    {node.total && (
+                    {node.total && node.type !== 'category' && (
                         <div className="flex items-center gap-2 text-xs">
                             <span className={cn('font-medium', getStatusColor(node.status ?? 'pending'))}>
                                 {node.passed ?? 0} / {node.total}
