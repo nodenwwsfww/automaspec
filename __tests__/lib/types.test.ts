@@ -3,7 +3,7 @@ import { expect, test, describe } from 'vitest'
 
 describe('Types', () => {
     test('TestStatus type has correct values', () => {
-        const validStatuses: TestStatus[] = ['pending', 'passed', 'failed', 'warning', 'skipped']
+        const validStatuses: TestStatus[] = ['pending', 'passed', 'failed', 'todo']
 
         // Test that each status is a valid string
         validStatuses.forEach((status) => {
@@ -14,7 +14,7 @@ describe('Types', () => {
 
     test('TestFramework type has correct values', () => {
         const framework: TestFramework = 'vitest'
-        expect(framework).toBe('Vitest')
+        expect(framework).toBe('vitest')
     })
 
     test('TreeNode interface has required properties', () => {
