@@ -99,7 +99,40 @@ export type CreateTestSpecInput = Omit<TestSpec, 'id' | 'createdAt' | 'updatedAt
 export type CreateTestInput = Omit<Test, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestRequirementInput = Omit<TestRequirement, 'id' | 'createdAt' | 'updatedAt'>
 
+// Organization types
+export type Organization = {
+    id: string
+    name: string
+    slug?: string | null
+    logo?: string | null
+    createdAt: Date
+    metadata?: string | null
+}
+
+export type Member = {
+    id: string
+    organizationId: string
+    userId: string
+    role: string
+    createdAt: Date
+}
+
+export type Invitation = {
+    id: string
+    organizationId: string
+    email: string
+    role?: string | null
+    status: string
+    expiresAt: Date
+    inviterId: string
+}
+
 // Update input types
 export type UpdateTestCategoryInput = { id: string } & Partial<CreateTestCategoryInput>
 export type UpdateTestSpecInput = { id: string } & Partial<CreateTestSpecInput>
 export type UpdateTestInput = { id: string } & Partial<CreateTestInput>
+
+// Organization input types
+export type CreateOrganizationInput = Omit<Organization, 'id' | 'createdAt'>
+export type CreateMemberInput = Omit<Member, 'id' | 'createdAt'>
+export type CreateInvitationInput = Omit<Invitation, 'id'>
