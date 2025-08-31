@@ -152,6 +152,7 @@ export default function Dashboard() {
     // }
 
     // Build hierarchical structure from flat data for display
+    // @ts-ignore FIXME
     const allTests = buildHierarchy(categories, specs, requirements, tests)
 
     if (loading) {

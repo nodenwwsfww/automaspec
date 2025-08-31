@@ -1,13 +1,20 @@
-import { TreeNode, TestStatus, SpecStatus } from '@/lib/types'
+import {
+    TreeNode,
+    TestStatus,
+    SpecStatus,
+    TestCategory,
+    type TestSpec,
+    type TestRequirement,
+    type Test
+} from '@/lib/types'
 import { FileText, Folder } from 'lucide-react'
 
 export function buildHierarchy(
-    categories: unknown[],
-    specs: unknown[],
-    requirements: unknown[],
-    tests: unknown[]
+    categories: TestCategory[],
+    specs: TestSpec[],
+    requirements: TestRequirement[],
+    tests: Test[]
 ): TreeNode[] {
-    // Helper function to calculate test stats
     const calculateStats = (children: TreeNode[]) => {
         let passed = 0
         let total = 0
