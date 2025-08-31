@@ -10,14 +10,15 @@ import { useState } from 'react'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
+import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useRouter } from 'next/navigation'
 import { FieldInfo } from '@/lib/shared/tanstack-form'
 
 const SignInSchema = z.object({
     email: z.email('Invalid email address'),
-    password: z.string().min(8, 'Password must be at least 8 characters')
+    password: z.string().min(8, 'Password must be at least 8 characters'),
+    remember: z.boolean()
 })
 
 const SocialAuthButtons = () => (
@@ -49,13 +50,13 @@ interface AuthFormProps {
 }
 
 export default function SignInForm({ onToggle }: AuthFormProps) {
-    const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm({
         defaultValues: {
             email: '',
-            password: ''
+            password: '',
+            remember: true
         },
         validators: {
             onSubmit: SignInSchema
@@ -64,7 +65,9 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
             await authClient.signIn.email(
                 {
                     email: value.email,
-                    password: value.password
+                    password: value.password,
+                    rememberMe: value.remember,
+                    callbackURL: '/dashboard'
                 },
                 {
                     onSuccess: async () => {
@@ -72,7 +75,7 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
 
                         const { data: organizations } = await authClient.organization.list()
                         const hasOrganizations = organizations && organizations.length > 0
-                        router.push(hasOrganizations ? '/dashboard' : '/create-organization')
+                        window.location.href = hasOrganizations ? '/dashboard' : '/create-organization'
                     },
                     onError: (ctx) => {
                         toast.error(ctx.error.message)
@@ -156,12 +159,20 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
                     </div>
 
                     <div className="flex items-center justify-between">
-                        <div className="flex items-center space-x-2">
-                            <input className="rounded" id="remember" type="checkbox" />
-                            <Label className="text-sm" htmlFor="remember">
-                                Remember me
-                            </Label>
-                        </div>
+                        <form.Field name="remember">
+                            {(field) => (
+                                <div className="flex items-center space-x-2">
+                                    <Checkbox
+                                        id={field.name}
+                                        checked={field.state.value}
+                                        onCheckedChange={(checked) => field.handleChange(!!checked)}
+                                    />
+                                    <Label className="text-primary text-sm" htmlFor={field.name}>
+                                        Remember me
+                                    </Label>
+                                </div>
+                            )}
+                        </form.Field>
                         <Link className="text-primary text-sm hover:underline" href="#">
                             Forgot password?
                         </Link>
