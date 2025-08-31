@@ -4,6 +4,7 @@ import { onError } from '@orpc/server'
 import { router } from '@/orpc/routes'
 import { ZodToJsonSchemaConverter } from '@orpc/zod/zod4'
 import { experimental_SmartCoercionPlugin as SmartCoercionPlugin } from '@orpc/json-schema'
+import { auth } from '@/lib/shared/better-auth'
 
 const handler = new OpenAPIHandler(router, {
     plugins: [
@@ -18,9 +19,13 @@ const handler = new OpenAPIHandler(router, {
 })
 
 async function handleRequest(request: Request) {
+    const session = await auth.api.getSession({
+        headers: request.headers
+    })
+
     const { response } = await handler.handle(request, {
         prefix: '/rpc',
-        context: {} // Provide initial context if needed
+        context: { session }
     })
 
     return response ?? new Response('Not found', { status: 404 })
