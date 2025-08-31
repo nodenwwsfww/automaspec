@@ -2,54 +2,112 @@ import { implement } from '@orpc/server'
 import { testsContract } from '@/orpc/contracts/tests'
 import { db } from '@/db'
 import { testCategory, testSpec, testRequirement, test } from '@/db/schema'
-import { eq } from 'drizzle-orm'
+import { eq, and } from 'drizzle-orm'
 import { TestStatus, TestFramework, SpecStatus } from '@/lib/types'
 import { authMiddleware } from '@/orpc/middleware'
 
 const os = implement(testsContract).use(authMiddleware)
 
-const listTestCategories = os.testCategories.list.handler(async () => {
-    return await db.select().from(testCategory)
+const listTestCategories = os.testCategories.list.handler(async ({ context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
+    return await db.select().from(testCategory).where(eq(testCategory.organizationId, organizationId))
 })
 
-const createTestCategory = os.testCategories.create.handler(async ({ input }) => {
+const createTestCategory = os.testCategories.create.handler(async ({ input, context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
     const newCategory = {
         id: crypto.randomUUID(),
-        ...input
+        ...input,
+        organizationId
     }
 
     const result = await db.insert(testCategory).values(newCategory).returning()
     return result[0]
 })
 
-const updateTestCategory = os.testCategories.update.handler(async ({ input }) => {
+const updateTestCategory = os.testCategories.update.handler(async ({ input, context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
     const { id, ...updates } = input
     const result = await db
         .update(testCategory)
         .set({ ...updates })
-        .where(eq(testCategory.id, id))
+        .where(and(eq(testCategory.id, id), eq(testCategory.organizationId, organizationId)))
         .returning()
 
     return result[0]
 })
 
-const deleteTestCategory = os.testCategories.delete.handler(async ({ input }) => {
-    const deletedCategory = await db.delete(testCategory).where(eq(testCategory.id, input.id)).returning({
-        id: testCategory.id
-    })
+const deleteTestCategory = os.testCategories.delete.handler(async ({ input, context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
 
-    if (!deletedCategory) {
+    const deletedCategory = await db
+        .delete(testCategory)
+        .where(and(eq(testCategory.id, input.id), eq(testCategory.organizationId, organizationId)))
+        .returning({
+            id: testCategory.id
+        })
+
+    if (!deletedCategory || deletedCategory.length === 0) {
         return { success: false }
     }
 
     return { success: true }
 })
 
-const listTestSpecs = os.testSpecs.list.handler(async () => {
-    return await db.select().from(testSpec)
+const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
+    return await db
+        .select({
+            id: testSpec.id,
+            name: testSpec.name,
+            title: testSpec.title,
+            description: testSpec.description,
+            status: testSpec.status,
+            testCategoryId: testSpec.testCategoryId,
+            createdAt: testSpec.createdAt,
+            updatedAt: testSpec.updatedAt
+        })
+        .from(testSpec)
+        .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
+        .where(eq(testCategory.organizationId, organizationId))
 })
 
-const createTestSpec = os.testSpecs.create.handler(async ({ input }) => {
+const createTestSpec = os.testSpecs.create.handler(async ({ input, context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
+    // Verify the category belongs to the current organization
+    const category = await db
+        .select({ id: testCategory.id })
+        .from(testCategory)
+        .where(and(eq(testCategory.id, input.testCategoryId), eq(testCategory.organizationId, organizationId)))
+        .limit(1)
+
+    if (!category || category.length === 0) {
+        throw new Error('Category not found or access denied')
+    }
+
     const newSpec = {
         id: crypto.randomUUID(),
         ...input
@@ -64,7 +122,12 @@ const createTestSpec = os.testSpecs.create.handler(async ({ input }) => {
     return result[0]
 })
 
-const updateTestSpec = os.testSpecs.update.handler(async ({ input }) => {
+const updateTestSpec = os.testSpecs.update.handler(async ({ input, context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
     const { id, ...updates } = input
     const result = await db
         .update(testSpec)
@@ -72,10 +135,41 @@ const updateTestSpec = os.testSpecs.update.handler(async ({ input }) => {
         .where(eq(testSpec.id, id))
         .returning()
 
+    // Verify the spec belongs to the organization (after update, check via JOIN)
+    if (result.length > 0) {
+        const verification = await db
+            .select({ id: testSpec.id })
+            .from(testSpec)
+            .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
+            .where(and(eq(testSpec.id, id), eq(testCategory.organizationId, organizationId)))
+            .limit(1)
+
+        if (!verification || verification.length === 0) {
+            throw new Error('Access denied')
+        }
+    }
+
     return result[0]
 })
 
-const deleteTestSpec = os.testSpecs.delete.handler(async ({ input }) => {
+const deleteTestSpec = os.testSpecs.delete.handler(async ({ input, context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
+    // Verify the spec belongs to the organization before deletion
+    const verification = await db
+        .select({ id: testSpec.id })
+        .from(testSpec)
+        .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
+        .where(and(eq(testSpec.id, input.id), eq(testCategory.organizationId, organizationId)))
+        .limit(1)
+
+    if (!verification || verification.length === 0) {
+        throw new Error('Spec not found or access denied')
+    }
+
     // TODO: This is unnecessary, because specs are cascade deleted on category deletion
     // Get all requirements in this spec
     const requirementsInSpec = await db
@@ -97,8 +191,27 @@ const deleteTestSpec = os.testSpecs.delete.handler(async ({ input }) => {
 })
 
 // oxlint-disable-next-line no-unused-vars
-const listTests = os.tests.list.handler(async ({ input }) => {
-    return await db.select().from(test)
+const listTests = os.tests.list.handler(async ({ context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
+    return await db
+        .select({
+            id: test.id,
+            status: test.status,
+            framework: test.framework,
+            code: test.code,
+            testRequirementId: test.testRequirementId,
+            createdAt: test.createdAt,
+            updatedAt: test.updatedAt
+        })
+        .from(test)
+        .innerJoin(testRequirement, eq(test.testRequirementId, testRequirement.id))
+        .innerJoin(testSpec, eq(testRequirement.testSpecId, testSpec.id))
+        .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
+        .where(eq(testCategory.organizationId, organizationId))
 })
 
 const createTest = os.tests.create.handler(async ({ input }) => {
@@ -134,8 +247,26 @@ const deleteTest = os.tests.delete.handler(async ({ input }) => {
 })
 
 // oxlint-disable-next-line no-unused-vars
-const listTestRequirements = os.testRequirements.list.handler(async ({ input }) => {
-    return await db.select().from(testRequirement)
+const listTestRequirements = os.testRequirements.list.handler(async ({ context }) => {
+    const organizationId = context.session.session.activeOrganizationId
+    if (!organizationId) {
+        throw new Error('No active organization')
+    }
+
+    return await db
+        .select({
+            id: testRequirement.id,
+            text: testRequirement.text,
+            description: testRequirement.description,
+            order: testRequirement.order,
+            testSpecId: testRequirement.testSpecId,
+            createdAt: testRequirement.createdAt,
+            updatedAt: testRequirement.updatedAt
+        })
+        .from(testRequirement)
+        .innerJoin(testSpec, eq(testRequirement.testSpecId, testSpec.id))
+        .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
+        .where(eq(testCategory.organizationId, organizationId))
 })
 
 const createTestRequirement = os.testRequirements.create.handler(async ({ input }) => {
