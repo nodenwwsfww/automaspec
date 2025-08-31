@@ -1,13 +1,9 @@
 'use client'
 
-import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQuery } from '@tanstack/react-query'
 import { orpc } from '@/lib/orpc'
-import { Test } from '@/lib/types'
 
 export function useDashboardData() {
-    const queryClient = useQueryClient()
-
-    // Fetch data using TanStack Query and ORPC
     const { data: categories = [], isLoading: categoriesLoading } = useQuery(
         orpc.testCategories.list.queryOptions({
             input: {}
@@ -39,97 +35,96 @@ export function useDashboardData() {
         specs,
         requirements,
         tests,
-        loading,
-        queryClient
+        loading
     }
 }
 
-export function useDashboardMutations(
-    queryClient: any,
-    selectedTest: Test | null,
-    setSelectedTest: (test: Test | null) => void
-) {
-    // Mutations for CRUD operations
-    const deleteTestCategoryMutation = useMutation(
-        orpc.testCategories.delete.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-                queryClient.invalidateQueries({ queryKey: ['tests'] })
-            }
-        })
-    )
+// export function useDashboardMutations(
+//     queryClient: any,
+//     selectedTest: Test | null,
+//     setSelectedTest: (test: Test | null) => void
+// ) {
+//     // Mutations for CRUD operations
+//     const deleteTestCategoryMutation = useMutation(
+//         orpc.testCategories.delete.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
+//                 queryClient.invalidateQueries({ queryKey: ['tests'] })
+//             }
+//         })
+//     )
 
-    const createTestCategoryMutation = useMutation(
-        orpc.testCategories.create.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-            }
-        })
-    )
+//     const createTestCategoryMutation = useMutation(
+//         orpc.testCategories.create.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+//             }
+//         })
+//     )
 
-    const updateTestCategoryMutation = useMutation(
-        orpc.testCategories.update.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testCategories'] })
-            }
-        })
-    )
+//     const updateTestCategoryMutation = useMutation(
+//         orpc.testCategories.update.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+//             }
+//         })
+//     )
 
-    const deleteTestSpecMutation = useMutation(
-        orpc.testSpecs.delete.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-                queryClient.invalidateQueries({ queryKey: ['tests'] })
-            }
-        })
-    )
+//     const deleteTestSpecMutation = useMutation(
+//         orpc.testSpecs.delete.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
+//                 queryClient.invalidateQueries({ queryKey: ['tests'] })
+//             }
+//         })
+//     )
 
-    const createTestSpecMutation = useMutation(
-        orpc.testSpecs.create.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-            }
-        })
-    )
+//     const createTestSpecMutation = useMutation(
+//         orpc.testSpecs.create.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
+//             }
+//         })
+//     )
 
-    const updateTestSpecMutation = useMutation(
-        orpc.testSpecs.update.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-            }
-        })
-    )
+//     const updateTestSpecMutation = useMutation(
+//         orpc.testSpecs.update.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
+//             }
+//         })
+//     )
 
-    const deleteTestMutation = useMutation(
-        orpc.tests.delete.mutationOptions({
-            onSuccess: () => {
-                queryClient.invalidateQueries({ queryKey: ['tests'] })
-                if (selectedTest && deleteTestMutation.variables?.id === selectedTest.id) {
-                    setSelectedTest(null)
-                }
-            }
-        })
-    )
+//     const deleteTestMutation = useMutation(
+//         orpc.tests.delete.mutationOptions({
+//             onSuccess: () => {
+//                 queryClient.invalidateQueries({ queryKey: ['tests'] })
+//                 if (selectedTest && deleteTestMutation.variables?.id === selectedTest.id) {
+//                     setSelectedTest(null)
+//                 }
+//             }
+//         })
+//     )
 
-    const handleDelete = async (node: any) => {
-        if (node.type === 'category') {
-            deleteTestCategoryMutation.mutate({ id: node.id })
-        } else if (node.type === 'spec') {
-            deleteTestSpecMutation.mutate({ id: node.id })
-        } else if (node.type === 'test') {
-            deleteTestMutation.mutate({ id: node.id })
-        }
-    }
+//     const handleDelete = async (node: any) => {
+//         if (node.type === 'category') {
+//             deleteTestCategoryMutation.mutate({ id: node.id })
+//         } else if (node.type === 'spec') {
+//             deleteTestSpecMutation.mutate({ id: node.id })
+//         } else if (node.type === 'test') {
+//             deleteTestMutation.mutate({ id: node.id })
+//         }
+//     }
 
-    return {
-        deleteTestCategoryMutation,
-        createTestCategoryMutation,
-        updateTestCategoryMutation,
-        deleteTestSpecMutation,
-        createTestSpecMutation,
-        updateTestSpecMutation,
-        deleteTestMutation,
-        handleDelete
-    }
-}
+//     return {
+//         deleteTestCategoryMutation,
+//         createTestCategoryMutation,
+//         updateTestCategoryMutation,
+//         deleteTestSpecMutation,
+//         createTestSpecMutation,
+//         updateTestSpecMutation,
+//         deleteTestMutation,
+//         handleDelete
+//     }
+// }

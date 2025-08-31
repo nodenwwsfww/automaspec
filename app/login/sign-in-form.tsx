@@ -14,6 +14,7 @@ import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { FieldInfo } from '@/lib/shared/tanstack-form'
+import { useRouter } from 'next/navigation'
 
 const SignInSchema = z.object({
     email: z.email('Invalid email address'),
@@ -51,6 +52,7 @@ interface AuthFormProps {
 
 export default function SignInForm({ onToggle }: AuthFormProps) {
     const [showPassword, setShowPassword] = useState(false)
+    const router = useRouter()
 
     const form = useForm({
         defaultValues: {
@@ -75,7 +77,7 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
 
                         const { data: organizations } = await authClient.organization.list()
                         const hasOrganizations = organizations && organizations.length > 0
-                        window.location.href = hasOrganizations ? '/dashboard' : '/create-organization'
+                        router.push(hasOrganizations ? '/dashboard' : '/create-organization')
                     },
                     onError: (ctx) => {
                         toast.error(ctx.error.message)

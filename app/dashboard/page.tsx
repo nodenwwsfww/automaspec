@@ -1,36 +1,32 @@
 'use client'
 
 import { useState } from 'react'
-import { useQueryClient } from '@tanstack/react-query'
 import { Loader2 } from 'lucide-react'
-import { Test, TestSpec, TreeNode } from '@/lib/types'
-import { GroupEditorModal } from '@/components/group-editor-modal'
-import { TestEditorModal } from '@/components/test-editor-modal'
+import { Test, TreeNode } from '@/lib/types'
+
 import { DashboardHeader } from './header'
 import { TreeNodeComponent } from './tree-node'
 import { TestDetailsPanel } from './test-details-panel'
-import { useDashboardData, useDashboardMutations } from './hooks'
+import { useDashboardData } from './hooks'
 import { buildHierarchy } from './hierarchy-utils'
 
 export default function Dashboard() {
-    const queryClient = useQueryClient()
-
     const [selectedTest, setSelectedTest] = useState<Test | null>(null)
-    const [groupEditorOpen, setGroupEditorOpen] = useState(false)
-    const [testEditorOpen, setTestEditorOpen] = useState(false)
-    const [editingGroup, setEditingGroup] = useState<TestSpec | null>(null)
-    const [editingTest, setEditingTest] = useState<Test | null>(null)
-    const [parentGroup, setParentGroup] = useState<TestSpec | null>(null)
+    // const [,setGroupEditorOpen] = useState(false)
+    // const [,setTestEditorOpen] = useState(false)
+    // const [,setEditingGroup] = useState<TestSpec | null>(null)
+    // const [,setEditingTest] = useState<Test | null>(null)
+    // const [,setParentGroup] = useState<TestSpec | null>(null)
 
     const { categories, specs, requirements, tests, loading } = useDashboardData()
 
-    const {
-        handleDelete,
-        createTestCategoryMutation,
-        updateTestCategoryMutation,
-        createTestSpecMutation,
-        updateTestSpecMutation
-    } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
+    // const {
+    //     handleDelete,
+    //     createTestCategoryMutation,
+    //     updateTestCategoryMutation,
+    //     createTestSpecMutation,
+    //     updateTestSpecMutation
+    // } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
 
     const handleTestSelect = (node: TreeNode) => {
         if (node.type === 'spec') {
@@ -74,86 +70,86 @@ export default function Dashboard() {
         }
     }
 
-    const handleCreateGroup = () => {
-        setEditingGroup(null)
-        setParentGroup(null)
-        setGroupEditorOpen(true)
-    }
+    // const handleCreateGroup = () => {
+    //     setEditingGroup(null)
+    //     setParentGroup(null)
+    //     setGroupEditorOpen(true)
+    // }
 
-    const handleCreateTest = () => {
-        setEditingGroup(null)
-        setParentGroup(null)
-        setGroupEditorOpen(true)
-    }
+    // const handleCreateTest = () => {
+    //     setEditingGroup(null)
+    //     setParentGroup(null)
+    //     setGroupEditorOpen(true)
+    // }
 
-    const handleEditGroup = (group: any) => {
-        setEditingGroup(group.group || group.category)
-        setParentGroup(null)
-        setGroupEditorOpen(true)
-    }
+    // const handleEditGroup = (group: any) => {
+    //     setEditingGroup(group.group || group.category)
+    //     setParentGroup(null)
+    //     setGroupEditorOpen(true)
+    // }
 
-    const handleAddChild = (parentNode: any) => {
-        setEditingGroup(null)
-        setParentGroup(parentNode.group || parentNode.category)
-        setGroupEditorOpen(true)
-    }
+    // const handleAddChild = (parentNode: any) => {
+    //     setEditingGroup(null)
+    //     setParentGroup(parentNode.group || parentNode.category)
+    //     setGroupEditorOpen(true)
+    // }
 
-    const handleEditTest = (test: any) => {
-        setEditingTest(test.test || test)
-        setTestEditorOpen(true)
-    }
+    // const handleEditTest = (test: any) => {
+    //     setEditingTest(test.test || test)
+    //     setTestEditorOpen(true)
+    // }
 
-    const handleSaveGroup = async (item: any) => {
-        if (item.type === 'group') {
-            if (editingGroup) {
-                // Update existing category
-                await updateTestCategoryMutation.mutateAsync({
-                    id: editingGroup.id,
-                    name: item.name,
-                    title: item.title,
-                    description: item.description
-                })
-            } else {
-                // Create new category
-                await createTestCategoryMutation.mutateAsync({
-                    name: item.name,
-                    title: item.title,
-                    description: item.description,
-                    parentCategoryId: parentGroup?.id || null,
-                    order: 0
-                })
-            }
-        } else if (item.type === 'spec') {
-            if (editingGroup) {
-                // Update existing spec
-                await updateTestSpecMutation.mutateAsync({
-                    id: editingGroup.id,
-                    name: item.name,
-                    title: item.title,
-                    description: item.description,
-                    status: item.status,
-                    testCategoryId: editingGroup.testCategoryId
-                })
-            } else {
-                // Create new spec
-                await createTestSpecMutation.mutateAsync({
-                    name: item.name,
-                    title: item.title,
-                    description: item.description,
-                    status: item.status,
-                    testCategoryId: parentGroup?.id || categories[0]?.id
-                })
-            }
-        }
+    // const handleSaveGroup = async (item: any) => {
+    //     if (item.type === 'group') {
+    //         if (editingGroup) {
+    //             // Update existing category
+    //             await updateTestCategoryMutation.mutateAsync({
+    //                 id: editingGroup.id,
+    //                 name: item.name,
+    //                 title: item.title,
+    //                 description: item.description
+    //             })
+    //         } else {
+    //             // Create new category
+    //             await createTestCategoryMutation.mutateAsync({
+    //                 name: item.name,
+    //                 title: item.title,
+    //                 description: item.description,
+    //                 parentCategoryId: parentGroup?.id || null,
+    //                 order: 0
+    //             })
+    //         }
+    //     } else if (item.type === 'spec') {
+    //         if (editingGroup) {
+    //             // Update existing spec
+    //             await updateTestSpecMutation.mutateAsync({
+    //                 id: editingGroup.id,
+    //                 name: item.name,
+    //                 title: item.title,
+    //                 description: item.description,
+    //                 status: item.status,
+    //                 testCategoryId: editingGroup.testCategoryId
+    //             })
+    //         } else {
+    //             // Create new spec
+    //             await createTestSpecMutation.mutateAsync({
+    //                 name: item.name,
+    //                 title: item.title,
+    //                 description: item.description,
+    //                 status: item.status,
+    //                 testCategoryId: parentGroup?.id || categories[0]?.id
+    //             })
+    //         }
+    //     }
 
-        setEditingGroup(null)
-        setParentGroup(null)
-    }
+    //     setEditingGroup(null)
+    //     setParentGroup(null)
+    // }
 
-    const handleSaveTest = (_test: any) => {
-        queryClient.invalidateQueries({ queryKey: ['tests'] })
-        setEditingTest(null)
-    }
+    // const handleSaveTest = (_test: any) => {
+    //     queryClient.invalidateQueries({ queryKey: ['tests'] })
+    //     setEditingTest(null)
+    // }
 
     // Build hierarchical structure from flat data for display
     const allTests = buildHierarchy(categories, specs, requirements, tests)
@@ -172,16 +168,16 @@ export default function Dashboard() {
     return (
         <div className="flex h-screen bg-background">
             <div className="flex w-1/2 flex-col border-r">
-                <DashboardHeader onCreateGroup={handleCreateGroup} onCreateTest={handleCreateTest} />
+                <DashboardHeader onCreateGroup={() => {}} onCreateTest={() => {}} />
 
                 <div className="flex-1 overflow-auto p-2">
                     {allTests.map((node: TreeNode) => (
                         <TreeNodeComponent
                             key={node.id}
                             node={node}
-                            onAddChild={handleAddChild}
-                            onDelete={handleDelete}
-                            onEdit={handleEditGroup}
+                            onAddChild={() => {}}
+                            onDelete={() => {}}
+                            onEdit={() => {}}
                             onSelect={handleTestSelect}
                             selectedId={selectedTest?.id || null}
                         />
@@ -192,13 +188,13 @@ export default function Dashboard() {
             <div className="flex w-1/2 flex-col">
                 <TestDetailsPanel
                     selectedTest={selectedTest}
-                    onEditTest={handleEditTest}
-                    onCreateGroup={handleCreateGroup}
-                    onCreateTest={handleCreateTest}
+                    onEditTest={() => {}}
+                    onCreateGroup={() => {}}
+                    onCreateTest={() => {}}
                 />
             </div>
 
-            <GroupEditorModal
+            {/* <GroupEditorModal
                 group={editingGroup}
                 onOpenChange={setGroupEditorOpen}
                 onSave={handleSaveGroup}
@@ -210,7 +206,7 @@ export default function Dashboard() {
                 onSave={handleSaveTest}
                 open={testEditorOpen}
                 test={editingTest}
-            />
+            /> */}
         </div>
     )
 }
