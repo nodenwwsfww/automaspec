@@ -6,7 +6,7 @@ import { Loader2 } from 'lucide-react'
 import { Test, TestSpec, TreeNode } from '@/lib/types'
 import { GroupEditorModal } from '@/components/group-editor-modal'
 import { TestEditorModal } from '@/components/test-editor-modal'
-import { DashboardHeader } from './dashboard-header'
+import { DashboardHeader } from './header'
 import { TreeNodeComponent } from './tree-node'
 import { TestDetailsPanel } from './test-details-panel'
 import { useDashboardData, useDashboardMutations } from './hooks'
@@ -14,6 +14,7 @@ import { buildHierarchy } from './hierarchy-utils'
 
 export default function Dashboard() {
     const queryClient = useQueryClient()
+
     const [selectedTest, setSelectedTest] = useState<Test | null>(null)
     const [groupEditorOpen, setGroupEditorOpen] = useState(false)
     const [testEditorOpen, setTestEditorOpen] = useState(false)
@@ -21,10 +22,8 @@ export default function Dashboard() {
     const [editingTest, setEditingTest] = useState<Test | null>(null)
     const [parentGroup, setParentGroup] = useState<TestSpec | null>(null)
 
-    // Use custom hooks for data fetching
     const { categories, specs, requirements, tests, loading } = useDashboardData()
 
-    // Use custom hooks for mutations
     const {
         handleDelete,
         createTestCategoryMutation,
@@ -172,7 +171,6 @@ export default function Dashboard() {
 
     return (
         <div className="flex h-screen bg-background">
-            {/* Left Panel - Tree Structure */}
             <div className="flex w-1/2 flex-col border-r">
                 <DashboardHeader onCreateGroup={handleCreateGroup} onCreateTest={handleCreateTest} />
 
@@ -191,7 +189,6 @@ export default function Dashboard() {
                 </div>
             </div>
 
-            {/* Right Panel - Test Details */}
             <div className="flex w-1/2 flex-col">
                 <TestDetailsPanel
                     selectedTest={selectedTest}
@@ -201,7 +198,6 @@ export default function Dashboard() {
                 />
             </div>
 
-            {/* Modals */}
             <GroupEditorModal
                 group={editingGroup}
                 onOpenChange={setGroupEditorOpen}

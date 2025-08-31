@@ -14,13 +14,7 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeaderProps) {
     const onSignOut = async () => {
-        await authClient.signOut({
-            // fetchOptions: {
-            //     onSuccess: () => {
-            //         router.push('/login')
-            //     }
-            // }
-        })
+        await authClient.signOut()
     }
 
     return (
