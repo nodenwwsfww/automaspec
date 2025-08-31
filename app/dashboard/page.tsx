@@ -160,7 +160,7 @@ export default function Dashboard() {
             <div className="flex h-screen items-center justify-center bg-background">
                 <div className="flex items-center gap-2">
                     <Loader2 className="h-6 w-6 animate-spin" />
-                    <span>Loading test data...</span>
+                    <span>Loading...</span>
                 </div>
             </div>
         )
