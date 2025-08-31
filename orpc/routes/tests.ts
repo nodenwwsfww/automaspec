@@ -34,40 +34,18 @@ const updateTestCategory = os.testCategories.update.handler(async ({ input }) =>
 })
 
 const deleteTestCategory = os.testCategories.delete.handler(async ({ input }) => {
-    // TODO: I guess this is unnecessary, because specs are cascade deleted on category deletion
-    // First get all specs in this category
-    const specsInCategory = await db
-        .select({ id: testSpec.id })
-        .from(testSpec)
-        .where(eq(testSpec.testCategoryId, input.id))
+    const deletedCategory = await db.delete(testCategory).where(eq(testCategory.id, input.id)).returning({
+        id: testCategory.id
+    })
 
-    // For each spec, delete all related data
-    for (const spec of specsInCategory) {
-        // Get all requirements in this spec
-        const requirementsInSpec = await db
-            .select({ id: testRequirement.id })
-            .from(testRequirement)
-            .where(eq(testRequirement.testSpecId, spec.id))
-
-        // Delete all tests for each requirement
-        for (const requirement of requirementsInSpec) {
-            await db.delete(test).where(eq(test.testRequirementId, requirement.id))
-        }
-
-        // Delete all requirements in this spec
-        await db.delete(testRequirement).where(eq(testRequirement.testSpecId, spec.id))
+    if (!deletedCategory) {
+        return { success: false }
     }
 
-    // Delete all specs in this category
-    await db.delete(testSpec).where(eq(testSpec.testCategoryId, input.id))
-
-    // Finally delete the category
-    await db.delete(testCategory).where(eq(testCategory.id, input.id))
     return { success: true }
 })
 
-// oxlint-disable-next-line no-unused-vars
-const listTestSpecs = os.testSpecs.list.handler(async ({ input }) => {
+const listTestSpecs = os.testSpecs.list.handler(async () => {
     return await db.select().from(testSpec)
 })
 
