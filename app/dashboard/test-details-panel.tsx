@@ -7,7 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Edit, FileText, Trash2, Check, Copy, Plus, Folder } from 'lucide-react'
 import { Test, TestRequirement } from '@/lib/types'
-import { getStatusBadge, getRequirementStatusIcon, getRequirementStatusColor } from './utils'
+import { statusEnum, requirementEnum } from './utils'
 import { TEST_STATUSES, getStatusConfig } from '@/lib/constants'
 
 interface RequirementWithTest extends TestRequirement {
@@ -91,7 +91,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                             <Badge variant="outline">{selectedTest.framework}</Badge>
                             {selectedTest.status &&
                                 (selectedTest.status as string) !== 'default' &&
-                                getStatusBadge(selectedTest.status)}
+                                statusEnum(selectedTest.status).badge}
                         </div>
                     </div>
                 </div>
@@ -219,26 +219,24 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                     </div>
                                 </div>
                             :   <div className="space-y-2">
-                                    {(selectedTest.requirements || []).map((req: any, index: number) => (
-                                        <div
-                                            className={cn(
-                                                'flex items-start gap-3 rounded-lg border p-3',
-                                                getRequirementStatusColor(req.status || 'pending')
-                                            )}
-                                            key={req.id || index}
-                                        >
-                                            <div className="mt-0.5">
-                                                {getRequirementStatusIcon(req.status || 'pending')}
-                                            </div>
-                                            <div className="flex-1">
-                                                <span className="font-medium text-sm">{req.text || req}</span>
-                                                <div className="mt-1 text-muted-foreground text-xs">
-                                                    Status:{' '}
-                                                    <span className="capitalize">{req.status || 'pending'}</span>
+                                    {(selectedTest.requirements || []).map((req: any, index: number) => {
+                                        const { badge, color } = requirementEnum(req.status || 'pending')
+                                        return (
+                                            <div
+                                                className={cn('flex items-start gap-3 rounded-lg border p-3', color)}
+                                                key={req.id || index}
+                                            >
+                                                <div className="mt-0.5">{badge}</div>
+                                                <div className="flex-1">
+                                                    <span className="font-medium text-sm">{req.text || req}</span>
+                                                    <div className="mt-1 text-muted-foreground text-xs">
+                                                        Status:{' '}
+                                                        <span className="capitalize">{req.status || 'pending'}</span>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                    ))}
+                                        )
+                                    })}
                                     {(selectedTest.requirements || []).length === 0 && (
                                         <div className="text-muted-foreground text-sm">No requirements defined</div>
                                     )}
