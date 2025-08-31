@@ -2,6 +2,7 @@
 import type { JsonAssertionResult } from 'vitest/reporters'
 import type { InferSelectModel, InferInsertModel } from 'drizzle-orm'
 import * as schema from '@/db/schema'
+import type { authClient } from './shared/better-auth'
 
 export type TestStatus = JsonAssertionResult['status']
 export type SpecStatus = 'skipped' | 'todo' | 'default'
@@ -68,8 +69,9 @@ export type CreateTestRequirementInput = Omit<TestRequirement, 'id' | 'createdAt
 export type Organization = InferSelectModel<typeof schema.organization>
 export type Member = InferSelectModel<typeof schema.member>
 export type Invitation = InferSelectModel<typeof schema.invitation>
-export type User = InferSelectModel<typeof schema.user>
-export type Session = InferSelectModel<typeof schema.session>
+// Session has user and session
+export type Session = typeof authClient.$Infer.Session
+export type User = Session['user']
 
 // Update input types
 export type UpdateTestCategoryInput = { id: string } & Partial<CreateTestCategoryInput>

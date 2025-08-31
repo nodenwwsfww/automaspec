@@ -4,8 +4,9 @@ import { db } from '@/db'
 import { testCategory, testSpec, testRequirement, test } from '@/db/schema'
 import { eq } from 'drizzle-orm'
 import { TestStatus, TestFramework, SpecStatus } from '@/lib/types'
+import { authMiddleware } from '@/orpc/middleware'
 
-const os = implement(testsContract)
+const os = implement(testsContract).use(authMiddleware)
 
 const listTestCategories = os.testCategories.list.handler(async () => {
     return await db.select().from(testCategory)
@@ -65,6 +66,7 @@ const deleteTestCategory = os.testCategories.delete.handler(async ({ input }) =>
     return { success: true }
 })
 
+// oxlint-disable-next-line no-unused-vars
 const listTestSpecs = os.testSpecs.list.handler(async ({ input }) => {
     return await db.select().from(testSpec)
 })
@@ -116,6 +118,7 @@ const deleteTestSpec = os.testSpecs.delete.handler(async ({ input }) => {
     return { success: true }
 })
 
+// oxlint-disable-next-line no-unused-vars
 const listTests = os.tests.list.handler(async ({ input }) => {
     return await db.select().from(test)
 })
@@ -152,6 +155,7 @@ const deleteTest = os.tests.delete.handler(async ({ input }) => {
     return { success: true }
 })
 
+// oxlint-disable-next-line no-unused-vars
 const listTestRequirements = os.testRequirements.list.handler(async ({ input }) => {
     return await db.select().from(testRequirement)
 })
