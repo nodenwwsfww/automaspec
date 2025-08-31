@@ -3,8 +3,10 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
+import { authClient } from '@/lib/shared/better-auth'
 import { Folder, Plus, User, Settings, LogOut } from 'lucide-react'
 import Link from 'next/link'
+import { useRouter } from 'next/navigation'
 
 interface DashboardHeaderProps {
     onCreateGroup: () => void
@@ -12,6 +14,17 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeaderProps) {
+    
+    const onSignOut = async () => {
+        await authClient.signOut({
+            // fetchOptions: {
+            //     onSuccess: () => {
+            //         router.push('/login')
+            //     }
+            // }
+        })
+    }
+
     return (
         <div className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
@@ -49,7 +62,7 @@ export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeader
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/">
+                            <Link href="/login" onClick={onSignOut}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Logout
                             </Link>

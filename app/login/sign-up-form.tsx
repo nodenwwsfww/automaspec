@@ -11,7 +11,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
-import { useRouter } from 'next/navigation'
 import { FieldInfo } from '@/lib/shared/tanstack-form'
 
 const SignUpSchema = z.object({
@@ -49,7 +48,6 @@ interface AuthFormProps {
 }
 
 export default function SignUpForm({ onToggle }: AuthFormProps) {
-    const router = useRouter()
     const [showPassword, setShowPassword] = useState(false)
 
     const form = useForm({
@@ -66,12 +64,12 @@ export default function SignUpForm({ onToggle }: AuthFormProps) {
                 {
                     email: value.email,
                     password: value.password,
-                    name: value.name
+                    name: value.name,
+                    callbackURL: '/dashboard'
                 },
                 {
                     onSuccess: () => {
                         toast.success('Sign up successful')
-                        router.push('/dashboard')
                     },
                     onError: (ctx) => {
                         toast.error(ctx.error.message)
