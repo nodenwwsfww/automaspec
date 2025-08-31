@@ -6,7 +6,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { authClient } from '@/lib/shared/better-auth'
 import { Folder, Plus, User, Settings, LogOut } from 'lucide-react'
 import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 
 interface DashboardHeaderProps {
     onCreateGroup: () => void
@@ -14,7 +13,6 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeaderProps) {
-    
     const onSignOut = async () => {
         await authClient.signOut({
             // fetchOptions: {
