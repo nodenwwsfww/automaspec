@@ -6,7 +6,7 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Edit, FileText, Trash2, Check, Copy, Plus, Folder } from 'lucide-react'
-import { Test, TestRequirement } from '@/lib/types'
+import { Test, TestRequirement, type TestStatus } from '@/lib/types'
 import { statusEnum, requirementEnum } from './utils'
 import { TEST_STATUSES, getStatusConfig } from '@/lib/constants'
 
@@ -89,9 +89,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                         <p className="mb-2 text-muted-foreground text-sm">{selectedTest.description}</p>
                         <div className="flex items-center gap-2">
                             <Badge variant="outline">{selectedTest.framework}</Badge>
-                            {selectedTest.status &&
-                                (selectedTest.status as string) !== 'default' &&
-                                statusEnum(selectedTest.status).badge}
+                            {selectedTest.status && statusEnum(selectedTest.status as TestStatus)?.badge}
                         </div>
                     </div>
                 </div>
@@ -220,6 +218,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                 </div>
                             :   <div className="space-y-2">
                                     {(selectedTest.requirements || []).map((req: any, index: number) => {
+                                        // @ts-expect-error
                                         const { badge, color } = requirementEnum(req.status || 'pending')
                                         return (
                                             <div

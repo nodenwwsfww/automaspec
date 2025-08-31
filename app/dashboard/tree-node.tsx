@@ -67,15 +67,13 @@ export function TreeNodeComponent({
 
                     <span className={cn('flex-1 text-sm', isLeaf && 'font-medium')}>{node.name}</span>
 
-                    {node.type === 'spec' && node.status && node.status !== 'default' && (
-                        <div className="flex-shrink-0">{statusEnum(node.status).badge}</div>
+                    {node.type === 'spec' && node.status && (
+                        <div className="flex-shrink-0">{statusEnum(node.status)?.badge}</div>
                     )}
 
                     {node.total && node.type !== 'category' && (
                         <div className="flex items-center gap-2 text-xs">
-                            <span className={cn('font-medium', statusEnum(node.status ?? 'pending').color)}>
-                                {node.total}
-                            </span>
+                            <span className={cn('font-medium', statusEnum(node.status)?.color)}>{node.total}</span>
                         </div>
                     )}
                 </div>

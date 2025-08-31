@@ -1,34 +1,21 @@
 import { oc } from '@orpc/contract'
 import * as z from 'zod'
 import {
+    testCategorySelectSchema,
     testCategoryInsertSchema,
     testSpecInsertSchema,
-    testInsertSchema,
-    testRequirementInsertSchema
-} from '@/db/schema'
+    testRequirementInsertSchema,
+    testInsertSchema
+} from '@/lib/types'
 
-// Test Categories contracts
 const listTestCategoriesContract = oc
     .route({ method: 'GET', path: '/test-categories' })
-    .input(z.object({ parentId: z.string().optional() }))
-    .output(z.array(testCategoryInsertSchema))
+    .input(testCategoryInsertSchema.pick({ parentCategoryId: true }))
+    .output(z.array(testCategorySelectSchema))
 
-const createTestCategoryContract = oc
-    .route({ method: 'POST', path: '/test-categories' })
-    .input(testCategoryInsertSchema.omit({ id: true, createdAt: true, updatedAt: true, organizationId: true }))
-    .output(testCategoryInsertSchema)
-
-const updateTestCategoryContract = oc
-    .route({ method: 'PUT', path: '/test-categories/{id}' })
-    .input(
-        testCategoryInsertSchema
-            .pick({ id: true })
-            .and(
-                testCategoryInsertSchema
-                    .omit({ id: true, createdAt: true, updatedAt: true, organizationId: true })
-                    .partial()
-            )
-    )
+const upsertTestCategoryContract = oc
+    .route({ method: 'POST', path: '/test-categories/{id}' })
+    .input(testCategoryInsertSchema.omit({ createdAt: true, updatedAt: true }).partial({ id: true }))
     .output(testCategoryInsertSchema)
 
 const deleteTestCategoryContract = oc
@@ -36,24 +23,14 @@ const deleteTestCategoryContract = oc
     .input(testCategoryInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
-// Test Specs contracts
 const listTestSpecsContract = oc
     .route({ method: 'GET', path: '/test-specs' })
-    .input(z.object({ testCategoriesId: z.string().optional() }))
+    .input(testSpecInsertSchema.pick({ testCategoryId: true }))
     .output(z.array(testSpecInsertSchema))
 
-const createTestSpecContract = oc
-    .route({ method: 'POST', path: '/test-specs' })
-    .input(testSpecInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-    .output(testSpecInsertSchema)
-
-const updateTestSpecContract = oc
+const upsertTestSpecContract = oc
     .route({ method: 'PUT', path: '/test-specs/{id}' })
-    .input(
-        testSpecInsertSchema
-            .pick({ id: true })
-            .and(testSpecInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
-    )
+    .input(testSpecInsertSchema.omit({ createdAt: true, updatedAt: true }))
     .output(testSpecInsertSchema)
 
 const deleteTestSpecContract = oc
@@ -61,24 +38,14 @@ const deleteTestSpecContract = oc
     .input(testSpecInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
-// Test Requirements contracts
 const listTestRequirementsContract = oc
     .route({ method: 'GET', path: '/test-requirements' })
-    .input(z.object({ testGroupId: z.string().optional() }))
+    .input(testRequirementInsertSchema.pick({ testSpecId: true }))
     .output(z.array(testRequirementInsertSchema))
 
-const createTestRequirementContract = oc
-    .route({ method: 'POST', path: '/test-requirements' })
-    .input(testRequirementInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-    .output(testRequirementInsertSchema)
-
-const updateTestRequirementContract = oc
+const upsertTestRequirementContract = oc
     .route({ method: 'PUT', path: '/test-requirements/{id}' })
-    .input(
-        testRequirementInsertSchema
-            .pick({ id: true })
-            .and(testRequirementInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
-    )
+    .input(testRequirementInsertSchema.omit({ createdAt: true, updatedAt: true }))
     .output(testRequirementInsertSchema)
 
 const deleteTestRequirementContract = oc
@@ -86,24 +53,14 @@ const deleteTestRequirementContract = oc
     .input(testRequirementInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
-// Tests contracts
 const listTestsContract = oc
     .route({ method: 'GET', path: '/tests' })
-    .input(z.object({ testRequirementId: z.string().optional() }))
+    .input(testInsertSchema.pick({ testRequirementId: true }))
     .output(z.array(testInsertSchema))
 
-const createTestContract = oc
-    .route({ method: 'POST', path: '/tests' })
-    .input(testInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
-    .output(testInsertSchema)
-
-const updateTestContract = oc
+const upsertTestContract = oc
     .route({ method: 'PUT', path: '/tests/{id}' })
-    .input(
-        testInsertSchema
-            .pick({ id: true })
-            .and(testInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
-    )
+    .input(testInsertSchema.omit({ createdAt: true, updatedAt: true }))
     .output(testInsertSchema)
 
 const deleteTestContract = oc
@@ -114,26 +71,22 @@ const deleteTestContract = oc
 export const testsContract = {
     testCategories: {
         list: listTestCategoriesContract,
-        create: createTestCategoryContract,
-        update: updateTestCategoryContract,
+        upsert: upsertTestCategoryContract,
         delete: deleteTestCategoryContract
     },
     testSpecs: {
         list: listTestSpecsContract,
-        create: createTestSpecContract,
-        update: updateTestSpecContract,
+        upsert: upsertTestSpecContract,
         delete: deleteTestSpecContract
     },
     testRequirements: {
         list: listTestRequirementsContract,
-        create: createTestRequirementContract,
-        update: updateTestRequirementContract,
+        upsert: upsertTestRequirementContract,
         delete: deleteTestRequirementContract
     },
     tests: {
         list: listTestsContract,
-        create: createTestContract,
-        update: updateTestContract,
+        upsert: upsertTestContract,
         delete: deleteTestContract
     }
 }

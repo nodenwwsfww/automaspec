@@ -3,7 +3,7 @@ import { CheckCircle, XCircle, Clock } from 'lucide-react'
 
 export const TEST_STATUSES: TestStatus[] = ['passed', 'failed', 'pending', 'skipped', 'todo']
 
-export const SPEC_STATUSES: SpecStatus[] = ['skipped', 'todo', 'default']
+export const SPEC_STATUSES: SpecStatus[] = ['skipped', 'todo']
 
 export interface StatusConfig {
     icon: React.ElementType

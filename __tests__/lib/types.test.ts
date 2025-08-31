@@ -22,7 +22,8 @@ describe('Types', () => {
         const treeNode: TreeNode = {
             id: 'test-id',
             name: 'Test Node',
-            type: 'category'
+            type: 'category',
+            status: 'failed'
         }
 
         expect(treeNode).toHaveProperty('id')
@@ -34,9 +35,9 @@ describe('Types', () => {
     })
 
     test('TreeNode supports all types', () => {
-        const categoryNode: TreeNode = { id: '1', name: 'Category', type: 'category' }
-        const specNode: TreeNode = { id: '2', name: 'Spec', type: 'spec' }
-        const testNode: TreeNode = { id: '3', name: 'Test', type: 'test' }
+        const categoryNode: TreeNode = { id: '1', name: 'Category', type: 'category', status: 'failed' }
+        const specNode: TreeNode = { id: '2', name: 'Spec', type: 'spec', status: 'failed' }
+        const testNode: TreeNode = { id: '3', name: 'Test', type: 'test', status: 'failed' }
 
         expect(categoryNode.type).toBe('category')
         expect(specNode.type).toBe('spec')

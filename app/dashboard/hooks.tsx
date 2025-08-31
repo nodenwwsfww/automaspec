@@ -12,19 +12,19 @@ export function useDashboardData() {
 
     const { data: specs = [], isLoading: specsLoading } = useQuery(
         orpc.testSpecs.list.queryOptions({
-            input: {}
+            input: { testCategoryId: '' }
         })
     )
 
     const { data: requirements = [], isLoading: requirementsLoading } = useQuery(
         orpc.testRequirements.list.queryOptions({
-            input: {}
+            input: { testSpecId: '' }
         })
     )
 
     const { data: tests = [], isLoading: testsLoading } = useQuery(
         orpc.tests.list.queryOptions({
-            input: {}
+            input: { testRequirementId: '' }
         })
     )
 

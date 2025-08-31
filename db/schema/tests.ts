@@ -1,6 +1,5 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
-import { createInsertSchema } from 'drizzle-zod'
 import { TestFramework, TestStatus, SpecStatus } from '@/lib/types'
 import { organization } from './auth'
 
@@ -20,14 +19,13 @@ export const testCategory = sqliteTable('test_category', {
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
-export const testCategoryInsertSchema = createInsertSchema(testCategory)
 
 export const testSpec = sqliteTable('test_spec', {
     id: text().primaryKey(),
     name: text().notNull(),
     title: text(),
     description: text(),
-    status: text().$type<SpecStatus>().default('default').notNull(),
+    status: text().$type<SpecStatus>().default('todo').notNull(),
     testCategoryId: text()
         .notNull()
         .references(() => testCategory.id, { onDelete: 'cascade' }),
@@ -39,7 +37,6 @@ export const testSpec = sqliteTable('test_spec', {
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
-export const testSpecInsertSchema = createInsertSchema(testSpec)
 
 export const testRequirement = sqliteTable('test_requirement', {
     id: text().primaryKey(),
@@ -57,7 +54,6 @@ export const testRequirement = sqliteTable('test_requirement', {
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
-export const testRequirementInsertSchema = createInsertSchema(testRequirement)
 
 export const test = sqliteTable('test', {
     id: text().primaryKey(),
@@ -75,7 +71,6 @@ export const test = sqliteTable('test', {
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
-export const testInsertSchema = createInsertSchema(test)
 
 export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({
     parent: one(testCategory, {

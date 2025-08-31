@@ -69,7 +69,7 @@ export function buildHierarchy(
                     children: [], // No children - requirements shown in right panel
                     passed: passed,
                     total: total,
-                    status: ((spec as { status?: string }).status as SpecStatus) || 'default',
+                    status: (spec as { status?: string }).status as SpecStatus,
                     spec: spec as any
                 }
             })

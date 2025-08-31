@@ -29,16 +29,6 @@ function statusEnum(status: TestStatus | SpecStatus) {
                 badge: <Badge className="border-amber-200 bg-amber-100 text-amber-800">Pending</Badge>,
                 color: 'text-amber-600'
             }
-        case 'default':
-            return {
-                badge: <Badge variant="secondary">Default</Badge>,
-                color: 'text-gray-600'
-            }
-        default:
-            return {
-                badge: <Badge variant="secondary">Unknown</Badge>,
-                color: 'text-gray-600'
-            }
     }
 }
 
@@ -93,16 +83,6 @@ function requirementEnum(status: TestStatus) {
                     </Badge>
                 ),
                 color: 'text-amber-800 bg-amber-50'
-            }
-        default:
-            return {
-                badge: (
-                    <Badge className="text-gray-600 bg-gray-50">
-                        <MinusCircle className="h-4 w-4 mr-1" />
-                        Unknown
-                    </Badge>
-                ),
-                color: 'text-gray-600 bg-gray-50'
             }
     }
 }
