@@ -1,9 +1,12 @@
+
 import { OpenAPIHandler } from '@orpc/openapi/fetch'
 import { CORSPlugin } from '@orpc/server/plugins'
 import { onError } from '@orpc/server'
 import { router } from '@/orpc/routes'
 import { ZodToJsonSchemaConverter } from '@orpc/zod/zod4'
 import { experimental_SmartCoercionPlugin as SmartCoercionPlugin } from '@orpc/json-schema'
+import { createContext } from '@/lib/context'
+import { NextResponse } from 'next/server'
 
 const handler = new OpenAPIHandler(router, {
     plugins: [
@@ -18,9 +21,16 @@ const handler = new OpenAPIHandler(router, {
 })
 
 async function handleRequest(request: Request) {
+    const context = await createContext(request)
+    if (!context.session) {
+        // Redirect to login
+        return NextResponse.redirect(new URL('/login', request.url))
+    }
     const { response } = await handler.handle(request, {
         prefix: '/rpc',
-        context: {}
+        context: {
+            session: context.session
+        }
     })
 
     return response ?? new Response('Not found', { status: 404 })
