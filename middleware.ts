@@ -11,6 +11,17 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
+    // Skip organization check for create-organization and invitations pages
+    if (request.nextUrl.pathname === '/create-organization' || request.nextUrl.pathname === '/invitations') {
+        return NextResponse.next()
+    }
+
+    // For now, just redirect to create organization if no active organization
+    // The client-side logic will handle invitation checking
+    if (!session.session.activeOrganizationId) {
+        return NextResponse.redirect(new URL('/create-organization', request.url))
+    }
+
     return NextResponse.next()
 }
 

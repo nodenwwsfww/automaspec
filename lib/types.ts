@@ -1,53 +1,18 @@
 // https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/reporters/json.ts
 import type { JsonAssertionResult } from 'vitest/reporters'
+import type { InferSelectModel, InferInsertModel } from 'drizzle-orm'
+import * as schema from '@/db/schema'
 
 export type TestStatus = JsonAssertionResult['status']
-
 export type SpecStatus = 'skipped' | 'todo' | 'default'
-
 export type TestFramework = 'vitest'
+export type OrganizationPlan = 'free' | 'pro' | 'enterprise'
 
-// Inferred types from database schema
-export type TestCategory = {
-    id: string
-    name: string
-    title?: string | null
-    description?: string | null
-    parentCategoryId?: string | null
-    order: number
-    createdAt: Date
-    updatedAt: Date
-}
-
-export type TestSpec = {
-    id: string
-    name: string
-    title: string | null
-    description: string | null
-    status: SpecStatus
-    testCategoryId: string
-    createdAt: Date
-    updatedAt: Date
-}
-
-export type TestRequirement = {
-    id: string
-    text: string
-    description?: string | null
-    order: number
-    testSpecId: string
-    createdAt: Date
-    updatedAt: Date
-}
-
-export type Test = {
-    id: string
-    status?: TestStatus
-    framework?: TestFramework
-    code?: string | null
-    testRequirementId: string
-    createdAt: Date
-    updatedAt: Date
+// Use types directly from database schema
+export type TestCategory = InferSelectModel<typeof schema.testCategory>
+export type TestSpec = InferSelectModel<typeof schema.testSpec>
+export type TestRequirement = InferSelectModel<typeof schema.testRequirement>
+export type Test = InferSelectModel<typeof schema.test> & {
     // Extended properties for UI
     title?: string
     description?: string
@@ -100,40 +65,19 @@ export type CreateTestSpecInput = Omit<TestSpec, 'id' | 'createdAt' | 'updatedAt
 export type CreateTestInput = Omit<Test, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestRequirementInput = Omit<TestRequirement, 'id' | 'createdAt' | 'updatedAt'>
 
-// Organization types
-export type Organization = {
-    id: string
-    name: string
-    slug?: string | null
-    logo?: string | null
-    createdAt: Date
-    metadata?: string | null
-}
-
-export type Member = {
-    id: string
-    organizationId: string
-    userId: string
-    role: string
-    createdAt: Date
-}
-
-export type Invitation = {
-    id: string
-    organizationId: string
-    email: string
-    role?: string | null
-    status: string
-    expiresAt: Date
-    inviterId: string
-}
+// Use organization types directly from database schema
+export type Organization = InferSelectModel<typeof schema.organization>
+export type Member = InferSelectModel<typeof schema.member>
+export type Invitation = InferSelectModel<typeof schema.invitation>
+export type User = InferSelectModel<typeof schema.user>
+export type Session = InferSelectModel<typeof schema.session>
 
 // Update input types
 export type UpdateTestCategoryInput = { id: string } & Partial<CreateTestCategoryInput>
 export type UpdateTestSpecInput = { id: string } & Partial<CreateTestSpecInput>
 export type UpdateTestInput = { id: string } & Partial<CreateTestInput>
 
-// Organization input types
-export type CreateOrganizationInput = Omit<Organization, 'id' | 'createdAt'>
-export type CreateMemberInput = Omit<Member, 'id' | 'createdAt'>
-export type CreateInvitationInput = Omit<Invitation, 'id'>
+// Organization input types (using Drizzle's InferInsertModel)
+export type CreateOrganizationInput = InferInsertModel<typeof schema.organization>
+export type CreateMemberInput = InferInsertModel<typeof schema.member>
+export type CreateInvitationInput = InferInsertModel<typeof schema.invitation>

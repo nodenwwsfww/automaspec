@@ -3,8 +3,9 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Folder, Plus, User, Settings, LogOut } from 'lucide-react'
+import { Folder, Plus, User, Settings, LogOut, Building2 } from 'lucide-react'
 import Link from 'next/link'
+import { authClient } from '@/lib/shared/better-auth'
 
 interface DashboardHeaderProps {
     onCreateGroup: () => void
@@ -12,10 +13,15 @@ interface DashboardHeaderProps {
 }
 
 export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeaderProps) {
+    const { data: activeOrganization } = authClient.useActiveOrganization()
+
     return (
         <div className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
-                <h1 className="font-semibold text-lg">Test Structure</h1>
+                <div className="flex items-center gap-2">
+                    <Building2 className="h-5 w-5 text-muted-foreground" />
+                    <h1 className="font-semibold text-lg">{activeOrganization?.name || 'Test Structure'}</h1>
+                </div>
                 <Badge variant="secondary">Free Plan</Badge>
             </div>
             <div className="flex items-center gap-2">

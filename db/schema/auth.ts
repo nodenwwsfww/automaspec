@@ -1,5 +1,6 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations } from 'drizzle-orm/relations'
+import { OrganizationPlan } from '@/lib/types'
 
 export const user = sqliteTable('user', {
     id: text().primaryKey(),
@@ -73,6 +74,7 @@ export const organization = sqliteTable('organization', {
     name: text().notNull(),
     slug: text().unique(),
     logo: text(),
+    plan: text().$type<OrganizationPlan>().default('free').notNull(),
     createdAt: integer({ mode: 'timestamp' }),
     updatedAt: integer({ mode: 'timestamp' }),
     metadata: text()

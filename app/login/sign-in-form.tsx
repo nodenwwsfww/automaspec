@@ -67,9 +67,12 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
                     password: value.password
                 },
                 {
-                    onSuccess: () => {
+                    onSuccess: async () => {
                         toast.success('Sign in successful')
-                        router.push('/dashboard')
+
+                        const { data: organizations } = await authClient.organization.list()
+                        const hasOrganizations = organizations && organizations.length > 0
+                        router.push(hasOrganizations ? '/dashboard' : '/create-organization')
                     },
                     onError: (ctx) => {
                         toast.error(ctx.error.message)

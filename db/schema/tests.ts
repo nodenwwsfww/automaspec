@@ -2,6 +2,7 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
 import { createInsertSchema } from 'drizzle-zod'
 import { TestFramework, TestStatus, SpecStatus } from '@/lib/types'
+import { organization } from './auth'
 
 export const testCategory = sqliteTable('test_category', {
     id: text().primaryKey(),
@@ -9,6 +10,7 @@ export const testCategory = sqliteTable('test_category', {
     title: text(),
     description: text(),
     parentCategoryId: text(),
+    organizationId: text().references(() => organization.id, { onDelete: 'cascade' }),
     order: integer().notNull().default(0),
     createdAt: integer({ mode: 'timestamp' })
         .notNull()
@@ -79,6 +81,10 @@ export const testCategoryRelations = relations(testCategory, ({ one, many }) => 
     parent: one(testCategory, {
         fields: [testCategory.parentCategoryId],
         references: [testCategory.id]
+    }),
+    organization: one(organization, {
+        fields: [testCategory.organizationId],
+        references: [organization.id]
     }),
     testSpecs: many(testSpec)
 }))

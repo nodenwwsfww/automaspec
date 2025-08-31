@@ -71,7 +71,7 @@ export default function SignUpForm({ onToggle }: AuthFormProps) {
                 {
                     onSuccess: () => {
                         toast.success('Sign up successful')
-                        router.push('/dashboard')
+                        router.push('/create-organization')
                     },
                     onError: (ctx) => {
                         toast.error(ctx.error.message)
