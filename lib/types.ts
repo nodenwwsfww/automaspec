@@ -1,3 +1,4 @@
+// https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/reporters/json.ts
 import type { JsonAssertionResult } from 'vitest/reporters'
 
 export type TestStatus = JsonAssertionResult['status']

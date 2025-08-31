@@ -1,6 +1,5 @@
 import { betterAuth } from 'better-auth'
 import { drizzleAdapter } from 'better-auth/adapters/drizzle'
-import { organizationClient } from 'better-auth/client/plugins'
 import { db } from '@/db'
 import * as schema from '@/db/schema'
 import { createAuthClient } from 'better-auth/react'
@@ -11,7 +10,7 @@ export const auth = betterAuth({
         provider: 'sqlite',
         schema: schema
     }),
-    trustedOrigins: [process.env.CORS_ORIGIN || ''],
+    trustedOrigins: [...(process.env.VERCEL_URL ? [`https://${process.env.VERCEL_URL}`] : [])],
     emailAndPassword: {
         enabled: true
     },
@@ -19,6 +18,5 @@ export const auth = betterAuth({
 })
 
 export const authClient = createAuthClient({
-    baseURL: process.env.NEXT_PUBLIC_SITE_URL,
-    plugins: [organizationClient()]
+    baseURL: typeof window !== 'undefined' ? window.location.origin : undefined
 })

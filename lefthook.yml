@@ -1,47 +1,41 @@
 pre-commit:
-  commands:
-    # eslint:
-    #   glob: "*.{ts,tsx}"
-    #   run: npx eslint {staged_files} --fix --max-warnings 0
-    #   stage_fixed: true
+    jobs:
+        - name: db-check
+          glob: 'db/schema/*.ts'
+          run: pnpx drizzle-kit checkt
+          fail_text: '❌ Database schema validation failed'
 
-    prettier:
-      glob: "*.{ts,tsx,js,jsx,mts}"
-      run: pnpx prettier --write {staged_files}
-      stage_fixed: true
+        - name: format
+          glob: "*.{ts,tsx,mts}"
+          run: pnpx prettier --write {staged_files}
+          stage_fixed: true
+          fail_text: '❌ Prettier failed'
 
-    # Check for TODO/FIXME comments
-    # todo-check:
-    #   glob: "*.{ts,tsx,js,jsx}"
-    #   run: |
-    #     if grep -n "TODO\|FIXME" {staged_files}; then
-    #       echo "⚠️  TODO/FIXME comments found. Consider addressing them."
-    #       echo "If intentional, add --no-verify to bypass this check."
-    #     fi
+        - name: lint
+          run: pnpx oxlint {staged_files} --fix --fix-suggestions --deny-warnings
+          stage_fixed: true
+          fail_text: '❌ Oxlint failed'
 
-  scripts:
-    "lint-staged":
-      runner: pnpm lint-staged
+        - name: todo-check
+          glob: "*.{ts,tsx,mts}"
+          run: |
+            if grep -n "TODO\|FIXME" {staged_files}; then
+              echo "⚠️  TODO/FIXME comments found. Consider addressing them."
+            fi
 
 pre-push:
-  commands:
-    typescript:
-      run: pnpm typecheck
-      fail_text: "❌ TypeScript type checking failed"
+    parallel: true
+    jobs:
+        - name: typecheck
+          run: pnpx next typegen && pnpx --package=typescript tsc --noEmit
+          fail_text: '❌ TypeScript type checking failed'
 
-    # eslint-all:
-    #   run: npm run lint
-    #   fail_text: "❌ ESLint failed"
-
-    db-check:
-      glob: "db/schema/*.{ts,js}"
-      run: pnpm db:check
-      fail_text: "❌ Database schema validation failed"
-
-  parallel: true
+        # - name: test
+        #   run: pnpm test
+        #   fail_text: '❌ Test failed'
 
 skip_output:
-  - meta
-  - execution
+    - meta
+    - execution
 
 colors: true
