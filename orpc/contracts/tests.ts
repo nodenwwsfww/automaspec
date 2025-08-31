@@ -15,7 +15,7 @@ const listTestCategoriesContract = oc
 
 const createTestCategoryContract = oc
     .route({ method: 'POST', path: '/test-categories' })
-    .input(testCategoryInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }))
+    .input(testCategoryInsertSchema.omit({ id: true, createdAt: true, updatedAt: true, organizationId: true }))
     .output(testCategoryInsertSchema)
 
 const updateTestCategoryContract = oc
@@ -23,7 +23,11 @@ const updateTestCategoryContract = oc
     .input(
         testCategoryInsertSchema
             .pick({ id: true })
-            .merge(testCategoryInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
+            .and(
+                testCategoryInsertSchema
+                    .omit({ id: true, createdAt: true, updatedAt: true, organizationId: true })
+                    .partial()
+            )
     )
     .output(testCategoryInsertSchema)
 
@@ -48,7 +52,7 @@ const updateTestSpecContract = oc
     .input(
         testSpecInsertSchema
             .pick({ id: true })
-            .merge(testSpecInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
+            .and(testSpecInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
     )
     .output(testSpecInsertSchema)
 
@@ -73,7 +77,7 @@ const updateTestRequirementContract = oc
     .input(
         testRequirementInsertSchema
             .pick({ id: true })
-            .merge(testRequirementInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
+            .and(testRequirementInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
     )
     .output(testRequirementInsertSchema)
 
@@ -98,7 +102,7 @@ const updateTestContract = oc
     .input(
         testInsertSchema
             .pick({ id: true })
-            .merge(testInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
+            .and(testInsertSchema.omit({ id: true, createdAt: true, updatedAt: true }).partial())
     )
     .output(testInsertSchema)
 
