@@ -8,7 +8,6 @@ export type SpecStatus = 'skipped' | 'todo' | 'default'
 export type TestFramework = 'vitest'
 export type OrganizationPlan = 'free' | 'pro' | 'enterprise'
 
-// Use types directly from database schema
 export type TestCategory = InferSelectModel<typeof schema.testCategory>
 export type TestSpec = InferSelectModel<typeof schema.testSpec>
 export type TestRequirement = InferSelectModel<typeof schema.testRequirement>
