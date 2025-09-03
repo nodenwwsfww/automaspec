@@ -56,7 +56,9 @@ export default function Dashboard() {
                 framework: framework,
                 code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
                 requirements: requirementsWithTests,
-                testRequirementId: ''
+                testRequirementId: '',
+                createdAt: new Date().toISOString(),
+                updatedAt: new Date().toISOString()
             } as Test)
         } else if (node.type === 'test') {
             // When test is selected, show test info and its requirement
