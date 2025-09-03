@@ -624,6 +624,7 @@
         },
         "created_at": {
           "name": "created_at",
+<<<<<<< HEAD
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -637,6 +638,21 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(datetime('now'))"
+=======
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+>>>>>>> 5cc86ea9668144dd6e93fc588519bdc5c557bc03
         }
       },
       "indexes": {},
@@ -714,6 +730,7 @@
         },
         "created_at": {
           "name": "created_at",
+<<<<<<< HEAD
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -727,6 +744,21 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(datetime('now'))"
+=======
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+>>>>>>> 5cc86ea9668144dd6e93fc588519bdc5c557bc03
         }
       },
       "indexes": {},
@@ -790,6 +822,7 @@
         },
         "created_at": {
           "name": "created_at",
+<<<<<<< HEAD
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -803,6 +836,21 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(datetime('now'))"
+=======
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+>>>>>>> 5cc86ea9668144dd6e93fc588519bdc5c557bc03
         }
       },
       "indexes": {},
@@ -873,6 +921,7 @@
         },
         "created_at": {
           "name": "created_at",
+<<<<<<< HEAD
           "type": "text",
           "primaryKey": false,
           "notNull": true,
@@ -886,6 +935,21 @@
           "notNull": true,
           "autoincrement": false,
           "default": "(datetime('now'))"
+=======
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+        },
+        "updated_at": {
+          "name": "updated_at",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "autoincrement": false,
+          "default": "(unixepoch())"
+>>>>>>> 5cc86ea9668144dd6e93fc588519bdc5c557bc03
         }
       },
       "indexes": {},
