@@ -141,6 +141,13 @@
       "when": 1756924111470,
       "tag": "0019_funny_jigsaw",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "6",
+      "when": 1756925091174,
+      "tag": "0020_right_zzzax",
+      "breakpoints": true
     }
   ]
 }

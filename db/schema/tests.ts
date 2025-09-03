@@ -13,11 +13,11 @@ export const testCategory = sqliteTable('test_category', {
     order: integer().notNull().default(0),
     createdAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
+        .default(sql`(unixepoch())`),
     updatedAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(unixepoch())`)
+        .$onUpdate(() => sql`(unixepoch())`)
 })
 
 export const testSpec = sqliteTable('test_spec', {
@@ -31,11 +31,11 @@ export const testSpec = sqliteTable('test_spec', {
         .references(() => testCategory.id, { onDelete: 'cascade' }),
     createdAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
+        .default(sql`(unixepoch())`),
     updatedAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(unixepoch())`)
+        .$onUpdate(() => sql`(unixepoch())`)
 })
 
 export const testRequirement = sqliteTable('test_requirement', {
@@ -48,11 +48,11 @@ export const testRequirement = sqliteTable('test_requirement', {
         .references(() => testSpec.id, { onDelete: 'cascade' }),
     createdAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
+        .default(sql`(unixepoch())`),
     updatedAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(unixepoch())`)
+        .$onUpdate(() => sql`(unixepoch())`)
 })
 
 export const test = sqliteTable('test', {
@@ -65,11 +65,11 @@ export const test = sqliteTable('test', {
         .references(() => testRequirement.id, { onDelete: 'cascade' }),
     createdAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
+        .default(sql`(unixepoch())`),
     updatedAt: integer({ mode: 'timestamp' })
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(unixepoch())`)
+        .$onUpdate(() => sql`(unixepoch())`)
 })
 
 export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({
