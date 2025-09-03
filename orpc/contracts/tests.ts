@@ -3,8 +3,11 @@ import * as z from 'zod'
 import {
     testCategorySelectSchema,
     testCategoryInsertSchema,
+    testSpecSelectSchema,
     testSpecInsertSchema,
+    testRequirementSelectSchema,
     testRequirementInsertSchema,
+    testSelectSchema,
     testInsertSchema
 } from '@/lib/types'
 
@@ -26,7 +29,7 @@ const deleteTestCategoryContract = oc
 const listTestSpecsContract = oc
     .route({ method: 'GET', path: '/test-specs' })
     .input(testSpecInsertSchema.pick({ testCategoryId: true }))
-    .output(z.array(testSpecInsertSchema))
+    .output(z.array(testSpecSelectSchema))
 
 const upsertTestSpecContract = oc
     .route({ method: 'PUT', path: '/test-specs/{id}' })
@@ -41,7 +44,7 @@ const deleteTestSpecContract = oc
 const listTestRequirementsContract = oc
     .route({ method: 'GET', path: '/test-requirements' })
     .input(testRequirementInsertSchema.pick({ testSpecId: true }))
-    .output(z.array(testRequirementInsertSchema))
+    .output(z.array(testRequirementSelectSchema))
 
 const upsertTestRequirementContract = oc
     .route({ method: 'PUT', path: '/test-requirements/{id}' })
@@ -56,7 +59,7 @@ const deleteTestRequirementContract = oc
 const listTestsContract = oc
     .route({ method: 'GET', path: '/tests' })
     .input(testInsertSchema.pick({ testRequirementId: true }))
-    .output(z.array(testInsertSchema))
+    .output(z.array(testSelectSchema))
 
 const upsertTestContract = oc
     .route({ method: 'PUT', path: '/tests/{id}' })

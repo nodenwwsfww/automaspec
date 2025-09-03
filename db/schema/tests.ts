@@ -11,13 +11,13 @@ export const testCategory = sqliteTable('test_category', {
     parentCategoryId: text(),
     organizationId: text().references(() => organization.id, { onDelete: 'cascade' }),
     order: integer().notNull().default(0),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+        .default(sql`(datetime('now'))`),
+    updatedAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(datetime('now'))`)
+        .$onUpdate(() => sql`(datetime('now'))`)
 })
 
 export const testSpec = sqliteTable('test_spec', {
@@ -29,13 +29,13 @@ export const testSpec = sqliteTable('test_spec', {
     testCategoryId: text()
         .notNull()
         .references(() => testCategory.id, { onDelete: 'cascade' }),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+        .default(sql`(datetime('now'))`),
+    updatedAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(datetime('now'))`)
+        .$onUpdate(() => sql`(datetime('now'))`)
 })
 
 export const testRequirement = sqliteTable('test_requirement', {
@@ -46,13 +46,13 @@ export const testRequirement = sqliteTable('test_requirement', {
     testSpecId: text()
         .notNull()
         .references(() => testSpec.id, { onDelete: 'cascade' }),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+        .default(sql`(datetime('now'))`),
+    updatedAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(datetime('now'))`)
+        .$onUpdate(() => sql`(datetime('now'))`)
 })
 
 export const test = sqliteTable('test', {
@@ -63,13 +63,13 @@ export const test = sqliteTable('test', {
     testRequirementId: text()
         .notNull()
         .references(() => testRequirement.id, { onDelete: 'cascade' }),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+        .default(sql`(datetime('now'))`),
+    updatedAt: text()
         .notNull()
-        .default(sql`(CURRENT_TIMESTAMP)`)
-        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
+        .default(sql`(datetime('now'))`)
+        .$onUpdate(() => sql`(datetime('now'))`)
 })
 
 export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({
