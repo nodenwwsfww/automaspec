@@ -10,7 +10,7 @@ import {
 
 const listTestCategoriesContract = oc
     .route({ method: 'GET', path: '/test-categories' })
-    .input(testCategoryInsertSchema.pick({ parentCategoryId: true }))
+    .input(testCategoryInsertSchema.pick({ parentCategoryId: true }).partial({ parentCategoryId: true }))
     .output(z.array(testCategorySelectSchema))
 
 const upsertTestCategoryContract = oc
