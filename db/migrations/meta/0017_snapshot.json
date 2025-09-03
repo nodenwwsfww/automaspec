@@ -1,7 +1,7 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "618e0795-0b19-4574-8d53-982382c303b6",
+  "id": "7956ba63-7a7e-422c-9e19-629bf682a715",
   "prevId": "66cee88a-c6aa-4eda-a86b-bd7c69633eeb",
   "tables": {
     "account": {
@@ -862,7 +862,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "'default'"
+          "default": "'todo'"
         },
         "test_category_id": {
           "name": "test_category_id",

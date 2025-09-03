@@ -16,8 +16,7 @@ export async function middleware(request: NextRequest) {
         return NextResponse.next()
     }
 
-    // For now, just redirect to create organization if no active organization
-    // The client-side logic will handle invitation checking
+    // Check if user has an active organization
     if (!session.session.activeOrganizationId) {
         return NextResponse.redirect(new URL('/create-organization', request.url))
     }

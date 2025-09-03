@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { FieldInfo } from '@/lib/shared/tanstack-form'
+import { setActiveOrganization } from '@/lib/utils'
 
 const SignUpSchema = z.object({
     name: z.string().min(2, 'Name must be at least 2 characters'),
@@ -70,9 +71,11 @@ export default function SignUpForm({ onToggle }: AuthFormProps) {
                     callbackURL: '/dashboard'
                 },
                 {
-                    onSuccess: () => {
+                    onSuccess: async () => {
                         toast.success('Sign up successful')
-                        router.push('/create-organization')
+
+                        const hasOrganizations = await setActiveOrganization(authClient)
+                        router.push(hasOrganizations ? '/dashboard' : '/create-organization')
                     },
                     onError: (ctx) => {
                         toast.error(ctx.error.message)

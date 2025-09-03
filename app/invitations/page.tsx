@@ -9,6 +9,7 @@ import { Badge } from '@/components/ui/badge'
 import { Loader2, Building2, Check, X, Mail } from 'lucide-react'
 import { authClient } from '@/lib/shared/better-auth'
 import { toast } from 'sonner'
+import { setActiveOrganization } from '@/lib/utils'
 
 import type { Invitation, Organization, User } from '@/lib/types'
 
@@ -32,13 +33,19 @@ export default function InvitationsPage() {
         try {
             setLoading(true)
 
-            // Check if the user has any invitations
+            // Check if the user already has organizations
+            const hasOrganizations = await setActiveOrganization(authClient)
+            if (hasOrganizations) {
+                // User already has organizations, redirect to dashboard
+                router.push('/dashboard')
+                return
+            }
+
+            // Check if the user has any pending invitations
             // For now, we'll simulate no invitations and redirect to create organization
             // This will be updated when the Better Auth invitation API is properly configured
-
             setInvitations([])
             router.push('/create-organization')
-            return
         } catch (err) {
             setError('An unexpected error occurred')
             console.error('Load invitations error:', err)

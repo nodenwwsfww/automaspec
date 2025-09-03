@@ -15,6 +15,7 @@ import { Label } from '@/components/ui/label'
 import { Separator } from '@/components/ui/separator'
 import { FieldInfo } from '@/lib/shared/tanstack-form'
 import { useRouter } from 'next/navigation'
+import { setActiveOrganization } from '@/lib/utils'
 
 const SignInSchema = z.object({
     email: z.email('Invalid email address'),
@@ -75,8 +76,7 @@ export default function SignInForm({ onToggle }: AuthFormProps) {
                     onSuccess: async () => {
                         toast.success('Sign in successful')
 
-                        const { data: organizations } = await authClient.organization.list()
-                        const hasOrganizations = organizations && organizations.length > 0
+                        const hasOrganizations = await setActiveOrganization(authClient)
                         router.push(hasOrganizations ? '/dashboard' : '/create-organization')
                     },
                     onError: (ctx) => {
