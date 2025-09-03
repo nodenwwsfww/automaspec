@@ -47,8 +47,8 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                     description: null,
                     order: index,
                     testSpecId: selectedTest.id,
-                    createdAt: new Date(),
-                    updatedAt: new Date()
+                    createdAt: new Date().toISOString(),
+                    updatedAt: new Date().toISOString()
                 }))
         }
         setEditingRequirements(false)
@@ -195,8 +195,8 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                                     description: null,
                                                     order: (selectedTest.requirements || []).length,
                                                     testSpecId: selectedTest.id,
-                                                    createdAt: new Date(),
-                                                    updatedAt: new Date()
+                                                    createdAt: new Date().toISOString(),
+                                                    updatedAt: new Date().toISOString()
                                                 }
                                                 const updatedReqs = [...(selectedTest.requirements || []), newReq]
                                                 selectedTest.requirements = updatedReqs
