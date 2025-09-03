@@ -1,12 +1,12 @@
 import { OpenAPILink } from '@orpc/openapi-client/fetch'
-import type { JsonifiedClient } from '@orpc/openapi-client'
 import { contract } from '@/orpc/contracts'
 import { createORPCClient } from '@orpc/client'
 import type { ContractRouterClient } from '@orpc/contract'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
+import { ResponseValidationPlugin } from '@orpc/contract/plugins'
 
 declare global {
-    var $client: JsonifiedClient<ContractRouterClient<typeof contract>> | undefined
+    var $client: ContractRouterClient<typeof contract> | undefined
 }
 
 const link = new OpenAPILink(contract, {
@@ -30,13 +30,13 @@ const link = new OpenAPILink(contract, {
             ...init,
             credentials: 'include'
             // TODO: check if this is needed in nextjs
-        })
+        }),
+    plugins: [new ResponseValidationPlugin(contract)]
 })
 
 /**
  * Fallback to client-side client if server-side client is not available.
  */
-export const client: JsonifiedClient<ContractRouterClient<typeof contract>> =
-    globalThis.$client ?? createORPCClient(link)
+export const client: ContractRouterClient<typeof contract> = globalThis.$client ?? createORPCClient(link)
 
 export const orpc = createTanstackQueryUtils(client)

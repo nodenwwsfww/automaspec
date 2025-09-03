@@ -1,10 +1,10 @@
-'server only'
+import 'server-only'
 
 import { headers } from 'next/headers'
-import { createJsonifiedRouterClient } from '@orpc/openapi'
+import { createRouterClient } from '@orpc/server'
 import { router } from '@/orpc/routes'
 
-globalThis.$client = createJsonifiedRouterClient(router, {
+globalThis.$client = createRouterClient(router, {
     /**
      * Provide initial context if needed.
      *
