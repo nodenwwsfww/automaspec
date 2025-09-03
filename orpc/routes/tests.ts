@@ -17,7 +17,9 @@ const listTestCategories = os.testCategories.list.handler(async ({ context }) =>
     }
     console.log('Active organization', organizationId)
 
-    return await db.select().from(testCategory).where(eq(testCategory.organizationId, organizationId))
+    const result = await db.select().from(testCategory).where(eq(testCategory.organizationId, organizationId))
+    console.log('Result', result)
+    return result
 })
 
 const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, context }) => {

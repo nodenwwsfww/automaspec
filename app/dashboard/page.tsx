@@ -32,11 +32,11 @@ export default function Dashboard() {
     const handleTestSelect = (node: TreeNode) => {
         if (node.type === 'spec') {
             // When spec is selected, show spec info and all its requirements
-            const specRequirements = requirements.filter((req: any) => req.testSpecId === node.id)
+            const specRequirements = requirements.filter((req) => req.testSpecId === node.id)
 
             // Attach test data and status to each requirement
-            const requirementsWithTests = specRequirements.map((req: any) => {
-                const test = tests.find((test: any) => test.testRequirementId === req.id)
+            const requirementsWithTests = specRequirements.map((req) => {
+                const test = tests.find((test) => test.testRequirementId === req.id)
                 return {
                     ...req,
                     test: test,
@@ -45,7 +45,7 @@ export default function Dashboard() {
             })
 
             // Get framework from the first test, or default to 'vitest'
-            const firstTest = requirementsWithTests.find((req: any) => req.test)?.test
+            const firstTest = requirementsWithTests.find((req) => req.test)?.test
             const framework = firstTest?.framework || 'vitest'
 
             setSelectedTest({
@@ -55,7 +55,7 @@ export default function Dashboard() {
                 status: node.status,
                 framework: framework,
                 code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
-                requirements: requirementsWithTests as any,
+                requirements: requirementsWithTests,
                 testRequirementId: '',
                 createdAt: new Date(),
                 updatedAt: new Date()
