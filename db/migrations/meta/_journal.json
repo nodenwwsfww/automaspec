@@ -127,6 +127,13 @@
       "when": 1756923085963,
       "tag": "0017_boring_gambit",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "6",
+      "when": 1756923632930,
+      "tag": "0018_yielding_johnny_blaze",
+      "breakpoints": true
     }
   ]
 }

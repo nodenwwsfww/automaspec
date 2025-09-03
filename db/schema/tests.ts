@@ -8,7 +8,7 @@ export const testCategory = sqliteTable('test_category', {
     name: text().notNull(),
     title: text(),
     description: text(),
-    parentCategoryId: text(),
+    parentCategoryId: text().default(''),
     organizationId: text().references(() => organization.id, { onDelete: 'cascade' }),
     order: integer().notNull().default(0),
     createdAt: integer({ mode: 'timestamp' })
