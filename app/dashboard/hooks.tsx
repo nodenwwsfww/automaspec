@@ -6,7 +6,9 @@ import { orpc } from '@/lib/orpc'
 export function useDashboardData() {
     const { data: categories = [], isLoading: categoriesLoading } = useQuery(
         orpc.testCategories.list.queryOptions({
-            input: {}
+            input: {
+                parentCategoryId: null
+            }
         })
     )
 

@@ -15,10 +15,6 @@ interface DashboardHeaderProps {
 export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeaderProps) {
     const { data: activeOrganization } = authClient.useActiveOrganization()
 
-    const onSignOut = async () => {
-        await authClient.signOut()
-    }
-
     return (
         <div className="flex items-center justify-between border-b p-4">
             <div className="flex items-center gap-4">
@@ -59,7 +55,7 @@ export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeader
                             </Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
-                            <Link href="/login" onClick={onSignOut}>
+                            <Link href="/login" onClick={() => authClient.signOut()}>
                                 <LogOut className="mr-2 h-4 w-4" />
                                 Logout
                             </Link>

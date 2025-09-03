@@ -5,14 +5,17 @@ import { testCategory, testSpec, testRequirement, test } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { TestStatus, TestFramework, SpecStatus } from '@/lib/types'
 import { authMiddleware } from '@/orpc/middleware'
+import { ORPCError } from '@orpc/server'
 
 const os = implement(testsContract).use(authMiddleware)
 
 const listTestCategories = os.testCategories.list.handler(async ({ context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        console.log('No active organization')
+        throw new ORPCError('No active organization')
     }
+    console.log('Active organization', organizationId)
 
     return await db.select().from(testCategory).where(eq(testCategory.organizationId, organizationId))
 })
@@ -20,7 +23,7 @@ const listTestCategories = os.testCategories.list.handler(async ({ context }) =>
 const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        throw new ORPCError('No active organization')
     }
 
     const { id = crypto.randomUUID(), ...updates } = input
@@ -40,7 +43,7 @@ const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, cont
 const deleteTestCategory = os.testCategories.delete.handler(async ({ input, context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        throw new ORPCError('No active organization')
     }
 
     const deletedCategory = await db
@@ -60,7 +63,7 @@ const deleteTestCategory = os.testCategories.delete.handler(async ({ input, cont
 const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        throw new ORPCError('No active organization')
     }
 
     return await db
@@ -82,7 +85,7 @@ const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
 const upsertTestSpec = os.testSpecs.upsert.handler(async ({ input, context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        throw new ORPCError('No active organization')
     }
 
     const { id = crypto.randomUUID(), ...updates } = input
@@ -121,7 +124,7 @@ const deleteTestSpec = os.testSpecs.delete.handler(async ({ input, context }) =>
         .limit(1)
 
     if (!verification || verification.length === 0) {
-        throw new Error('Spec not found or access denied')
+        throw new ORPCError('Spec not found or access denied')
     }
 
     await db.delete(testSpec).where(eq(testSpec.id, input.id))
@@ -131,7 +134,7 @@ const deleteTestSpec = os.testSpecs.delete.handler(async ({ input, context }) =>
 const listTests = os.tests.list.handler(async ({ context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        throw new ORPCError('No active organization')
     }
 
     return await db
@@ -182,7 +185,7 @@ const deleteTest = os.tests.delete.handler(async ({ input }) => {
 const listTestRequirements = os.testRequirements.list.handler(async ({ context }) => {
     const organizationId = context.session.session.activeOrganizationId
     if (!organizationId) {
-        throw new Error('No active organization')
+        throw new ORPCError('No active organization')
     }
 
     return await db

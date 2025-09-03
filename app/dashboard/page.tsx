@@ -19,6 +19,7 @@ export default function Dashboard() {
     // const [,setParentGroup] = useState<TestSpec | null>(null)
 
     const { categories, specs, requirements, tests, loading } = useDashboardData()
+    console.log(categories, specs, requirements, tests)
 
     // const {
     //     handleDelete,
