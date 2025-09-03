@@ -11,10 +11,16 @@ import {
     testInsertSchema
 } from '@/lib/types'
 
+// Create a modified schema that expects Date objects for timestamps
+const testCategorySelectWithDatesSchema = testCategorySelectSchema.extend({
+    createdAt: z.date(),
+    updatedAt: z.date()
+})
+
 const listTestCategoriesContract = oc
     .route({ method: 'GET', path: '/test-categories' })
     .input(testCategoryInsertSchema.pick({ parentCategoryId: true }).partial({ parentCategoryId: true }))
-    .output(z.array(testCategorySelectSchema))
+    .output(z.array(testCategorySelectWithDatesSchema))
 
 const upsertTestCategoryContract = oc
     .route({ method: 'POST', path: '/test-categories/{id}' })
