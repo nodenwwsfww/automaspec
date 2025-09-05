@@ -19,7 +19,7 @@ export default function Dashboard() {
     // const [,setParentGroup] = useState<TestSpec | null>(null)
 
     const { categories, specs, requirements, tests, loading } = useDashboardData()
-    console.log(categories, specs, requirements, tests)
+    // console.log(categories, specs, requirements, tests)
 
     // const {
     //     handleDelete,
@@ -57,9 +57,10 @@ export default function Dashboard() {
                 code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
                 requirements: requirementsWithTests,
                 testRequirementId: '',
+                // TODO: add zod codec
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString()
-            } as Test)
+            })
         } else if (node.type === 'test') {
             // When test is selected, show test info and its requirement
             setSelectedTest({
@@ -67,7 +68,7 @@ export default function Dashboard() {
                 title: node.requirement?.text || node.name,
                 description: node.requirement?.description || '',
                 requirements: node.requirement ? [node.requirement] : []
-            } as Test)
+            } as Test) // FIXME: as
         }
     }
 

@@ -11,20 +11,10 @@ export async function middleware(request: NextRequest) {
         return NextResponse.redirect(new URL('/login', request.url))
     }
 
-    // Skip organization check for create-organization and invitations pages
-    if (request.nextUrl.pathname === '/create-organization' || request.nextUrl.pathname === '/invitations') {
-        return NextResponse.next()
-    }
-
-    // Check if user has an active organization
-    if (!session.session.activeOrganizationId) {
-        return NextResponse.redirect(new URL('/create-organization', request.url))
-    }
-
     return NextResponse.next()
 }
 
 export const config = {
     runtime: 'nodejs',
-    matcher: ['/dashboard', '/profile', '/settings']
+    matcher: ['/dashboard', '/profile', '/settings', '/create-organization', '/invitations']
 }

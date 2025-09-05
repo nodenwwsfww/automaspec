@@ -1,4 +1,3 @@
-
 import { OpenAPIHandler } from '@orpc/openapi/fetch'
 import { CORSPlugin } from '@orpc/server/plugins'
 import { onError } from '@orpc/server'
@@ -23,7 +22,6 @@ const handler = new OpenAPIHandler(router, {
 async function handleRequest(request: Request) {
     const context = await createContext(request)
     if (!context.session) {
-        // Redirect to login
         return NextResponse.redirect(new URL('/login', request.url))
     }
     const { response } = await handler.handle(request, {

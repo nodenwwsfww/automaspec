@@ -1,6 +1,6 @@
 import { OpenAPILink } from '@orpc/openapi-client/fetch'
 import { contract } from '@/orpc/contracts'
-import { createORPCClient } from '@orpc/client'
+import { createORPCClient, onError } from '@orpc/client'
 import type { ContractRouterClient } from '@orpc/contract'
 import { createTanstackQueryUtils } from '@orpc/tanstack-query'
 import { ResponseValidationPlugin } from '@orpc/contract/plugins'
@@ -23,14 +23,14 @@ const link = new OpenAPILink(contract, {
         }
 
         const { headers } = await import('next/headers')
-        return Object.fromEntries(await headers())
+        return await headers()
     },
     fetch: (request, init) =>
         globalThis.fetch(request, {
             ...init,
             credentials: 'include'
-            // TODO: check if this is needed in nextjs
         }),
+    interceptors: [onError((error) => console.error(error))],
     plugins: [new ResponseValidationPlugin(contract)]
 })
 

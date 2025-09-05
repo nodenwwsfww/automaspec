@@ -4,29 +4,19 @@ import { db } from '@/db'
 import { testCategory, testSpec, testRequirement, test } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
 import { TestStatus, TestFramework, SpecStatus } from '@/lib/types'
-import { authMiddleware } from '@/orpc/middleware'
+import { authMiddleware, organizationMiddleware } from '@/orpc/middleware'
 import { ORPCError } from '@orpc/server'
 
-const os = implement(testsContract).use(authMiddleware)
+const os = implement(testsContract).use(authMiddleware).use(organizationMiddleware)
 
 const listTestCategories = os.testCategories.list.handler(async ({ context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        console.log('No active organization')
-        throw new ORPCError('No active organization')
-    }
-    console.log('Active organization', organizationId)
+    const organizationId = context.organizationId
 
-    const result = await db.select().from(testCategory).where(eq(testCategory.organizationId, organizationId))
-    console.log('Result', result)
-    return result
+    return await db.select().from(testCategory).where(eq(testCategory.organizationId, organizationId))
 })
 
 const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new ORPCError('No active organization')
-    }
+    const organizationId = context.organizationId
 
     const { id = crypto.randomUUID(), ...updates } = input
 
@@ -43,10 +33,7 @@ const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, cont
 })
 
 const deleteTestCategory = os.testCategories.delete.handler(async ({ input, context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new ORPCError('No active organization')
-    }
+    const organizationId = context.organizationId
 
     const deletedCategory = await db
         .delete(testCategory)
@@ -63,10 +50,7 @@ const deleteTestCategory = os.testCategories.delete.handler(async ({ input, cont
 })
 
 const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new ORPCError('No active organization')
-    }
+    const organizationId = context.organizationId
 
     return await db
         .select({
@@ -84,12 +68,7 @@ const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
         .where(eq(testCategory.organizationId, organizationId))
 })
 
-const upsertTestSpec = os.testSpecs.upsert.handler(async ({ input, context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new ORPCError('No active organization')
-    }
-
+const upsertTestSpec = os.testSpecs.upsert.handler(async ({ input }) => {
     const { id = crypto.randomUUID(), ...updates } = input
 
     const result = await db
@@ -112,10 +91,7 @@ const upsertTestSpec = os.testSpecs.upsert.handler(async ({ input, context }) =>
 })
 
 const deleteTestSpec = os.testSpecs.delete.handler(async ({ input, context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new Error('No active organization')
-    }
+    const organizationId = context.organizationId
 
     // Verify the spec belongs to the organization before deletion
     const verification = await db
@@ -134,10 +110,7 @@ const deleteTestSpec = os.testSpecs.delete.handler(async ({ input, context }) =>
 })
 
 const listTests = os.tests.list.handler(async ({ context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new ORPCError('No active organization')
-    }
+    const organizationId = context.organizationId
 
     return await db
         .select({
@@ -185,10 +158,7 @@ const deleteTest = os.tests.delete.handler(async ({ input }) => {
 })
 
 const listTestRequirements = os.testRequirements.list.handler(async ({ context }) => {
-    const organizationId = context.session.session.activeOrganizationId
-    if (!organizationId) {
-        throw new ORPCError('No active organization')
-    }
+    const organizationId = context.organizationId
 
     return await db
         .select({
