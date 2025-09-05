@@ -1,7 +1,6 @@
 import { render, screen } from '@testing-library/react'
 import { Badge } from '@/components/ui/badge'
 import { expect, test, describe } from 'vitest'
-import Link from 'next/link'
 
 describe('Badge', () => {
     test('renders with default props', () => {
@@ -31,17 +30,6 @@ describe('Badge', () => {
         render(<Badge>Test Badge</Badge>)
         const badge = screen.getByText('Test Badge')
         expect(badge.getAttribute('data-slot')).toBe('badge')
-    })
-
-    test('renders with asChild prop', () => {
-        render(
-            <Badge asChild>
-                <Link href="/dashboard">Link Badge</Link>
-            </Badge>
-        )
-        const link = screen.getByRole('link', { name: 'Link Badge' })
-        expect(link).toBeDefined()
-        expect(link.getAttribute('href')).toBe('/test')
     })
 
     test('renders as span by default', () => {

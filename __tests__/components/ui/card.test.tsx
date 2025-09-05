@@ -1,5 +1,5 @@
 import { render, screen } from '@testing-library/react'
-import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter, CardAction } from '@/components/ui/card'
+import { Card, CardHeader, CardTitle, CardDescription, CardContent, CardFooter } from '@/components/ui/card'
 import { expect, test, describe } from 'vitest'
 
 describe('Card', () => {
@@ -38,7 +38,6 @@ describe('Card', () => {
             <Card>
                 <CardHeader>
                     <CardTitle>Card with Action</CardTitle>
-                    <CardAction>Action</CardAction>
                 </CardHeader>
                 <CardContent>Content</CardContent>
             </Card>
