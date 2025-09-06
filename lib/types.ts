@@ -11,12 +11,6 @@ import { TEST_STATUSES, SPEC_STATUSES } from './constants'
 //     }
 // });
 
-const testSpecSelectSchema2 = createSelectSchema(schema.testSpec, {
-    createdAt: z.coerce.date(),
-    updatedAt: z.coerce.date()
-})
-export type TestSpec2 = z.infer<typeof testSpecSelectSchema2>
-
 export const testCategorySelectSchema = createSelectSchema(schema.testCategory, {
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date()

@@ -4,6 +4,7 @@ import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
 
 export const testCategory = sqliteTable('test_category', {
+    // TODO: add uuid
     id: text().primaryKey(),
     name: text().notNull(),
     description: text(),
@@ -12,10 +13,10 @@ export const testCategory = sqliteTable('test_category', {
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
     order: integer().notNull().default(0),
-    createdAt: text()
+    createdAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: text()
+    updatedAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
@@ -26,15 +27,16 @@ export const testSpec = sqliteTable('test_spec', {
     name: text().notNull(),
     fileName: text(),
     description: text(),
+    // TODO: add enum
     status: text().$type<SpecStatus>().notNull(),
     testCategoryId: text().references(() => testCategory.id, { onDelete: 'cascade' }),
     organizationId: text()
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
-    createdAt: text()
+    createdAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: text()
+    updatedAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
@@ -48,10 +50,10 @@ export const testRequirement = sqliteTable('test_requirement', {
     testSpecId: text()
         .notNull()
         .references(() => testSpec.id, { onDelete: 'cascade' }),
-    createdAt: text()
+    createdAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: text()
+    updatedAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
@@ -65,10 +67,10 @@ export const test = sqliteTable('test', {
     testRequirementId: text()
         .notNull()
         .references(() => testRequirement.id, { onDelete: 'cascade' }),
-    createdAt: text()
+    createdAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: text()
+    updatedAt: integer({ mode: 'timestamp' })
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
