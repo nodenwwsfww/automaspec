@@ -6,7 +6,8 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, FileText, MoreHorizontal, Edit, Folder, Trash2 } from 'lucide-react'
 import { TreeNode } from '@/lib/types'
-import { statusEnum } from './utils'
+import { STATUS_CONFIGS } from '@/lib/constants'
+import { Badge } from '@/components/ui/badge'
 
 interface TreeNodeProps {
     node: TreeNode
@@ -68,12 +69,19 @@ export function TreeNodeComponent({
                     <span className={cn('flex-1 text-sm', isLeaf && 'font-medium')}>{node.name}</span>
 
                     {node.type === 'spec' && node.status && (
-                        <div className="flex-shrink-0">{statusEnum(node.status)?.badge}</div>
+                        <div className="flex-shrink-0">
+                            {(() => {
+                                const config = STATUS_CONFIGS[node.status]
+                                return config.badgeClassName ?
+                                        <Badge className={config.badgeClassName}>{config.label}</Badge>
+                                    :   null
+                            })()}
+                        </div>
                     )}
 
                     {node.total && node.type !== 'category' && (
                         <div className="flex items-center gap-2 text-xs">
-                            <span className={cn('font-medium', statusEnum(node.status)?.color)}>{node.total}</span>
+                            <span className={cn('font-medium', STATUS_CONFIGS[node.status]?.color)}>{node.total}</span>
                         </div>
                     )}
                 </div>
@@ -100,7 +108,9 @@ export function TreeNodeComponent({
                                     <Folder className="mr-2 h-4 w-4" />
                                     Add Spec
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'test' })}>
+                                <DropdownMenuItem
+                                    onClick={() => onAddChild({ ...node, type: 'test', status: 'pending' })}
+                                >
                                     <FileText className="mr-2 h-4 w-4" />
                                     Add Test
                                 </DropdownMenuItem>

@@ -1,10 +1,10 @@
-import type { TestStatus, TestFramework, TreeNode } from '@/lib/types'
-import { TEST_STATUSES } from '@/lib/constants'
+import type { TestFramework, TreeNode } from '@/lib/types'
+import { SPEC_STATUSES, TEST_STATUSES } from '@/lib/constants'
 import { expect, test, describe } from 'vitest'
 
 describe('Types', () => {
     test('TestStatus type has correct values', () => {
-        const validStatuses: TestStatus[] = TEST_STATUSES
+        const validStatuses = Object.values(TEST_STATUSES)
 
         // Test that each status is a valid string
         validStatuses.forEach((status) => {
@@ -23,7 +23,7 @@ describe('Types', () => {
             id: 'test-id',
             name: 'Test Node',
             type: 'category',
-            status: 'failed'
+            status: TEST_STATUSES.failed
         }
 
         expect(treeNode).toHaveProperty('id')
@@ -35,9 +35,9 @@ describe('Types', () => {
     })
 
     test('TreeNode supports all types', () => {
-        const categoryNode: TreeNode = { id: '1', name: 'Category', type: 'category', status: 'failed' }
-        const specNode: TreeNode = { id: '2', name: 'Spec', type: 'spec', status: 'failed' }
-        const testNode: TreeNode = { id: '3', name: 'Test', type: 'test', status: 'failed' }
+        const categoryNode: TreeNode = { id: '1', name: 'Category', type: 'category', status: TEST_STATUSES.failed }
+        const specNode: TreeNode = { id: '2', name: 'Spec', type: 'spec', status: SPEC_STATUSES.active }
+        const testNode: TreeNode = { id: '3', name: 'Test', type: 'test', status: TEST_STATUSES.failed }
 
         expect(categoryNode.type).toBe('category')
         expect(specNode.type).toBe('spec')
@@ -51,7 +51,7 @@ describe('Types', () => {
             type: 'category',
             passed: 5,
             total: 10,
-            status: 'failed',
+            status: TEST_STATUSES.failed,
             children: []
         }
 

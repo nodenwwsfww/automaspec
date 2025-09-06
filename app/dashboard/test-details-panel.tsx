@@ -7,8 +7,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Edit, FileText, Trash2, Check, Copy, Plus, Folder } from 'lucide-react'
 import { Test, TestRequirement, type TestStatus } from '@/lib/types'
-import { statusEnum, requirementEnum } from './utils'
-import { TEST_STATUSES, getStatusConfig } from '@/lib/constants'
+import { STATUS_CONFIGS, TEST_STATUSES } from '@/lib/constants'
 
 interface RequirementWithTest extends TestRequirement {
     test?: Test
@@ -47,8 +46,8 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                     description: null,
                     order: index,
                     testSpecId: selectedTest.id,
-                    createdAt: new Date().toISOString(),
-                    updatedAt: new Date().toISOString()
+                    createdAt: new Date(),
+                    updatedAt: new Date()
                 }))
         }
         setEditingRequirements(false)
@@ -89,7 +88,13 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                         <p className="mb-2 text-muted-foreground text-sm">{selectedTest.description}</p>
                         <div className="flex items-center gap-2">
                             <Badge variant="outline">{selectedTest.framework}</Badge>
-                            {selectedTest.status && statusEnum(selectedTest.status as TestStatus)?.badge}
+                            {selectedTest.status &&
+                                (() => {
+                                    const config = STATUS_CONFIGS[selectedTest.status as TestStatus]
+                                    return config.badgeClassName ?
+                                            <Badge className={config.badgeClassName}>{config.label}</Badge>
+                                        :   null
+                                })()}
                         </div>
                     </div>
                 </div>
@@ -119,14 +124,14 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                             {(selectedTest.requirements || []).length > 0 && (
                                 <div className="mb-4 rounded-lg bg-muted/30 p-3">
                                     <div className="flex items-center gap-4 text-sm">
-                                        {TEST_STATUSES.map((status) => {
+                                        {Object.values(TEST_STATUSES).map((status) => {
                                             const count = (selectedTest.requirements || []).filter(
                                                 (req: RequirementWithTest) => req.status === status
                                             ).length
 
                                             if (count === 0) return null
 
-                                            const statusConfig = getStatusConfig(status)
+                                            const statusConfig = STATUS_CONFIGS[status]
                                             const IconComponent = statusConfig.icon
 
                                             return (
@@ -195,8 +200,8 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                                     description: null,
                                                     order: (selectedTest.requirements || []).length,
                                                     testSpecId: selectedTest.id,
-                                                    createdAt: new Date().toISOString(),
-                                                    updatedAt: new Date().toISOString()
+                                                    createdAt: new Date(),
+                                                    updatedAt: new Date()
                                                 }
                                                 const updatedReqs = [...(selectedTest.requirements || []), newReq]
                                                 selectedTest.requirements = updatedReqs
@@ -218,8 +223,15 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                 </div>
                             :   <div className="space-y-2">
                                     {(selectedTest.requirements || []).map((req: any, index: number) => {
-                                        // @ts-expect-error
-                                        const { badge, color } = requirementEnum(req.status || 'pending')
+                                        const config = STATUS_CONFIGS[(req.status || 'pending') as TestStatus]
+                                        const IconComponent = config.icon
+                                        const badge = (
+                                            <Badge className={config.requirementClassName}>
+                                                <IconComponent className="h-4 w-4 mr-1" />
+                                                {config.label}
+                                            </Badge>
+                                        )
+                                        const color = config.requirementClassName || config.color
                                         return (
                                             <div
                                                 className={cn('flex items-start gap-3 rounded-lg border p-3', color)}

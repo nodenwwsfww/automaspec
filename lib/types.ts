@@ -1,23 +1,59 @@
-import type { JsonAssertionResult } from 'vitest/reporters' // https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/reporters/json.ts
 import * as schema from '@/db/schema'
-import { createInsertSchema, createSelectSchema } from 'drizzle-zod'
+import { createSelectSchema, createInsertSchema } from 'drizzle-zod'
 import type { authClient } from './shared/better-auth'
 import * as z from 'zod'
+import { TEST_STATUSES, SPEC_STATUSES } from './constants'
 
-export type TestStatus = JsonAssertionResult['status']
-export type SpecStatus = 'skipped' | 'todo'
+// FIXME: will work after https://github.com/drizzle-team/drizzle-orm/pull/4820, removing all manual zod coercions
+// const { createInsertSchema, createSelectSchema } = createSchemaFactory({
+//     coerce: {
+//       date: true
+//     }
+// });
+
+const testSpecSelectSchema2 = createSelectSchema(schema.testSpec, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export type TestSpec2 = z.infer<typeof testSpecSelectSchema2>
+
+export const testCategorySelectSchema = createSelectSchema(schema.testCategory, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testCategoryInsertSchema = createInsertSchema(schema.testCategory, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testSpecSelectSchema = createSelectSchema(schema.testSpec, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testSpecInsertSchema = createInsertSchema(schema.testSpec, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testRequirementSelectSchema = createSelectSchema(schema.testRequirement, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testRequirementInsertSchema = createInsertSchema(schema.testRequirement, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testSelectSchema = createSelectSchema(schema.test, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+export const testInsertSchema = createInsertSchema(schema.test, {
+    createdAt: z.coerce.date(),
+    updatedAt: z.coerce.date()
+})
+
 export type TestFramework = 'vitest'
 export type OrganizationPlan = 'free' | 'pro' | 'enterprise'
-
-export const testCategorySelectSchema = createSelectSchema(schema.testCategory)
-export const testCategoryInsertSchema = createInsertSchema(schema.testCategory)
-export const testSpecSelectSchema = createSelectSchema(schema.testSpec)
-export const testSpecInsertSchema = createInsertSchema(schema.testSpec)
-export const testRequirementSelectSchema = createSelectSchema(schema.testRequirement)
-export const testRequirementInsertSchema = createInsertSchema(schema.testRequirement)
-export const testSelectSchema = createSelectSchema(schema.test)
-export const testInsertSchema = createInsertSchema(schema.test)
-
+export type TestStatus = keyof typeof TEST_STATUSES
+export type SpecStatus = keyof typeof SPEC_STATUSES
 export type TestCategory = z.infer<typeof testCategorySelectSchema>
 export type TestSpec = z.infer<typeof testSpecSelectSchema>
 export type TestRequirement = z.infer<typeof testRequirementSelectSchema>
@@ -32,20 +68,24 @@ export type Test = z.infer<typeof testSelectSchema> & {
 }
 
 // Tree node types for the dashboard
-export interface TreeNode {
+export type TreeNode = {
     id: string
     name: string
     type: 'category' | 'spec' | 'test'
     children?: TreeNode[]
     passed?: number
     total?: number
-    status: TestStatus | SpecStatus
     icon?: React.ElementType
     spec?: TestSpec
     category?: TestCategory
     test?: Test
     requirement?: TestRequirement
-}
+} &
+    // FIXME: WTF is category status?
+    (| { type: 'category'; status: TestStatus }
+        | { type: 'spec'; status: SpecStatus }
+        | { type: 'test'; status: TestStatus }
+    )
 
 // API response types
 export interface TestDataResponse {

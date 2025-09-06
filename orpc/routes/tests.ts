@@ -3,7 +3,7 @@ import { testsContract } from '@/orpc/contracts/tests'
 import { db } from '@/db'
 import { testCategory, testSpec, testRequirement, test } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { TestStatus, TestFramework, SpecStatus } from '@/lib/types'
+import { TestStatus, SpecStatus, TestFramework } from '@/lib/types'
 import { authMiddleware, organizationMiddleware } from '@/orpc/middleware'
 import { ORPCError } from '@orpc/server'
 
@@ -56,7 +56,7 @@ const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
         .select({
             id: testSpec.id,
             name: testSpec.name,
-            title: testSpec.title,
+            fileName: testSpec.fileName,
             description: testSpec.description,
             status: testSpec.status,
             testCategoryId: testSpec.testCategoryId,

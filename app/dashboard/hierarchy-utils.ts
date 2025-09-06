@@ -1,13 +1,13 @@
 import {
-    TreeNode,
-    TestStatus,
-    SpecStatus,
-    TestCategory,
+    type TreeNode,
+    type TestCategory,
     type TestSpec,
     type TestRequirement,
-    type Test
+    type Test,
+    type SpecStatus
 } from '@/lib/types'
 import { FileText, Folder } from 'lucide-react'
+import { TEST_STATUSES } from '@/lib/constants'
 
 export function buildHierarchy(
     categories: TestCategory[],
@@ -22,14 +22,14 @@ export function buildHierarchy(
         children.forEach((child) => {
             if (child.type === 'test') {
                 total += 1
-                if (child.status === 'passed') passed += 1
+                if (child.status === TEST_STATUSES.passed) passed += 1
             } else if (child.type === 'spec') {
                 // For specs, use their pre-calculated stats
                 passed += child.passed || 0
                 total += child.total || 0
             } else if (child.children) {
                 const childStats = calculateStats(child.children)
-                passed += childStats.passed
+                passed += childStats.passed || 0
                 total += childStats.total
             }
         })
@@ -40,56 +40,45 @@ export function buildHierarchy(
     // Create a map of categories with their specs
     const categoriesWithSpecs = categories.map((category) => {
         const categorySpecs = specs
-            .filter((spec) => (spec as { testCategoryId: string }).testCategoryId === (category as { id: string }).id)
+            .filter((spec) => spec.testCategoryId === category.id)
             .map((spec) => {
                 // Calculate stats for the spec based on its requirements
-                const specRequirements = requirements.filter(
-                    (req) => (req as { testSpecId: string }).testSpecId === (spec as { id: string }).id
-                )
+                const specRequirements = requirements.filter((req) => req.testSpecId === spec.id)
                 let passed = 0
                 const total = specRequirements.length
 
                 specRequirements.forEach((requirement) => {
-                    const test = tests.find(
-                        (test) =>
-                            (test as { testRequirementId: string }).testRequirementId ===
-                            (requirement as { id: string }).id
-                    )
-                    if ((test as { status?: string })?.status === 'passed') passed += 1
+                    const test = tests.find((test) => test.testRequirementId === requirement.id)
+                    if (test?.status === TEST_STATUSES.passed) passed += 1
                 })
 
                 return {
-                    id: (spec as { id: string }).id,
-                    name:
-                        (spec as { name?: string; title?: string }).name ||
-                        (spec as { title?: string }).title ||
-                        'Untitled Spec',
+                    id: spec.id,
+                    name: spec.name,
                     type: 'spec' as const,
                     icon: FileText,
                     children: [], // No children - requirements shown in right panel
                     passed: passed,
                     total: total,
-                    status: (spec as { status?: string }).status as SpecStatus,
-                    spec: spec as any
+                    status: spec.status as SpecStatus,
+                    spec: spec
                 }
             })
 
         const categoryStats = calculateStats(categorySpecs)
         return {
-            id: (category as { id: string }).id,
-            name:
-                (category as { name?: string; title?: string }).name ||
-                (category as { title?: string }).title ||
-                'Untitled Category',
+            id: category.id,
+            name: category.name,
             type: 'category' as const,
             icon: Folder,
             children: categorySpecs,
             passed: categoryStats.passed,
             total: categoryStats.total,
-            status: (categoryStats.passed === categoryStats.total ? 'passed'
-            : categoryStats.passed > 0 ? 'pending'
-            : 'failed') as TestStatus,
-            category: category as any
+            status:
+                categoryStats.passed === categoryStats.total ? TEST_STATUSES.passed
+                : categoryStats.passed > 0 ? TEST_STATUSES.pending
+                : TEST_STATUSES.failed,
+            category: category
         }
     })
 

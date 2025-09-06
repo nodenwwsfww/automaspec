@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9722a1f3-b37f-479f-867e-64e2d0b6dea8",
-  "prevId": "b545a47a-4008-403e-9609-99494c673a50",
+  "id": "450583d1-cfe1-45fb-a4b5-d57d0906a194",
+  "prevId": "f9a9324d-0a5c-465e-a567-5cc46efda92c",
   "tables": {
     "account": {
       "name": "account",
@@ -597,16 +597,14 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'todo'"
+          "autoincrement": false
         },
         "framework": {
           "name": "framework",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "'vitest'"
+          "notNull": true,
+          "autoincrement": false
         },
         "code": {
           "name": "code",
@@ -628,7 +626,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -636,7 +634,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -676,13 +674,6 @@
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
-          "type": "text",
-          "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false
-        },
         "description": {
           "name": "description",
           "type": "text",
@@ -718,7 +709,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -726,7 +717,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -794,7 +785,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -802,7 +793,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -842,8 +833,8 @@
           "notNull": true,
           "autoincrement": false
         },
-        "title": {
-          "name": "title",
+        "file_name": {
+          "name": "file_name",
           "type": "text",
           "primaryKey": false,
           "notNull": false,
@@ -861,8 +852,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'todo'"
+          "autoincrement": false
         },
         "test_category_id": {
           "name": "test_category_id",
@@ -877,7 +867,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -885,7 +875,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -914,7 +904,9 @@
   "_meta": {
     "schemas": {},
     "tables": {},
-    "columns": {}
+    "columns": {
+      "\"test_spec\".\"title\"": "\"test_spec\".\"file_name\""
+    }
   },
   "internal": {
     "indexes": {}

@@ -9,6 +9,7 @@ import { Label } from '@/components/ui/label'
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select'
 import { Textarea } from '@/components/ui/textarea'
 import { TestStatus } from '@/lib/types'
+import { TEST_STATUSES } from '@/lib/constants'
 
 const groupTypes = [
     { value: 'group', label: 'Group', icon: Folder, description: 'Container for organizing tests' },
@@ -16,12 +17,12 @@ const groupTypes = [
     { value: 'test', label: 'Test', icon: FileText, description: 'Individual test case' }
 ]
 
-const statusOptions: { value: TestStatus; label: string; description: string }[] = [
-    { value: 'passed', label: 'Passed', description: 'All tests passed successfully' },
-    { value: 'failed', label: 'Failed', description: 'Some tests failed' },
-    { value: 'skipped', label: 'Skipped', description: 'Tests were skipped' },
-    { value: 'todo', label: 'Todo', description: 'Tests are marked as todo' },
-    { value: 'pending', label: 'Pending', description: 'Tests are waiting to run' }
+const statusOptions: { value: TestStatus; description: string }[] = [
+    { value: TEST_STATUSES.passed, description: 'All tests passed' },
+    { value: TEST_STATUSES.failed, description: 'Some tests failed' },
+    { value: TEST_STATUSES.skipped, description: 'Tests were skipped' },
+    { value: TEST_STATUSES.todo, description: 'Tests are marked as todo' },
+    { value: TEST_STATUSES.pending, description: 'Tests are waiting to run' }
 ]
 
 interface GroupEditorModalProps {
@@ -32,11 +33,16 @@ interface GroupEditorModalProps {
 }
 
 export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEditorModalProps) {
-    const [formData, setFormData] = useState({
+    const [formData, setFormData] = useState<{
+        name: string
+        type: string
+        description: string
+        status: TestStatus
+    }>({
         name: '',
         type: 'group',
         description: '',
-        status: 'pending' as TestStatus
+        status: TEST_STATUSES.todo
     })
 
     const isEditing = !!group && !group.type // If group.type is passed, it's for creating new item
@@ -49,14 +55,14 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEdi
                 name: group.name || '',
                 type: group.type || 'group',
                 description: group.description || '',
-                status: group.status || 'pending'
+                status: group.status || TEST_STATUSES.todo
             })
         } else {
             setFormData({
                 name: '',
                 type: presetType || 'group',
                 description: '',
-                status: 'pending'
+                status: TEST_STATUSES.todo
             })
         }
     }, [group, presetType, open])
@@ -169,7 +175,7 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEdi
                                 Status
                             </Label>
                             <Select
-                                onValueChange={(value) => setFormData({ ...formData, status: value as TestStatus })}
+                                onValueChange={(value: TestStatus) => setFormData({ ...formData, status: value })}
                                 value={formData.status}
                             >
                                 <SelectTrigger>
@@ -179,7 +185,7 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEdi
                                     {statusOptions.map((status) => (
                                         <SelectItem key={status.value} value={status.value}>
                                             <div>
-                                                <div className="font-medium">{status.label}</div>
+                                                <div className="font-medium">{status.value.toUpperCase()}</div>
                                                 <div className="text-xs text-muted-foreground">
                                                     {status.description}
                                                 </div>

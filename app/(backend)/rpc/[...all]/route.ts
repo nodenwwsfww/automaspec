@@ -4,7 +4,7 @@ import { onError } from '@orpc/server'
 import { router } from '@/orpc/routes'
 import { ZodToJsonSchemaConverter } from '@orpc/zod/zod4'
 import { experimental_SmartCoercionPlugin as SmartCoercionPlugin } from '@orpc/json-schema'
-import { createContext } from '@/lib/context'
+import { createContext } from '@/lib/orpc/context'
 import { NextResponse } from 'next/server'
 
 const handler = new OpenAPIHandler(router, {

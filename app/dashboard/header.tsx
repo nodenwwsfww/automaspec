@@ -20,7 +20,7 @@ export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeader
             <div className="flex items-center gap-4">
                 <div className="flex items-center gap-2">
                     <Building2 className="h-5 w-5 text-muted-foreground" />
-                    <h1 className="font-semibold text-lg">{activeOrganization?.name || 'Test Structure'}</h1>
+                    <h1 className="font-semibold text-lg">{activeOrganization?.name}</h1>
                 </div>
                 <Badge variant="secondary">Free Plan</Badge>
             </div>

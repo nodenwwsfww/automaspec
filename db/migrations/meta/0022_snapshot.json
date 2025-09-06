@@ -1,8 +1,8 @@
 {
   "version": "6",
   "dialect": "sqlite",
-  "id": "9722a1f3-b37f-479f-867e-64e2d0b6dea8",
-  "prevId": "b545a47a-4008-403e-9609-99494c673a50",
+  "id": "f9a9324d-0a5c-465e-a567-5cc46efda92c",
+  "prevId": "86cee1cc-7d1e-4560-865c-b07ed7fc8e3e",
   "tables": {
     "account": {
       "name": "account",
@@ -597,16 +597,14 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'todo'"
+          "autoincrement": false
         },
         "framework": {
           "name": "framework",
           "type": "text",
           "primaryKey": false,
-          "notNull": false,
-          "autoincrement": false,
-          "default": "'vitest'"
+          "notNull": true,
+          "autoincrement": false
         },
         "code": {
           "name": "code",
@@ -628,7 +626,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -636,7 +634,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -718,7 +716,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -726,7 +724,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -794,7 +792,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -802,7 +800,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},
@@ -861,8 +859,7 @@
           "type": "text",
           "primaryKey": false,
           "notNull": true,
-          "autoincrement": false,
-          "default": "'todo'"
+          "autoincrement": false
         },
         "test_category_id": {
           "name": "test_category_id",
@@ -877,7 +874,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         },
         "updated_at": {
           "name": "updated_at",
@@ -885,7 +882,7 @@
           "primaryKey": false,
           "notNull": true,
           "autoincrement": false,
-          "default": "(datetime('now'))"
+          "default": "(CURRENT_TIMESTAMP)"
         }
       },
       "indexes": {},

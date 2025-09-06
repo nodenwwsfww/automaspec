@@ -57,9 +57,8 @@ export default function Dashboard() {
                 code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
                 requirements: requirementsWithTests,
                 testRequirementId: '',
-                // TODO: add zod codec
-                createdAt: new Date().toISOString(),
-                updatedAt: new Date().toISOString()
+                createdAt: new Date(),
+                updatedAt: new Date()
             })
         } else if (node.type === 'test') {
             // When test is selected, show test info and its requirement

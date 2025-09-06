@@ -1,7 +1,7 @@
 'use client'
 
 import { useQuery } from '@tanstack/react-query'
-import { orpc } from '@/lib/orpc'
+import { orpc } from '@/lib/orpc/orpc'
 
 export function useDashboardData() {
     const { data: categories = [], isLoading: categoriesLoading } = useQuery(

@@ -7,9 +7,7 @@ export const authMiddleware = os.$context<{ session?: Session }>().middleware(as
     }
 
     return await next({
-        context: {
-            session: context.session
-        }
+        context: { session: context.session }
     })
 })
 

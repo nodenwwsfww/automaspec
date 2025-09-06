@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "build": "next build",
-    "dev": "next dev --turbopack",
+    "dev": "next dev --turbopack --experimental-https",
     "start": "next start",
     "test": "vitest",
     "db:local": "turso dev --db-file db/local.db",

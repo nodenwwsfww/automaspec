@@ -1,41 +1,40 @@
 import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
-import { TestFramework, TestStatus, SpecStatus } from '@/lib/types'
+import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
 
 export const testCategory = sqliteTable('test_category', {
     id: text().primaryKey(),
     name: text().notNull(),
-    title: text(),
     description: text(),
     parentCategoryId: text(),
     organizationId: text().references(() => organization.id, { onDelete: 'cascade' }),
     order: integer().notNull().default(0),
     createdAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`),
+        .default(sql`(CURRENT_TIMESTAMP)`),
     updatedAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`)
-        .$onUpdate(() => sql`(datetime('now'))`)
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 
 export const testSpec = sqliteTable('test_spec', {
     id: text().primaryKey(),
     name: text().notNull(),
-    title: text(),
+    fileName: text(),
     description: text(),
-    status: text().$type<SpecStatus>().default('todo').notNull(),
+    status: text().$type<SpecStatus>().notNull(),
     testCategoryId: text()
         .notNull()
         .references(() => testCategory.id, { onDelete: 'cascade' }),
     createdAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`),
+        .default(sql`(CURRENT_TIMESTAMP)`),
     updatedAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`)
-        .$onUpdate(() => sql`(datetime('now'))`)
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 
 export const testRequirement = sqliteTable('test_requirement', {
@@ -48,28 +47,28 @@ export const testRequirement = sqliteTable('test_requirement', {
         .references(() => testSpec.id, { onDelete: 'cascade' }),
     createdAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`),
+        .default(sql`(CURRENT_TIMESTAMP)`),
     updatedAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`)
-        .$onUpdate(() => sql`(datetime('now'))`)
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 
 export const test = sqliteTable('test', {
     id: text().primaryKey(),
-    status: text().$type<TestStatus>().default('todo').notNull(),
-    framework: text().$type<TestFramework>().default('vitest'),
+    status: text().$type<TestStatus>().notNull(),
+    framework: text().$type<TestFramework>().notNull(),
     code: text(),
     testRequirementId: text()
         .notNull()
         .references(() => testRequirement.id, { onDelete: 'cascade' }),
     createdAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`),
+        .default(sql`(CURRENT_TIMESTAMP)`),
     updatedAt: text()
         .notNull()
-        .default(sql`(datetime('now'))`)
-        .$onUpdate(() => sql`(datetime('now'))`)
+        .default(sql`(CURRENT_TIMESTAMP)`)
+        .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 
 export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({

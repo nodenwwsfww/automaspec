@@ -1,4 +1,3 @@
-
 import { auth } from '@/lib/shared/better-auth'
 
 export async function createContext(req: Request) {
