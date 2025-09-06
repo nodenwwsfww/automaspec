@@ -23,7 +23,7 @@ interface TestDetailsPanelProps {
 export function TestDetailsPanel({ selectedSpec, onEditSpec, onCreateGroup, onCreateTest }: TestDetailsPanelProps) {
     const [copied, setCopied] = useState(false)
     const [editingRequirements, setEditingRequirements] = useState(false)
-    const [requirementsContent, setRequirementsContent] = useState('')
+    const [,setRequirementsContent] = useState('')
 
     const copyTestCode = async () => {
         if (selectedSpec) {
@@ -62,7 +62,7 @@ ${requirements}
         if (selectedSpec) {
             // This would update the requirements in the database
             // For now, we'll just close the editing mode
-            console.log('Saving requirements:', requirementsContent)
+            // console.log('Saving requirements:', requirementsContent)
         }
         setEditingRequirements(false)
     }

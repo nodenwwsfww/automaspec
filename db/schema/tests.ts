@@ -8,7 +8,9 @@ export const testCategory = sqliteTable('test_category', {
     name: text().notNull(),
     description: text(),
     parentCategoryId: text(),
-    organizationId: text().references(() => organization.id, { onDelete: 'cascade' }),
+    organizationId: text()
+        .references(() => organization.id, { onDelete: 'cascade' })
+        .notNull(),
     order: integer().notNull().default(0),
     createdAt: text()
         .notNull()
@@ -25,9 +27,10 @@ export const testSpec = sqliteTable('test_spec', {
     fileName: text(),
     description: text(),
     status: text().$type<SpecStatus>().notNull(),
-    testCategoryId: text()
-        .notNull()
-        .references(() => testCategory.id, { onDelete: 'cascade' }),
+    testCategoryId: text().references(() => testCategory.id, { onDelete: 'cascade' }),
+    organizationId: text()
+        .references(() => organization.id, { onDelete: 'cascade' })
+        .notNull(),
     createdAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
@@ -87,6 +90,10 @@ export const testSpecRelations = relations(testSpec, ({ one, many }) => ({
     category: one(testCategory, {
         fields: [testSpec.testCategoryId],
         references: [testCategory.id]
+    }),
+    organization: one(organization, {
+        fields: [testSpec.organizationId],
+        references: [organization.id]
     }),
     requirements: many(testRequirement)
 }))

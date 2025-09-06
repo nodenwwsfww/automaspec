@@ -2,13 +2,14 @@
 
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { SelectedSpec, TreeNode, TestStatus } from '@/lib/types'
+import { SelectedSpec, TestStatus, CategoryWithStats, SpecWithStats } from '@/lib/types'
 
 import { DashboardHeader } from './header'
-import { TreeNodeComponent } from './tree-node'
+import { CategoryComponent } from './category'
+import { SpecComponent } from './spec'
 import { TestDetailsPanel } from './test-details-panel'
 import { useDashboardData } from './hooks'
-import { buildHierarchy } from './hierarchy-utils'
+import { buildCategoryHierarchy, getSpecsWithoutCategories } from './hierarchy-utils'
 
 export default function Dashboard() {
     const [selectedSpec, setSelectedSpec] = useState<SelectedSpec | null>(null)
@@ -20,17 +21,6 @@ export default function Dashboard() {
 
     const { categories, specs, requirements, tests, loading } = useDashboardData()
 
-    // Debug: Log the data to see what we're getting
-    if (!loading) {
-        console.log('Categories:', categories.length)
-        console.log('Specs:', specs.length)
-        console.log('Requirements:', requirements.length)
-        console.log('Tests:', tests.length)
-        if (requirements.length > 0) {
-            console.log('First requirement:', requirements[0])
-        }
-    }
-
     // const {
     //     handleDelete,
     //     createTestCategoryMutation,
@@ -39,29 +29,24 @@ export default function Dashboard() {
     //     updateTestSpecMutation
     // } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
 
-    const handleSpecSelect = (node: TreeNode) => {
-        if (node.type === 'spec' && node.spec) {
-            console.log('Selecting spec:', node.spec.name, 'ID:', node.id)
+    const handleSpecSelect = (spec: SpecWithStats) => {
+        // When spec is selected, show spec info and all its requirements
+        const specRequirements = requirements.filter((req) => req.testSpecId === spec.id)
 
-            // When spec is selected, show spec info and all its requirements
-            const specRequirements = requirements.filter((req) => req.testSpecId === node.id)
-            console.log(`Found ${specRequirements.length} requirements for spec ${node.spec.name}`)
+        // Attach test data and status to each requirement
+        const requirementsWithTests = specRequirements.map((req) => {
+            const test = tests.find((test) => test.testRequirementId === req.id)
+            return {
+                ...req,
+                test: test,
+                status: (test?.status || 'pending') as TestStatus
+            }
+        })
 
-            // Attach test data and status to each requirement
-            const requirementsWithTests = specRequirements.map((req) => {
-                const test = tests.find((test) => test.testRequirementId === req.id)
-                return {
-                    ...req,
-                    test: test,
-                    status: (test?.status || 'pending') as TestStatus
-                }
-            })
-
-            setSelectedSpec({
-                ...node.spec,
-                requirements: requirementsWithTests
-            })
-        }
+        setSelectedSpec({
+            ...spec,
+            requirements: requirementsWithTests
+        })
     }
 
     // const handleCreateGroup = () => {
@@ -146,8 +131,8 @@ export default function Dashboard() {
     // }
 
     // Build hierarchical structure from flat data for display
-    // @ts-ignore FIXME
-    const allTests = buildHierarchy(categories, specs, requirements, tests)
+    const categoriesWithStats = buildCategoryHierarchy(categories, specs, requirements, tests)
+    const specsWithoutCategories = getSpecsWithoutCategories(specs, requirements, tests)
 
     if (loading) {
         return (
@@ -160,23 +145,56 @@ export default function Dashboard() {
         )
     }
 
+    const renderCategory = (category: CategoryWithStats, level = 0) => (
+        <CategoryComponent
+            key={category.id}
+            category={category}
+            level={level}
+            onEdit={() => {}}
+            onAddChild={() => {}}
+            onDelete={() => {}}
+            onAddSpec={() => {}}
+        >
+            {/* Render child categories */}
+            {category.children.map((child) => renderCategory(child, level + 1))}
+            {/* Render specs in this category */}
+            {category.specs.map((spec) => (
+                <SpecComponent
+                    key={spec.id}
+                    spec={spec}
+                    level={level + 1}
+                    onSelect={handleSpecSelect}
+                    onEdit={() => {}}
+                    onDelete={() => {}}
+                    onAddRequirement={() => {}}
+                    selectedId={selectedSpec?.id || null}
+                />
+            ))}
+        </CategoryComponent>
+    )
+
     return (
         <div className="flex h-screen bg-background">
             <div className="flex w-1/2 flex-col border-r">
                 <DashboardHeader onCreateGroup={() => {}} onCreateTest={() => {}} />
 
                 <div className="flex-1 overflow-auto p-2">
-                    {allTests.map((node: TreeNode) => (
-                        <TreeNodeComponent
-                            key={node.id}
-                            node={node}
-                            onAddChild={() => {}}
-                            onDelete={() => {}}
-                            onEdit={() => {}}
+                    {/* Render specs without categories first */}
+                    {specsWithoutCategories.map((spec) => (
+                        <SpecComponent
+                            key={spec.id}
+                            spec={spec}
+                            level={0}
                             onSelect={handleSpecSelect}
+                            onEdit={() => {}}
+                            onDelete={() => {}}
+                            onAddRequirement={() => {}}
                             selectedId={selectedSpec?.id || null}
                         />
                     ))}
+
+                    {/* Render categories with their nested structure */}
+                    {categoriesWithStats.map((category) => renderCategory(category))}
                 </div>
             </div>
 

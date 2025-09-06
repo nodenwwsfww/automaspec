@@ -60,6 +60,7 @@ const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
             description: testSpec.description,
             status: testSpec.status,
             testCategoryId: testSpec.testCategoryId,
+            organizationId: testSpec.organizationId,
             createdAt: testSpec.createdAt,
             updatedAt: testSpec.updatedAt
         })

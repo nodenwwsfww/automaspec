@@ -57,31 +57,32 @@ export type SpecStatus = keyof typeof SPEC_STATUSES
 export type TestCategory = z.infer<typeof testCategorySelectSchema>
 export type TestSpec = z.infer<typeof testSpecSelectSchema>
 export type TestRequirement = z.infer<typeof testRequirementSelectSchema>
+export type Test = z.infer<typeof testSelectSchema>
 
 // I check correct types up to here
 
-export type Test = z.infer<typeof testSelectSchema> & {
-    // title?: string
-    // description?: string
-    // requirements?: TestRequirement[]
+// Category with nested structure and stats
+export interface CategoryWithStats extends TestCategory {
+    children: CategoryWithStats[]
+    specs: SpecWithStats[]
+    passed: number
+    failed: number
+    pending: number
+    skipped: number
+    todo: number
+    total: number
+    status: TestStatus
 }
 
-// Tree node types for the dashboard
-export type TreeNode = {
-    id: string
-    name: string
-    type: 'category' | 'spec'
-    children?: TreeNode[]
-    passed?: number
-    failed?: number
-    pending?: number
-    skipped?: number
-    todo?: number
-    total?: number
-    icon?: React.ElementType
-    spec?: TestSpec
-    category?: TestCategory
-} & ({ type: 'category'; status: TestStatus } | { type: 'spec'; status: SpecStatus })
+// Spec with stats
+export interface SpecWithStats extends TestSpec {
+    passed: number
+    failed: number
+    pending: number
+    skipped: number
+    todo: number
+    total: number
+}
 
 // API response types
 export interface TestDataResponse {

@@ -26,8 +26,8 @@ export function useDashboardData() {
 
     // Debug: Log requirements data
     if (!requirementsLoading && requirements.length > 0) {
-        console.log('Requirements fetched:', requirements.length)
-        console.log('First requirement:', requirements[0])
+        // console.log('Requirements fetched:', requirements.length)
+        // console.log('First requirement:', requirements[0])
     }
 
     const { data: tests = [], isLoading: testsLoading } = useQuery(
