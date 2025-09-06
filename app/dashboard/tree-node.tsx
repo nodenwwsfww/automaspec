@@ -6,7 +6,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import { cn } from '@/lib/utils'
 import { ChevronDown, ChevronRight, FileText, MoreHorizontal, Edit, Folder, Trash2 } from 'lucide-react'
 import { TreeNode } from '@/lib/types'
-import { STATUS_CONFIGS } from '@/lib/constants'
+import { SPEC_STATUSES, STATUS_CONFIGS } from '@/lib/constants'
 import { Badge } from '@/components/ui/badge'
 
 interface TreeNodeProps {
@@ -80,8 +80,23 @@ export function TreeNodeComponent({
                     )}
 
                     {node.total && node.type !== 'category' && (
-                        <div className="flex items-center gap-2 text-xs">
-                            <span className={cn('font-medium', STATUS_CONFIGS[node.status]?.color)}>{node.total}</span>
+                        <div className="flex items-center gap-1 text-xs">
+                            {node.passed !== undefined && node.passed > 0 && (
+                                <span className="text-emerald-600 font-medium">{node.passed}</span>
+                            )}
+                            {node.failed !== undefined && node.failed > 0 && (
+                                <span className="text-red-600 font-medium">{node.failed}</span>
+                            )}
+                            {node.pending !== undefined && node.pending > 0 && (
+                                <span className="text-amber-600 font-medium">{node.pending}</span>
+                            )}
+                            {node.skipped !== undefined && node.skipped > 0 && (
+                                <span className="text-slate-600 font-medium">{node.skipped}</span>
+                            )}
+                            {node.todo !== undefined && node.todo > 0 && (
+                                <span className="text-orange-600 font-medium">{node.todo}</span>
+                            )}
+                            <span className="text-muted-foreground">({node.total})</span>
                         </div>
                     )}
                 </div>
@@ -108,7 +123,9 @@ export function TreeNodeComponent({
                                     <Folder className="mr-2 h-4 w-4" />
                                     Add Spec
                                 </DropdownMenuItem>
-                                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'spec', status: 'todo' })}>
+                                <DropdownMenuItem
+                                    onClick={() => onAddChild({ ...node, type: 'spec', status: SPEC_STATUSES.missing })}
+                                >
                                     <FileText className="mr-2 h-4 w-4" />
                                     Add Requirement
                                 </DropdownMenuItem>

@@ -79,6 +79,10 @@ export function GroupEditorModal({ open, onOpenChange, group, onSave }: GroupEdi
             framework: 'vitest',
             icon: selectedType?.icon,
             passed: group?.passed || 0,
+            failed: group?.failed || 0,
+            pending: group?.pending || 0,
+            skipped: group?.skipped || 0,
+            todo: group?.todo || 0,
             total: group?.total || 0,
             children: group?.children || []
         }

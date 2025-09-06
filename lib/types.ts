@@ -73,6 +73,10 @@ export type TreeNode = {
     type: 'category' | 'spec'
     children?: TreeNode[]
     passed?: number
+    failed?: number
+    pending?: number
+    skipped?: number
+    todo?: number
     total?: number
     icon?: React.ElementType
     spec?: TestSpec

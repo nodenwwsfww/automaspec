@@ -35,6 +35,10 @@ export function TestEditorModal({ open, onOpenChange, test, onSave }: TestEditor
             requirements: formData.requirements.split('\n').filter((req: string) => req.trim()),
             code: formData.code,
             passed: test?.passed || 0,
+            failed: test?.failed || 0,
+            pending: test?.pending || 0,
+            skipped: test?.skipped || 0,
+            todo: test?.todo || 0,
             total: test?.total || 1,
             status: test?.status || 'not_run',
             framework: test?.framework || 'Vitest'
