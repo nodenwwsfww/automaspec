@@ -157,13 +157,20 @@ const deleteTest = os.tests.delete.handler(async ({ input }) => {
     return { success: true }
 })
 
-const listTestRequirements = os.testRequirements.list.handler(async ({ context }) => {
+const listTestRequirements = os.testRequirements.list.handler(async ({ input, context }) => {
     const organizationId = context.organizationId
+
+    const conditions = [eq(testCategory.organizationId, organizationId)]
+
+    // If testSpecId is provided, filter by it
+    if (input.testSpecId) {
+        conditions.push(eq(testRequirement.testSpecId, input.testSpecId))
+    }
 
     return await db
         .select({
             id: testRequirement.id,
-            text: testRequirement.text,
+            name: testRequirement.name,
             description: testRequirement.description,
             order: testRequirement.order,
             testSpecId: testRequirement.testSpecId,
@@ -173,7 +180,7 @@ const listTestRequirements = os.testRequirements.list.handler(async ({ context }
         .from(testRequirement)
         .innerJoin(testSpec, eq(testRequirement.testSpecId, testSpec.id))
         .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
-        .where(eq(testCategory.organizationId, organizationId))
+        .where(and(...conditions))
 })
 
 const upsertTestRequirement = os.testRequirements.upsert.handler(async ({ input }) => {

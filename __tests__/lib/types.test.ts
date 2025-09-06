@@ -37,11 +37,9 @@ describe('Types', () => {
     test('TreeNode supports all types', () => {
         const categoryNode: TreeNode = { id: '1', name: 'Category', type: 'category', status: TEST_STATUSES.failed }
         const specNode: TreeNode = { id: '2', name: 'Spec', type: 'spec', status: SPEC_STATUSES.active }
-        const testNode: TreeNode = { id: '3', name: 'Test', type: 'test', status: TEST_STATUSES.failed }
 
         expect(categoryNode.type).toBe('category')
         expect(specNode.type).toBe('spec')
-        expect(testNode.type).toBe('test')
     })
 
     test('TreeNode can have optional properties', () => {

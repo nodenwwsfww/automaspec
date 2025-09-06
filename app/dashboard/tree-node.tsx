@@ -39,8 +39,8 @@ export function TreeNodeComponent({
         if (hasChildren) {
             setIsExpanded(!isExpanded)
         }
-        // Allow selecting both tests and specs
-        if (node.type === 'test' || node.type === 'spec') {
+        // Allow selecting specs
+        if (node.type === 'spec') {
             onSelect(node)
         }
     }
@@ -108,11 +108,9 @@ export function TreeNodeComponent({
                                     <Folder className="mr-2 h-4 w-4" />
                                     Add Spec
                                 </DropdownMenuItem>
-                                <DropdownMenuItem
-                                    onClick={() => onAddChild({ ...node, type: 'test', status: 'pending' })}
-                                >
+                                <DropdownMenuItem onClick={() => onAddChild({ ...node, type: 'spec', status: 'todo' })}>
                                     <FileText className="mr-2 h-4 w-4" />
-                                    Add Test
+                                    Add Requirement
                                 </DropdownMenuItem>
                             </>
                         )}

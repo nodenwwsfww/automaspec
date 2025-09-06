@@ -39,7 +39,7 @@ export const testSpec = sqliteTable('test_spec', {
 
 export const testRequirement = sqliteTable('test_requirement', {
     id: text().primaryKey(),
-    text: text().notNull(),
+    name: text().notNull(),
     description: text(),
     order: integer().notNull().default(0),
     testSpecId: text()

@@ -6,59 +6,73 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Edit, FileText, Trash2, Check, Copy, Plus, Folder } from 'lucide-react'
-import { Test, TestRequirement, type TestStatus } from '@/lib/types'
+import { SelectedSpec, Test, TestRequirement, type TestStatus } from '@/lib/types'
 import { STATUS_CONFIGS, TEST_STATUSES } from '@/lib/constants'
 
 interface RequirementWithTest extends TestRequirement {
     test?: Test
-    status?: string
+    status?: TestStatus
 }
-
 interface TestDetailsPanelProps {
-    selectedTest: Test | null
-    onEditTest: (test: Test) => void
+    selectedSpec: SelectedSpec | null
+    onEditSpec: (spec: SelectedSpec) => void
     onCreateGroup: () => void
     onCreateTest: () => void
 }
 
-export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCreateTest }: TestDetailsPanelProps) {
+export function TestDetailsPanel({ selectedSpec, onEditSpec, onCreateGroup, onCreateTest }: TestDetailsPanelProps) {
     const [copied, setCopied] = useState(false)
     const [editingRequirements, setEditingRequirements] = useState(false)
     const [requirementsContent, setRequirementsContent] = useState('')
 
     const copyTestCode = async () => {
-        if (selectedTest?.code) {
-            await navigator.clipboard.writeText(selectedTest.code)
+        if (selectedSpec) {
+            // Generate test code from the spec and its requirements
+            const testCode = generateTestCode(selectedSpec)
+            await navigator.clipboard.writeText(testCode)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         }
     }
 
+    const generateTestCode = (spec: SelectedSpec): string => {
+        const requirements = spec.requirements
+            .map((req) => {
+                const testStatus = req.test?.status || 'pending'
+                const testCode = req.test?.code || `// TODO: Implement test for ${req.name}`
+                return `  it('${req.name}', () => {
+    // ${req.description || 'No description'}
+    // Status: ${testStatus}
+    ${testCode}
+  })`
+            })
+            .join('\n\n')
+
+        return `describe('${spec.name}', () => {
+  // ${spec.description || 'No description'}
+  // Total requirements: ${spec.requirements.length}
+  // Passed tests: ${spec.requirements.filter((r) => r.status === 'passed').length}
+
+${requirements}
+})`
+    }
+
     const saveRequirements = () => {
         // In real app, would save to database
-        if (selectedTest) {
-            selectedTest.requirements = requirementsContent
-                .split('\n')
-                .filter((req) => req.trim())
-                .map((req: string, index: number) => ({
-                    id: `req-${index + 1}`,
-                    text: req,
-                    description: null,
-                    order: index,
-                    testSpecId: selectedTest.id,
-                    createdAt: new Date(),
-                    updatedAt: new Date()
-                }))
+        if (selectedSpec) {
+            // This would update the requirements in the database
+            // For now, we'll just close the editing mode
+            console.log('Saving requirements:', requirementsContent)
         }
         setEditingRequirements(false)
     }
 
-    if (!selectedTest) {
+    if (!selectedSpec) {
         return (
             <div className="flex flex-1 items-center justify-center text-muted-foreground">
                 <div className="text-center">
                     <FileText className="mx-auto mb-4 h-12 w-12 opacity-50" />
-                    <p>Select a test to view details and code</p>
+                    <p>Select a spec to view details and requirements</p>
                     <div className="mt-4 flex gap-2">
                         <Button variant="outline" onClick={onCreateGroup}>
                             <Folder className="mr-2 h-4 w-4" />
@@ -80,21 +94,15 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                 <div className="mb-2 flex items-start justify-between">
                     <div>
                         <div className="mb-1 flex items-center gap-2">
-                            <h2 className="font-semibold text-xl">{selectedTest.title}</h2>
-                            <Button onClick={() => onEditTest(selectedTest)} size="sm" variant="ghost">
+                            <h2 className="font-semibold text-xl">{selectedSpec.name}</h2>
+                            <Button onClick={() => onEditSpec(selectedSpec)} size="sm" variant="ghost">
                                 <Edit className="h-4 w-4" />
                             </Button>
                         </div>
-                        <p className="mb-2 text-muted-foreground text-sm">{selectedTest.description}</p>
+                        <p className="mb-2 text-muted-foreground text-sm">{selectedSpec.description}</p>
                         <div className="flex items-center gap-2">
-                            <Badge variant="outline">{selectedTest.framework}</Badge>
-                            {selectedTest.status &&
-                                (() => {
-                                    const config = STATUS_CONFIGS[selectedTest.status as TestStatus]
-                                    return config.badgeClassName ?
-                                            <Badge className={config.badgeClassName}>{config.label}</Badge>
-                                        :   null
-                                })()}
+                            <Badge variant="outline">{selectedSpec.status}</Badge>
+                            <Badge variant="outline">{selectedSpec.fileName || 'No file'}</Badge>
                         </div>
                     </div>
                 </div>
@@ -121,11 +129,11 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                 </Button>
                             </div>
 
-                            {(selectedTest.requirements || []).length > 0 && (
+                            {selectedSpec.requirements.length > 0 && (
                                 <div className="mb-4 rounded-lg bg-muted/30 p-3">
                                     <div className="flex items-center gap-4 text-sm">
                                         {Object.values(TEST_STATUSES).map((status) => {
-                                            const count = (selectedTest.requirements || []).filter(
+                                            const count = selectedSpec.requirements.filter(
                                                 (req: RequirementWithTest) => req.status === status
                                             ).length
 
@@ -150,62 +158,57 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                             {editingRequirements ?
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        {(selectedTest.requirements || []).map(
-                                            (req: RequirementWithTest, index: number) => (
-                                                <div
-                                                    key={req.id || index}
-                                                    className="flex items-center gap-2 rounded-lg border p-3"
+                                        {selectedSpec.requirements.map((req: RequirementWithTest, index: number) => (
+                                            <div
+                                                key={req.id || index}
+                                                className="flex items-center gap-2 rounded-lg border p-3"
+                                            >
+                                                <input
+                                                    className="flex-1 bg-transparent outline-none"
+                                                    onChange={(e) => {
+                                                        const updatedReqs = [...selectedSpec.requirements]
+                                                        updatedReqs[index] = {
+                                                            ...req,
+                                                            name: e.target.value
+                                                        } as RequirementWithTest
+                                                        setRequirementsContent(
+                                                            updatedReqs
+                                                                .map((r: RequirementWithTest) => r.name)
+                                                                .join('\n')
+                                                        )
+                                                    }}
+                                                    placeholder="Enter requirement..."
+                                                    value={req.name || ''}
+                                                />
+                                                <Button
+                                                    onClick={() => {
+                                                        const updatedReqs = selectedSpec.requirements.filter(
+                                                            (_: any, i: number) => i !== index
+                                                        )
+                                                        setRequirementsContent(
+                                                            updatedReqs.map((r: any) => r.name).join('\n')
+                                                        )
+                                                    }}
+                                                    size="sm"
+                                                    variant="ghost"
                                                 >
-                                                    <input
-                                                        className="flex-1 bg-transparent outline-none"
-                                                        onChange={(e) => {
-                                                            const updatedReqs = [...(selectedTest.requirements || [])]
-                                                            updatedReqs[index] = {
-                                                                ...req,
-                                                                text: e.target.value
-                                                            }
-                                                            selectedTest.requirements = updatedReqs
-                                                            setRequirementsContent(
-                                                                updatedReqs
-                                                                    .map((r: RequirementWithTest) => r.text)
-                                                                    .join('\n')
-                                                            )
-                                                        }}
-                                                        placeholder="Enter requirement..."
-                                                        value={req.text || ''}
-                                                    />
-                                                    <Button
-                                                        onClick={() => {
-                                                            const updatedReqs = (
-                                                                selectedTest.requirements || []
-                                                            ).filter((_: any, i: number) => i !== index)
-                                                            selectedTest.requirements = updatedReqs
-                                                            setRequirementsContent(
-                                                                updatedReqs.map((r: any) => r.text).join('\n')
-                                                            )
-                                                        }}
-                                                        size="sm"
-                                                        variant="ghost"
-                                                    >
-                                                        <Trash2 className="h-4 w-4" />
-                                                    </Button>
-                                                </div>
-                                            )
-                                        )}
+                                                    <Trash2 className="h-4 w-4" />
+                                                </Button>
+                                            </div>
+                                        ))}
                                         <Button
                                             onClick={() => {
                                                 const newReq = {
                                                     id: `req-${Date.now()}`,
-                                                    text: '',
+                                                    name: '',
                                                     description: null,
-                                                    order: (selectedTest.requirements || []).length,
-                                                    testSpecId: selectedTest.id,
+                                                    order: selectedSpec.requirements.length,
+                                                    testSpecId: selectedSpec.id,
                                                     createdAt: new Date(),
                                                     updatedAt: new Date()
                                                 }
-                                                const updatedReqs = [...(selectedTest.requirements || []), newReq]
-                                                selectedTest.requirements = updatedReqs
-                                                setRequirementsContent(updatedReqs.map((r: any) => r.text).join('\n'))
+                                                const updatedReqs = [...selectedSpec.requirements, newReq]
+                                                setRequirementsContent(updatedReqs.map((r: any) => r.name).join('\n'))
                                             }}
                                             size="sm"
                                             variant="outline"
@@ -222,7 +225,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                     </div>
                                 </div>
                             :   <div className="space-y-2">
-                                    {(selectedTest.requirements || []).map((req: any, index: number) => {
+                                    {selectedSpec.requirements.map((req: RequirementWithTest, index: number) => {
                                         const config = STATUS_CONFIGS[(req.status || 'pending') as TestStatus]
                                         const IconComponent = config.icon
                                         const badge = (
@@ -239,7 +242,12 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                             >
                                                 <div className="mt-0.5">{badge}</div>
                                                 <div className="flex-1">
-                                                    <span className="font-medium text-sm">{req.text || req}</span>
+                                                    <span className="font-medium text-sm">{req.name}</span>
+                                                    {req.description && (
+                                                        <div className="mt-1 text-muted-foreground text-xs">
+                                                            {req.description}
+                                                        </div>
+                                                    )}
                                                     <div className="mt-1 text-muted-foreground text-xs">
                                                         Status:{' '}
                                                         <span className="capitalize">{req.status || 'pending'}</span>
@@ -248,7 +256,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                             </div>
                                         )
                                     })}
-                                    {(selectedTest.requirements || []).length === 0 && (
+                                    {selectedSpec.requirements.length === 0 && (
                                         <div className="text-muted-foreground text-sm">No requirements defined</div>
                                     )}
                                 </div>
@@ -274,7 +282,7 @@ export function TestDetailsPanel({ selectedTest, onEditTest, onCreateGroup, onCr
                                 </Button>
                             </div>
                             <div className="max-h-[500px] overflow-auto rounded-lg bg-slate-950 p-4 font-mono text-slate-50 text-sm">
-                                <pre className="whitespace-pre-wrap">{selectedTest.code || 'No code available'}</pre>
+                                <pre className="whitespace-pre-wrap">{generateTestCode(selectedSpec)}</pre>
                             </div>
                         </div>
                     </TabsContent>

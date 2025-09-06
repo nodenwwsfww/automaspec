@@ -20,10 +20,7 @@ export function buildHierarchy(
         let total = 0
 
         children.forEach((child) => {
-            if (child.type === 'test') {
-                total += 1
-                if (child.status === TEST_STATUSES.passed) passed += 1
-            } else if (child.type === 'spec') {
+            if (child.type === 'spec') {
                 // For specs, use their pre-calculated stats
                 passed += child.passed || 0
                 total += child.total || 0

@@ -2,7 +2,7 @@
 
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { Test, TreeNode } from '@/lib/types'
+import { SelectedSpec, TreeNode, TestStatus } from '@/lib/types'
 
 import { DashboardHeader } from './header'
 import { TreeNodeComponent } from './tree-node'
@@ -11,7 +11,7 @@ import { useDashboardData } from './hooks'
 import { buildHierarchy } from './hierarchy-utils'
 
 export default function Dashboard() {
-    const [selectedTest, setSelectedTest] = useState<Test | null>(null)
+    const [selectedSpec, setSelectedSpec] = useState<SelectedSpec | null>(null)
     // const [,setGroupEditorOpen] = useState(false)
     // const [,setTestEditorOpen] = useState(false)
     // const [,setEditingGroup] = useState<TestSpec | null>(null)
@@ -19,7 +19,17 @@ export default function Dashboard() {
     // const [,setParentGroup] = useState<TestSpec | null>(null)
 
     const { categories, specs, requirements, tests, loading } = useDashboardData()
-    // console.log(categories, specs, requirements, tests)
+
+    // Debug: Log the data to see what we're getting
+    if (!loading) {
+        console.log('Categories:', categories.length)
+        console.log('Specs:', specs.length)
+        console.log('Requirements:', requirements.length)
+        console.log('Tests:', tests.length)
+        if (requirements.length > 0) {
+            console.log('First requirement:', requirements[0])
+        }
+    }
 
     // const {
     //     handleDelete,
@@ -29,10 +39,13 @@ export default function Dashboard() {
     //     updateTestSpecMutation
     // } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
 
-    const handleTestSelect = (node: TreeNode) => {
-        if (node.type === 'spec') {
+    const handleSpecSelect = (node: TreeNode) => {
+        if (node.type === 'spec' && node.spec) {
+            console.log('Selecting spec:', node.spec.name, 'ID:', node.id)
+
             // When spec is selected, show spec info and all its requirements
             const specRequirements = requirements.filter((req) => req.testSpecId === node.id)
+            console.log(`Found ${specRequirements.length} requirements for spec ${node.spec.name}`)
 
             // Attach test data and status to each requirement
             const requirementsWithTests = specRequirements.map((req) => {
@@ -40,34 +53,14 @@ export default function Dashboard() {
                 return {
                     ...req,
                     test: test,
-                    status: test?.status || 'pending'
+                    status: (test?.status || 'pending') as TestStatus
                 }
             })
 
-            // Get framework from the first test, or default to 'vitest'
-            const firstTest = requirementsWithTests.find((req) => req.test)?.test
-            const framework = firstTest?.framework || 'vitest'
-
-            setSelectedTest({
-                id: node.id,
-                title: node.name,
-                description: node.spec?.description || '',
-                status: node.status,
-                framework: framework,
-                code: `// Spec: ${node.name}\n// Description: ${node.spec?.description || 'No description'}\n// Total tests: ${node.total}\n// Passed tests: ${node.passed}`,
-                requirements: requirementsWithTests,
-                testRequirementId: '',
-                createdAt: new Date(),
-                updatedAt: new Date()
+            setSelectedSpec({
+                ...node.spec,
+                requirements: requirementsWithTests
             })
-        } else if (node.type === 'test') {
-            // When test is selected, show test info and its requirement
-            setSelectedTest({
-                ...node.test,
-                title: node.requirement?.text || node.name,
-                description: node.requirement?.description || '',
-                requirements: node.requirement ? [node.requirement] : []
-            } as Test) // FIXME: as
         }
     }
 
@@ -180,8 +173,8 @@ export default function Dashboard() {
                             onAddChild={() => {}}
                             onDelete={() => {}}
                             onEdit={() => {}}
-                            onSelect={handleTestSelect}
-                            selectedId={selectedTest?.id || null}
+                            onSelect={handleSpecSelect}
+                            selectedId={selectedSpec?.id || null}
                         />
                     ))}
                 </div>
@@ -189,8 +182,8 @@ export default function Dashboard() {
 
             <div className="flex w-1/2 flex-col">
                 <TestDetailsPanel
-                    selectedTest={selectedTest}
-                    onEditTest={() => {}}
+                    selectedSpec={selectedSpec}
+                    onEditSpec={() => {}}
                     onCreateGroup={() => {}}
                     onCreateTest={() => {}}
                 />

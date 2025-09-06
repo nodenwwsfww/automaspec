@@ -61,31 +61,23 @@ export type TestRequirement = z.infer<typeof testRequirementSelectSchema>
 // I check correct types up to here
 
 export type Test = z.infer<typeof testSelectSchema> & {
-    // Extended properties for UI
-    title?: string
-    description?: string
-    requirements?: TestRequirement[]
+    // title?: string
+    // description?: string
+    // requirements?: TestRequirement[]
 }
 
 // Tree node types for the dashboard
 export type TreeNode = {
     id: string
     name: string
-    type: 'category' | 'spec' | 'test'
+    type: 'category' | 'spec'
     children?: TreeNode[]
     passed?: number
     total?: number
     icon?: React.ElementType
     spec?: TestSpec
     category?: TestCategory
-    test?: Test
-    requirement?: TestRequirement
-} &
-    // FIXME: WTF is category status?
-    (| { type: 'category'; status: TestStatus }
-        | { type: 'spec'; status: SpecStatus }
-        | { type: 'test'; status: TestStatus }
-    )
+} & ({ type: 'category'; status: TestStatus } | { type: 'spec'; status: SpecStatus })
 
 // API response types
 export interface TestDataResponse {
@@ -106,6 +98,14 @@ export interface TestCategoryWithType extends TestCategory {
 
 export interface TestWithType extends Test {
     type: 'test'
+}
+
+// Type for selected spec with its requirements and associated tests
+export interface SelectedSpec extends TestSpec {
+    requirements: (TestRequirement & {
+        test?: Test
+        status?: TestStatus
+    })[]
 }
 
 // Union type for editing different node types
