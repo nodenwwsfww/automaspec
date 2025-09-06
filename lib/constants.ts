@@ -5,7 +5,10 @@ import type { TestStatus, SpecStatus } from './types'
 export const SPEC_STATUSES = {
     active: 'active',
     skipped: 'skipped',
-    missing: 'missing'
+    missing: 'missing',
+    passed: 'passed',
+    failed: 'failed',
+    partial: 'partial'
 } as const
 
 export const TEST_STATUSES = {
@@ -71,6 +74,13 @@ export const STATUS_CONFIGS: Record<TestStatus | SpecStatus, StatusConfig> = {
         icon: MinusCircle,
         color: 'text-orange-600',
         label: 'Todo',
+        badgeClassName: 'border-orange-200 bg-orange-100 text-orange-800',
+        requirementClassName: 'text-orange-800 bg-orange-50'
+    },
+    [SPEC_STATUSES.partial]: {
+        icon: MinusCircle,
+        color: 'text-orange-600',
+        label: 'Partial',
         badgeClassName: 'border-orange-200 bg-orange-100 text-orange-800',
         requirementClassName: 'text-orange-800 bg-orange-50'
     }
