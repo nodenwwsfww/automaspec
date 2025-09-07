@@ -9,9 +9,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs'
 import { Separator } from '@/components/ui/separator'
 import { Badge } from '@/components/ui/badge'
-import { ModeToggle } from '@/components/theme-toggler'
 import { ArrowLeft, Bell, Shield, Palette, Code, Download, Trash2, AlertTriangle, Save, Zap } from 'lucide-react'
 import Link from 'next/link'
+import { ModeToggle } from '@/components/theme-toggler'
 
 export default function SettingsPage() {
     const [settings, setSettings] = useState({

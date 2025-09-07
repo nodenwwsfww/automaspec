@@ -2,14 +2,13 @@
 
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { SelectedSpec, TestStatus, CategoryWithStats, SpecWithStats } from '@/lib/types'
+import { SelectedSpec, TestStatus, SpecWithStats } from '@/lib/types'
 
 import { DashboardHeader } from './header'
-import { CategoryComponent } from './category'
-import { SpecComponent } from './spec'
+import { Tree } from './tree'
 import { TestDetailsPanel } from './test-details-panel'
 import { useDashboardData } from './hooks'
-import { buildCategoryHierarchy, getSpecsWithoutCategories } from './hierarchy-utils'
+// hierarchy is handled inside Tree component
 
 export default function Dashboard() {
     const [selectedSpec, setSelectedSpec] = useState<SelectedSpec | null>(null)
@@ -130,9 +129,7 @@ export default function Dashboard() {
     //     setEditingTest(null)
     // }
 
-    // Build hierarchical structure from flat data for display
-    const categoriesWithStats = buildCategoryHierarchy(categories, specs, requirements, tests)
-    const specsWithoutCategories = getSpecsWithoutCategories(specs, requirements, tests)
+    // Tree will compute hierarchy and stats internally
 
     if (loading) {
         return (
@@ -145,56 +142,20 @@ export default function Dashboard() {
         )
     }
 
-    const renderCategory = (category: CategoryWithStats, level = 0) => (
-        <CategoryComponent
-            key={category.id}
-            category={category}
-            level={level}
-            onEdit={() => {}}
-            onAddChild={() => {}}
-            onDelete={() => {}}
-            onAddSpec={() => {}}
-        >
-            {/* Render child categories */}
-            {category.children.map((child) => renderCategory(child, level + 1))}
-            {/* Render specs in this category */}
-            {category.specs.map((spec) => (
-                <SpecComponent
-                    key={spec.id}
-                    spec={spec}
-                    level={level + 1}
-                    onSelect={handleSpecSelect}
-                    onEdit={() => {}}
-                    onDelete={() => {}}
-                    onAddRequirement={() => {}}
-                    selectedId={selectedSpec?.id || null}
-                />
-            ))}
-        </CategoryComponent>
-    )
-
     return (
         <div className="flex h-screen bg-background">
             <div className="flex w-1/2 flex-col border-r">
                 <DashboardHeader onCreateGroup={() => {}} onCreateTest={() => {}} />
 
                 <div className="flex-1 overflow-auto p-2">
-                    {/* Render specs without categories first */}
-                    {specsWithoutCategories.map((spec) => (
-                        <SpecComponent
-                            key={spec.id}
-                            spec={spec}
-                            level={0}
-                            onSelect={handleSpecSelect}
-                            onEdit={() => {}}
-                            onDelete={() => {}}
-                            onAddRequirement={() => {}}
-                            selectedId={selectedSpec?.id || null}
-                        />
-                    ))}
-
-                    {/* Render categories with their nested structure */}
-                    {categoriesWithStats.map((category) => renderCategory(category))}
+                    <Tree
+                        categories={categories}
+                        specs={specs}
+                        requirements={requirements}
+                        tests={tests}
+                        selectedSpecId={selectedSpec?.id || null}
+                        onSelectSpec={handleSpecSelect}
+                    />
                 </div>
             </div>
 

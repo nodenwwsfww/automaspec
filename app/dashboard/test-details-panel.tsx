@@ -23,7 +23,7 @@ interface TestDetailsPanelProps {
 export function TestDetailsPanel({ selectedSpec, onEditSpec, onCreateGroup, onCreateTest }: TestDetailsPanelProps) {
     const [copied, setCopied] = useState(false)
     const [editingRequirements, setEditingRequirements] = useState(false)
-    const [,setRequirementsContent] = useState('')
+    const [, setRequirementsContent] = useState('')
 
     const copyTestCode = async () => {
         if (selectedSpec) {
