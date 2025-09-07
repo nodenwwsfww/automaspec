@@ -204,6 +204,13 @@
       "when": 1757179847745,
       "tag": "0028_bitter_red_ghost",
       "breakpoints": true
+    },
+    {
+      "idx": 29,
+      "version": "6",
+      "when": 1757259622613,
+      "tag": "0029_third_smiling_tiger",
+      "breakpoints": true
     }
   ]
 }

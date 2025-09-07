@@ -13,10 +13,10 @@ export const testCategory = sqliteTable('test_category', {
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
     order: integer().notNull().default(0),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+    updatedAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
@@ -33,10 +33,10 @@ export const testSpec = sqliteTable('test_spec', {
     organizationId: text()
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+    updatedAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
@@ -50,10 +50,10 @@ export const testRequirement = sqliteTable('test_requirement', {
     testSpecId: text()
         .notNull()
         .references(() => testSpec.id, { onDelete: 'cascade' }),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+    updatedAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
@@ -67,10 +67,10 @@ export const test = sqliteTable('test', {
     testRequirementId: text()
         .notNull()
         .references(() => testRequirement.id, { onDelete: 'cascade' }),
-    createdAt: integer({ mode: 'timestamp' })
+    createdAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`),
-    updatedAt: integer({ mode: 'timestamp' })
+    updatedAt: text()
         .notNull()
         .default(sql`(CURRENT_TIMESTAMP)`)
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
