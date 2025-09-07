@@ -4,6 +4,7 @@ import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
 
 export const testCategory = sqliteTable('test_category', {
+    // TODO: add uuid
     id: text().primaryKey(),
     name: text().notNull(),
     description: text(),
@@ -26,6 +27,7 @@ export const testSpec = sqliteTable('test_spec', {
     name: text().notNull(),
     fileName: text(),
     description: text(),
+    // TODO: add enum
     status: text().$type<SpecStatus>().notNull(),
     testCategoryId: text().references(() => testCategory.id, { onDelete: 'cascade' }),
     organizationId: text()

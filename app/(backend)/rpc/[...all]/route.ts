@@ -16,7 +16,17 @@ const handler = new OpenAPIHandler(router, {
             schemaConverters: [new ZodToJsonSchemaConverter()]
         })
     ],
-    interceptors: [onError((error) => console.error(error))]
+    interceptors: [
+        onError((error: any) => {
+            console.error('RPC Error:', error)
+            if (error.cause && error.cause.issues) {
+                console.error('Validation Issues:', JSON.stringify(error.cause.issues, null, 2))
+            }
+            if (error.cause && error.cause.data) {
+                console.error('Data that failed validation:', JSON.stringify(error.cause.data, null, 2))
+            }
+        })
+    ]
 })
 
 async function handleRequest(request: Request) {

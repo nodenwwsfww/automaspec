@@ -30,7 +30,17 @@ const link = new OpenAPILink(contract, {
             ...init,
             credentials: 'include'
         }),
-    interceptors: [onError((error) => console.error(error))],
+    interceptors: [
+        onError((error: any) => {
+            console.error('Client RPC Error:', error)
+            if (error.cause && error.cause.issues) {
+                console.error('Client Validation Issues:', JSON.stringify(error.cause.issues, null, 2))
+            }
+            if (error.cause && error.cause.data) {
+                console.error('Client Data that failed validation:', JSON.stringify(error.cause.data, null, 2))
+            }
+        })
+    ],
     plugins: [new ResponseValidationPlugin(contract)]
 })
 
