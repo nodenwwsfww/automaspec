@@ -4,7 +4,6 @@ import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
 
 export const testCategory = sqliteTable('test_category', {
-    // TODO: add uuid
     id: text().primaryKey(),
     name: text().notNull(),
     description: text(),

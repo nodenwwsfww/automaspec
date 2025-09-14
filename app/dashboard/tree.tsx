@@ -18,10 +18,8 @@ import type {
 } from '@/lib/types'
 import { TEST_STATUSES } from '@/lib/constants'
 
-type ItemType = 'category' | 'spec'
-
 interface ItemPayload {
-    type: ItemType
+    type: 'category' | 'spec'
     category?: CategoryWithStats
     spec?: SpecWithStats
 }

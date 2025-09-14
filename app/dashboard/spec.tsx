@@ -71,7 +71,6 @@ export function SpecComponent({
                 )}
             </div>
 
-            {/* Actions Menu */}
             <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                     <Button
