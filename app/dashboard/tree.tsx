@@ -8,9 +8,9 @@ import { cn } from '@/lib/utils'
 import { STATUS_CONFIGS } from '@/lib/constants'
 import { Badge } from '@/components/ui/badge'
 import type {
-    CategoryWithStats,
+    FolderWithStats,
     SpecWithStats,
-    TestCategory,
+    TestFolder,
     TestSpec,
     TestRequirement,
     Test,
@@ -18,20 +18,18 @@ import type {
 } from '@/lib/types'
 import { TEST_STATUSES } from '@/lib/constants'
 
-type ItemType = 'category' | 'spec'
-
 interface ItemPayload {
-    type: ItemType
-    category?: CategoryWithStats
+    type: 'category' | 'spec'
+    category?: FolderWithStats
     spec?: SpecWithStats
 }
 
 interface TreeProps {
-    categories: TestCategory[]
+    categories: TestFolder[]
     specs: TestSpec[]
     requirements: TestRequirement[]
     tests: Test[]
-    selectedSpecId: string | null
+    selectedSpecId: TestSpec['id'] | null
     onSelectSpec: (spec: SpecWithStats) => void
 }
 
@@ -68,7 +66,7 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
     const buildHierarchy = useMemo(() => {
         const specsWithStats = specs.map(calculateSpecStats)
 
-        const calculateCategoryStats = (s: SpecWithStats[], children: CategoryWithStats[]) => {
+        const calculateCategoryStats = (s: SpecWithStats[], children: FolderWithStats[]) => {
             let passed = 0
             let failed = 0
             let pending = 0
@@ -94,11 +92,11 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
             return { passed, failed, pending, skipped, todo, total }
         }
 
-        const buildCategory = (category: TestCategory): CategoryWithStats => {
+        const buildCategory = (category: TestFolder): FolderWithStats => {
             const childCategories = categories
                 .filter((cat) => cat.parentCategoryId === category.id)
                 .map((child) => buildCategory(child))
-            const categorySpecs = specsWithStats.filter((spec) => spec.testCategoryId === category.id)
+            const categorySpecs = specsWithStats.filter((spec) => spec.testFolderId === category.id)
             const stats = calculateCategoryStats(categorySpecs, childCategories)
             const status: TestStatus =
                 stats.passed === stats.total ? TEST_STATUSES.passed
@@ -113,8 +111,8 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
             }
         }
 
-        const roots: CategoryWithStats[] = categories.filter((c) => !c.parentCategoryId).map(buildCategory)
-        const orphanSpecs: SpecWithStats[] = specs.filter((s) => !s.testCategoryId).map(calculateSpecStats)
+        const roots: FolderWithStats[] = categories.filter((c) => !c.parentCategoryId).map(buildCategory)
+        const orphanSpecs: SpecWithStats[] = specs.filter((s) => !s.testFolderId).map(calculateSpecStats)
         return { roots, orphanSpecs }
     }, [categories, specs, requirements, tests])
 
@@ -136,7 +134,7 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
             children.root.push(sid)
         })
 
-        const addCategory = (cat: CategoryWithStats, parent: string | null) => {
+        const addCategory = (cat: FolderWithStats, parent: string | null) => {
             const cid = makeCatId(cat.id)
             items[cid] = { type: 'category', category: cat }
             ensure(cid)

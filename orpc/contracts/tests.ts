@@ -1,8 +1,8 @@
 import { oc } from '@orpc/contract'
 import * as z from 'zod'
 import {
-    testCategorySelectSchema,
-    testCategoryInsertSchema,
+    testFolderSelectSchema,
+    testFolderInsertSchema,
     testSpecSelectSchema,
     testSpecInsertSchema,
     testRequirementSelectSchema,
@@ -13,22 +13,22 @@ import {
 
 const listTestCategoriesContract = oc
     .route({ method: 'GET', path: '/test-categories' })
-    .input(testCategoryInsertSchema.pick({ parentCategoryId: true }).partial({ parentCategoryId: true }))
-    .output(z.array(testCategorySelectSchema))
+    .input(testFolderInsertSchema.pick({ parentCategoryId: true }).partial({ parentCategoryId: true }))
+    .output(z.array(testFolderSelectSchema))
 
 const upsertTestCategoryContract = oc
     .route({ method: 'POST', path: '/test-categories/{id}' })
-    .input(testCategoryInsertSchema.omit({ createdAt: true, updatedAt: true }).partial({ id: true }))
-    .output(testCategoryInsertSchema)
+    .input(testFolderInsertSchema.omit({ createdAt: true, updatedAt: true }).partial({ id: true }))
+    .output(testFolderInsertSchema)
 
 const deleteTestCategoryContract = oc
     .route({ method: 'DELETE', path: '/test-categories/{id}' })
-    .input(testCategoryInsertSchema.pick({ id: true }))
+    .input(testFolderInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
 const listTestSpecsContract = oc
     .route({ method: 'GET', path: '/test-specs' })
-    .input(testSpecInsertSchema.pick({ testCategoryId: true }))
+    .input(testSpecInsertSchema.pick({ testFolderId: true }))
     .output(z.array(testSpecSelectSchema))
 
 const upsertTestSpecContract = oc

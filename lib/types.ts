@@ -11,11 +11,11 @@ import { TEST_STATUSES, SPEC_STATUSES } from './constants'
 //     }
 // });
 
-export const testCategorySelectSchema = createSelectSchema(schema.testCategory, {
+export const testFolderSelectSchema = createSelectSchema(schema.testFolder, {
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date()
 })
-export const testCategoryInsertSchema = createInsertSchema(schema.testCategory, {
+export const testFolderInsertSchema = createInsertSchema(schema.testFolder, {
     createdAt: z.coerce.date(),
     updatedAt: z.coerce.date()
 })
@@ -48,7 +48,7 @@ export type TestFramework = 'vitest'
 export type OrganizationPlan = 'free' | 'pro' | 'enterprise'
 export type TestStatus = keyof typeof TEST_STATUSES
 export type SpecStatus = keyof typeof SPEC_STATUSES
-export type TestCategory = z.infer<typeof testCategorySelectSchema>
+export type TestFolder = z.infer<typeof testFolderSelectSchema>
 export type TestSpec = z.infer<typeof testSpecSelectSchema>
 export type TestRequirement = z.infer<typeof testRequirementSelectSchema>
 export type Test = z.infer<typeof testSelectSchema>
@@ -56,8 +56,8 @@ export type Test = z.infer<typeof testSelectSchema>
 // I check correct types up to here
 
 // Category with nested structure and stats
-export interface CategoryWithStats extends TestCategory {
-    children: CategoryWithStats[]
+export interface FolderWithStats extends TestFolder {
+    children: FolderWithStats[]
     specs: SpecWithStats[]
     passed: number
     failed: number
@@ -80,7 +80,7 @@ export interface SpecWithStats extends TestSpec {
 
 // API response types
 export interface TestDataResponse {
-    categories: TestCategory[]
+    categories: TestFolder[]
     specs: TestSpec[]
     tests: Test[]
     requirements: TestRequirement[]
@@ -91,7 +91,7 @@ export interface TestSpecWithType extends TestSpec {
     type: 'spec'
 }
 
-export interface TestCategoryWithType extends TestCategory {
+export interface TestFolderWithType extends TestFolder {
     type: 'category'
 }
 
@@ -108,10 +108,10 @@ export interface SelectedSpec extends TestSpec {
 }
 
 // Union type for editing different node types
-export type EditableNode = TestSpecWithType | TestCategoryWithType | TestWithType
+export type EditableNode = TestSpecWithType | TestFolderWithType | TestWithType
 
 // Form input types
-export type CreateTestCategoryInput = Omit<TestCategory, 'id' | 'createdAt' | 'updatedAt'>
+export type CreateTestFolderInput = Omit<TestFolder, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestSpecInput = Omit<TestSpec, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestInput = Omit<Test, 'id' | 'createdAt' | 'updatedAt'>
 export type CreateTestRequirementInput = Omit<TestRequirement, 'id' | 'createdAt' | 'updatedAt'>
@@ -128,7 +128,7 @@ export type Session = typeof authClient.$Infer.Session
 export type User = Session['user']
 
 // Update input types
-export type UpdateTestCategoryInput = { id: string } & Partial<CreateTestCategoryInput>
+export type UpdateTestFolderInput = { id: string } & Partial<CreateTestFolderInput>
 export type UpdateTestSpecInput = { id: string } & Partial<CreateTestSpecInput>
 export type UpdateTestInput = { id: string } & Partial<CreateTestInput>
 
