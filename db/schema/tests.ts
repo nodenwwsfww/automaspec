@@ -3,7 +3,7 @@ import { relations, sql } from 'drizzle-orm'
 import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
 
-export const testCategory = sqliteTable('test_category', {
+export const testFolder = sqliteTable('test_folder', {
     id: text().primaryKey(),
     name: text().notNull(),
     description: text(),
@@ -30,7 +30,7 @@ export const testSpec = sqliteTable('test_spec', {
     status: text().$type<SpecStatus>().notNull(),
     allTestCount: integer().notNull().default(0),
     succeededTestCount: integer().notNull().default(0),
-    testCategoryId: text().references(() => testCategory.id, { onDelete: 'cascade' }),
+    testFolderId: text().references(() => testFolder.id, { onDelete: 'cascade' }),
     organizationId: text()
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
@@ -77,22 +77,22 @@ export const test = sqliteTable('test', {
         .$onUpdate(() => sql`(CURRENT_TIMESTAMP)`)
 })
 
-export const testCategoryRelations = relations(testCategory, ({ one, many }) => ({
-    parent: one(testCategory, {
-        fields: [testCategory.parentCategoryId],
-        references: [testCategory.id]
+export const testFolderRelations = relations(testFolder, ({ one, many }) => ({
+    parent: one(testFolder, {
+        fields: [testFolder.parentCategoryId],
+        references: [testFolder.id]
     }),
     organization: one(organization, {
-        fields: [testCategory.organizationId],
+        fields: [testFolder.organizationId],
         references: [organization.id]
     }),
     testSpecs: many(testSpec)
 }))
 
 export const testSpecRelations = relations(testSpec, ({ one, many }) => ({
-    category: one(testCategory, {
-        fields: [testSpec.testCategoryId],
-        references: [testCategory.id]
+    folder: one(testFolder, {
+        fields: [testSpec.testFolderId],
+        references: [testFolder.id]
     }),
     organization: one(organization, {
         fields: [testSpec.organizationId],

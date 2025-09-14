@@ -232,6 +232,13 @@
       "when": 1757849819248,
       "tag": "0032_closed_ultragirl",
       "breakpoints": true
+    },
+    {
+      "idx": 33,
+      "version": "6",
+      "when": 1757851072860,
+      "tag": "0033_wet_sumo",
+      "breakpoints": true
     }
   ]
 }
