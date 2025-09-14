@@ -8,7 +8,7 @@ import { DashboardHeader } from './header'
 import { Tree } from './tree'
 import { TestDetailsPanel } from './test-details-panel'
 import { useDashboardData } from './hooks'
-// hierarchy is handled inside Tree component
+import { TreeV2 } from './tree-v2'
 
 export default function Dashboard() {
     const [selectedSpec, setSelectedSpec] = useState<SelectedSpec | null>(null)
@@ -156,6 +156,7 @@ export default function Dashboard() {
                         selectedSpecId={selectedSpec?.id || null}
                         onSelectSpec={handleSpecSelect}
                     />
+                    <TreeV2 />
                 </div>
             </div>
 

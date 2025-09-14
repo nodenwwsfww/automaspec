@@ -28,6 +28,8 @@ export const testSpec = sqliteTable('test_spec', {
     description: text(),
     // TODO: add enum
     status: text().$type<SpecStatus>().notNull(),
+    allTestCount: integer().notNull().default(0),
+    succeededTestCount: integer().notNull().default(0),
     testCategoryId: text().references(() => testCategory.id, { onDelete: 'cascade' }),
     organizationId: text()
         .references(() => organization.id, { onDelete: 'cascade' })

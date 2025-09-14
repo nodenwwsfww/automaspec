@@ -52,21 +52,7 @@ const deleteTestCategory = os.testCategories.delete.handler(async ({ input, cont
 const listTestSpecs = os.testSpecs.list.handler(async ({ context }) => {
     const organizationId = context.organizationId
 
-    return await db
-        .select({
-            id: testSpec.id,
-            name: testSpec.name,
-            fileName: testSpec.fileName,
-            description: testSpec.description,
-            status: testSpec.status,
-            testCategoryId: testSpec.testCategoryId,
-            organizationId: testSpec.organizationId,
-            createdAt: testSpec.createdAt,
-            updatedAt: testSpec.updatedAt
-        })
-        .from(testSpec)
-        .innerJoin(testCategory, eq(testSpec.testCategoryId, testCategory.id))
-        .where(eq(testCategory.organizationId, organizationId))
+    return await db.select().from(testSpec).where(eq(testSpec.organizationId, organizationId))
 })
 
 const upsertTestSpec = os.testSpecs.upsert.handler(async ({ input }) => {

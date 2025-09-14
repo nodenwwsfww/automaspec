@@ -29,7 +29,7 @@ interface TreeProps {
     specs: TestSpec[]
     requirements: TestRequirement[]
     tests: Test[]
-    selectedSpecId: string | null
+    selectedSpecId: TestSpec['id'] | null
     onSelectSpec: (spec: SpecWithStats) => void
 }
 
