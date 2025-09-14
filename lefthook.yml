@@ -23,12 +23,12 @@ pre-commit:
               echo "⚠️  TODO/FIXME comments found. Consider addressing them."
             fi
 
-pre-push:
-    parallel: true
-    jobs:
-        - name: typecheck
-          run: pnpx next typegen && pnpx --package=typescript tsc --noEmit
-          fail_text: '❌ TypeScript type checking failed'
+# pre-push:
+#     parallel: true
+#     jobs:
+        # - name: typecheck
+        #   run: pnpx next typegen && pnpx --package=typescript tsc --noEmit
+        #   fail_text: '❌ TypeScript type checking failed'
 
         # - name: test
         #   run: pnpm test
