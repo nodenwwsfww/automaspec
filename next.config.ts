@@ -4,8 +4,7 @@ const nextConfig: NextConfig = {
     experimental: {
         browserDebugInfoInTerminal: true,
         typedEnv: true,
-        // useLightningcss: true,
-        devtoolSegmentExplorer: true
+        useLightningcss: true
     },
     typedRoutes: true,
     eslint: {
@@ -19,4 +18,4 @@ const nextConfig: NextConfig = {
     }
 }
 
-export default nextConfig
+module.exports = nextConfig
