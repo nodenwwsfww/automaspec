@@ -1,7 +1,14 @@
 'use client'
 
-import { useMemo } from 'react'
-import { selectionFeature, syncDataLoaderFeature, hotkeysCoreFeature } from '@headless-tree/core'
+import { useMemo, useState } from 'react'
+import {
+    selectionFeature,
+    syncDataLoaderFeature,
+    hotkeysCoreFeature,
+    dragAndDropFeature,
+    keyboardDragAndDropFeature,
+    createOnDropHandler
+} from '@headless-tree/core'
 import { useTree } from '@headless-tree/react'
 import { ChevronDown, ChevronRight, FileText, Folder } from 'lucide-react'
 import { cn } from '@/lib/utils'
@@ -161,16 +168,30 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
         return { itemsById: items, childrenById: children }
     }, [buildHierarchy])
 
+    // Store only overrides produced by drag-and-drop; fall back to computed children
+    const [overrides, setOverrides] = useState<Record<string, string[]>>({})
+
     const tree = useTree<ItemPayload>({
         rootItemId: 'root',
         getItemName: (item) => item.getItemData().category?.name || item.getItemData().spec?.name || '',
         isItemFolder: (item) => item.getItemData().type === 'category',
         dataLoader: {
             getItem: (itemId) => itemsById[itemId],
-            getChildren: (itemId) => childrenById[itemId]
+            getChildren: (itemId) => overrides[itemId] ?? childrenById[itemId]
         },
+        canReorder: true,
+        onDrop: createOnDropHandler((item, newChildren) => {
+            const targetId = item.getId()
+            setOverrides((prev) => ({ ...prev, [targetId]: newChildren }))
+        }),
         indent: 16,
-        features: [syncDataLoaderFeature, selectionFeature, hotkeysCoreFeature]
+        features: [
+            syncDataLoaderFeature,
+            selectionFeature,
+            hotkeysCoreFeature,
+            dragAndDropFeature,
+            keyboardDragAndDropFeature
+        ]
     })
 
     return (
@@ -182,7 +203,7 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
                 const isExpanded = item.isExpanded()
                 const isSelected = payload.spec ? selectedSpecId === payload.spec.id : false
 
-                const baseProps = item.getProps()
+                const { children: _libChildren, ...baseProps } = item.getProps()
                 const onClick = (e: any) => {
                     baseProps.onClick?.(e)
                     if (payload.spec) onSelectSpec(payload.spec)
@@ -252,6 +273,10 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
                     </button>
                 )
             })}
+            <div
+                style={tree.getDragLineStyle()}
+                className="h-0.5 -mt-0.5 bg-[#0366d6] before:content-[''] before:absolute before:left-0 before:-top-1 before:h-1 before:w-1 before:bg-white before:border-2 before:border-[#0366d6] before:rounded-full"
+            />
         </div>
     )
 }
