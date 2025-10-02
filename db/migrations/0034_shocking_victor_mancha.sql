@@ -1,0 +1,1 @@
+ALTER TABLE `test_folder` RENAME COLUMN "parent_category_id" TO "parent_folder_id";

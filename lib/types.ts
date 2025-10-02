@@ -55,7 +55,7 @@ export type Test = z.infer<typeof testSelectSchema>
 
 // I check correct types up to here
 
-// Category with nested structure and stats
+// Folder with nested structure and stats
 export interface FolderWithStats extends TestFolder {
     children: FolderWithStats[]
     specs: SpecWithStats[]
@@ -80,7 +80,7 @@ export interface SpecWithStats extends TestSpec {
 
 // API response types
 export interface TestDataResponse {
-    categories: TestFolder[]
+    folders: TestFolder[]
     specs: TestSpec[]
     tests: Test[]
     requirements: TestRequirement[]
@@ -92,7 +92,7 @@ export interface TestSpecWithType extends TestSpec {
 }
 
 export interface TestFolderWithType extends TestFolder {
-    type: 'category'
+    type: 'folder'
 }
 
 export interface TestWithType extends Test {

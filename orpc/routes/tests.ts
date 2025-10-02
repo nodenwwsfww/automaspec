@@ -9,13 +9,13 @@ import { ORPCError } from '@orpc/server'
 
 const os = implement(testsContract).use(authMiddleware).use(organizationMiddleware)
 
-const listTestCategories = os.testCategories.list.handler(async ({ context }) => {
+const listTestFolders = os.testFolders.list.handler(async ({ context }) => {
     const organizationId = context.organizationId
 
     return await db.select().from(testFolder).where(eq(testFolder.organizationId, organizationId))
 })
 
-const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, context }) => {
+const upsertTestFolder = os.testFolders.upsert.handler(async ({ input, context }) => {
     const organizationId = context.organizationId
 
     const { id = crypto.randomUUID(), ...updates } = input
@@ -32,17 +32,17 @@ const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, cont
     return result[0]
 })
 
-const deleteTestCategory = os.testCategories.delete.handler(async ({ input, context }) => {
+const deleteTestFolder = os.testFolders.delete.handler(async ({ input, context }) => {
     const organizationId = context.organizationId
 
-    const deletedCategory = await db
+    const deletedFolder = await db
         .delete(testFolder)
         .where(and(eq(testFolder.id, input.id), eq(testFolder.organizationId, organizationId)))
         .returning({
             id: testFolder.id
         })
 
-    if (!deletedCategory || deletedCategory.length === 0) {
+    if (!deletedFolder || deletedFolder.length === 0) {
         return { success: false }
     }
 
@@ -194,10 +194,10 @@ const deleteTestRequirement = os.testRequirements.delete.handler(async ({ input 
 })
 
 export const testsRouter = {
-    testCategories: {
-        list: listTestCategories,
-        upsert: upsertTestCategory,
-        delete: deleteTestCategory
+    testFolders: {
+        list: listTestFolders,
+        upsert: upsertTestFolder,
+        delete: deleteTestFolder
     },
     testSpecs: {
         list: listTestSpecs,

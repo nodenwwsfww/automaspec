@@ -11,18 +11,18 @@ import {
     testInsertSchema
 } from '@/lib/types'
 
-const listTestCategoriesContract = oc
-    .route({ method: 'GET', path: '/test-categories' })
-    .input(testFolderInsertSchema.pick({ parentCategoryId: true }).partial({ parentCategoryId: true }))
+const listTestFoldersContract = oc
+    .route({ method: 'GET', path: '/test-folders' })
+    .input(testFolderInsertSchema.pick({ parentFolderId: true }).partial({ parentFolderId: true }))
     .output(z.array(testFolderSelectSchema))
 
-const upsertTestCategoryContract = oc
-    .route({ method: 'POST', path: '/test-categories/{id}' })
+const upsertTestFolderContract = oc
+    .route({ method: 'POST', path: '/test-folders/{id}' })
     .input(testFolderInsertSchema.omit({ createdAt: true, updatedAt: true }).partial({ id: true }))
     .output(testFolderInsertSchema)
 
-const deleteTestCategoryContract = oc
-    .route({ method: 'DELETE', path: '/test-categories/{id}' })
+const deleteTestFolderContract = oc
+    .route({ method: 'DELETE', path: '/test-folders/{id}' })
     .input(testFolderInsertSchema.pick({ id: true }))
     .output(z.object({ success: z.boolean() }))
 
@@ -72,10 +72,10 @@ const deleteTestContract = oc
     .output(z.object({ success: z.boolean() }))
 
 export const testsContract = {
-    testCategories: {
-        list: listTestCategoriesContract,
-        upsert: upsertTestCategoryContract,
-        delete: deleteTestCategoryContract
+    testFolders: {
+        list: listTestFoldersContract,
+        upsert: upsertTestFolderContract,
+        delete: deleteTestFolderContract
     },
     testSpecs: {
         list: listTestSpecsContract,

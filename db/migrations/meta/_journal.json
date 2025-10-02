@@ -239,6 +239,27 @@
       "when": 1757851072860,
       "tag": "0033_wet_sumo",
       "breakpoints": true
+    },
+    {
+      "idx": 34,
+      "version": "6",
+      "when": 1759168138852,
+      "tag": "0034_shocking_victor_mancha",
+      "breakpoints": true
+    },
+    {
+      "idx": 35,
+      "version": "6",
+      "when": 1759420617841,
+      "tag": "0035_clumsy_bushwacker",
+      "breakpoints": true
+    },
+    {
+      "idx": 36,
+      "version": "6",
+      "when": 1759420738409,
+      "tag": "0036_absurd_vulture",
+      "breakpoints": true
     }
   ]
 }

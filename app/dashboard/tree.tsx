@@ -26,13 +26,13 @@ import type {
 import { TEST_STATUSES } from '@/lib/constants'
 
 interface ItemPayload {
-    type: 'category' | 'spec'
-    category?: FolderWithStats
+    type: 'folder' | 'spec'
+    folder?: FolderWithStats
     spec?: SpecWithStats
 }
 
 interface TreeProps {
-    categories: TestFolder[]
+    folders: TestFolder[]
     specs: TestSpec[]
     requirements: TestRequirement[]
     tests: Test[]
@@ -40,7 +40,7 @@ interface TreeProps {
     onSelectSpec: (spec: SpecWithStats) => void
 }
 
-export function Tree({ categories, specs, requirements, tests, selectedSpecId, onSelectSpec }: TreeProps) {
+export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSelectSpec }: TreeProps) {
     const calculateSpecStats = (spec: TestSpec): SpecWithStats => {
         const specRequirements = requirements.filter((req) => req.testSpecId === spec.id)
         let passed = 0
@@ -71,9 +71,7 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
     }
 
     const buildHierarchy = useMemo(() => {
-        const specsWithStats = specs.map(calculateSpecStats)
-
-        const calculateCategoryStats = (s: SpecWithStats[], children: FolderWithStats[]) => {
+        const calculateFolderStats = (s: SpecWithStats[], children: FolderWithStats[]) => {
             let passed = 0
             let failed = 0
             let pending = 0
@@ -99,71 +97,75 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
             return { passed, failed, pending, skipped, todo, total }
         }
 
-        const buildCategory = (category: TestFolder): FolderWithStats => {
-            const childCategories = categories
-                .filter((cat) => cat.parentCategoryId === category.id)
-                .map((child) => buildCategory(child))
-            const categorySpecs = specsWithStats.filter((spec) => spec.testFolderId === category.id)
-            const stats = calculateCategoryStats(categorySpecs, childCategories)
+        const specsWithStats = specs.map(calculateSpecStats)
+
+        const buildFolder = (folder: TestFolder): FolderWithStats => {
+            const childFolders = folders
+                .filter((f) => f.parentFolderId === folder.id)
+                .map((child) => buildFolder(child))
+
+            const folderSpecs = specsWithStats.filter((spec) => spec.testFolderId === folder.id)
+
+            const stats = calculateFolderStats(folderSpecs, childFolders)
             const status: TestStatus =
                 stats.passed === stats.total ? TEST_STATUSES.passed
                 : stats.passed > 0 ? TEST_STATUSES.pending
                 : TEST_STATUSES.failed
             return {
-                ...category,
-                children: childCategories,
-                specs: categorySpecs,
+                ...folder,
+                children: childFolders,
+                specs: folderSpecs,
                 ...stats,
                 status
             }
         }
 
-        const roots: FolderWithStats[] = categories.filter((c) => !c.parentCategoryId).map(buildCategory)
+        const roots: FolderWithStats[] = folders.filter((f) => !f.parentFolderId).map(buildFolder)
         const orphanSpecs: SpecWithStats[] = specs.filter((s) => !s.testFolderId).map(calculateSpecStats)
         return { roots, orphanSpecs }
-    }, [categories, specs, requirements, tests])
+    }, [folders, specs, requirements, tests])
 
     const { itemsById, childrenById } = useMemo(() => {
         const items: Record<string, ItemPayload> = {}
         const children: Record<string, string[]> = { root: [] }
 
-        const makeCatId = (id: string) => `cat:${id}`
+        const makeFolderId = (id: string) => `folder:${id}`
         const makeSpecId = (id: string) => `spec:${id}`
 
         const ensure = (id: string) => {
             if (!children[id]) children[id] = []
         }
 
-        // Orphan specs (without category) go under root
+        // Orphan specs (without folder) go under root
         buildHierarchy.orphanSpecs.forEach((spec) => {
             const sid = makeSpecId(spec.id)
             items[sid] = { type: 'spec', spec }
             children.root.push(sid)
         })
 
-        const addCategory = (cat: FolderWithStats, parent: string | null) => {
-            const cid = makeCatId(cat.id)
-            items[cid] = { type: 'category', category: cat }
-            ensure(cid)
+        const addFolder = (folder: FolderWithStats, parent: string | null) => {
+            const fid = makeFolderId(folder.id)
+            items[fid] = { type: 'folder', folder: folder }
+            ensure(fid)
             if (parent) {
                 ensure(parent)
-                children[parent].push(cid)
+                children[parent].push(fid)
             } else {
-                children.root.push(cid)
+                children.root.push(fid)
             }
 
-            // specs of this category
-            cat.specs.forEach((spec) => {
+            // specs of this folder
+            folder.specs.forEach((spec) => {
                 const sid = makeSpecId(spec.id)
                 items[sid] = { type: 'spec', spec }
-                children[cid].push(sid)
+                children[fid].push(sid)
             })
 
-            // child categories
-            cat.children.forEach((child) => addCategory(child, cid))
+            // child folders
+            folder.children.forEach((child) => addFolder(child, fid))
         }
 
-        buildHierarchy.roots.forEach((r) => addCategory(r, null))
+        buildHierarchy.roots.forEach((r) => addFolder(r, null))
 
         return { itemsById: items, childrenById: children }
     }, [buildHierarchy])
@@ -173,8 +175,8 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
 
     const tree = useTree<ItemPayload>({
         rootItemId: 'root',
-        getItemName: (item) => item.getItemData().category?.name || item.getItemData().spec?.name || '',
-        isItemFolder: (item) => item.getItemData().type === 'category',
+        getItemName: (item) => item.getItemData().folder?.name || item.getItemData().spec?.name || '',
+        isItemFolder: (item) => item.getItemData().type === 'folder',
         dataLoader: {
             getItem: (itemId) => itemsById[itemId],
             getChildren: (itemId) => overrides[itemId] ?? childrenById[itemId]

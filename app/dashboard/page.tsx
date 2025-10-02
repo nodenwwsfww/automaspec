@@ -9,7 +9,6 @@ import { Tree } from './tree'
 import { TestDetailsPanel } from './test-details-panel'
 import { useDashboardData } from './hooks'
 
-
 export default function Dashboard() {
     const [selectedSpec, setSelectedSpec] = useState<SelectedSpec | null>(null)
     // const [,setGroupEditorOpen] = useState(false)
@@ -18,7 +17,7 @@ export default function Dashboard() {
     // const [,setEditingTest] = useState<Test | null>(null)
     // const [,setParentGroup] = useState<TestSpec | null>(null)
 
-    const { categories, specs, requirements, tests, loading } = useDashboardData()
+    const { folders, specs, requirements, tests, loading } = useDashboardData()
 
     // const {
     //     handleDelete,
@@ -106,7 +105,7 @@ export default function Dashboard() {
     //                 title: item.title,
     //                 description: item.description,
     //                 status: item.status,
-    //                 testCategoryId: editingGroup.testCategoryId
+    //                 testFolderId: editingGroup.testFolderId
     //             })
     //         } else {
     //             // Create new spec
@@ -115,7 +114,7 @@ export default function Dashboard() {
     //                 title: item.title,
     //                 description: item.description,
     //                 status: item.status,
-    //                 testCategoryId: parentGroup?.id || categories[0]?.id
+    //                 testFolderId: parentGroup?.id || folders[0]?.id
     //             })
     //         }
     //     }
@@ -149,14 +148,13 @@ export default function Dashboard() {
 
                 <div className="flex-1 overflow-auto p-2">
                     <Tree
-                        categories={categories}
+                        folders={folders}
                         specs={specs}
                         requirements={requirements}
                         tests={tests}
                         selectedSpecId={selectedSpec?.id || null}
                         onSelectSpec={handleSpecSelect}
                     />
-                    {/* <TreeV2 /> */}
                 </div>
             </div>
 
