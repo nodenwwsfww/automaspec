@@ -1,16 +1,15 @@
+'use client'
+
 import { ArrowRight, CheckCircle, Chrome, Code, Github, Shield, Users, Zap } from 'lucide-react'
 import Link from 'next/link'
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar'
-import { headers } from 'next/headers'
-import { auth } from '@/lib/shared/better-auth'
+import { authClient } from '@/lib/shared/better-auth'
 
-export default async function LandingPage() {
-    const session = await auth.api.getSession({
-        headers: await headers()
-    })
+export default function LandingPage() {
+    const { data: session } = authClient.useSession()
 
     return (
         <div className="min-h-screen bg-background">
@@ -20,7 +19,7 @@ export default async function LandingPage() {
                         <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                             <Code className="h-5 w-5 text-primary-foreground" />
                         </div>
-                        <span className="font-bold text-xl">TestAssist</span>
+                        <span className="font-bold text-xl">AutomaSpec</span>
                     </div>
                     <nav className="hidden items-center gap-6 md:flex">
                         <Link className="text-muted-foreground hover:text-foreground" href="#features">
@@ -54,7 +53,6 @@ export default async function LandingPage() {
                 </div>
             </header>
 
-            {/* Hero Section */}
             <section className="px-4 py-20">
                 <div className="container mx-auto max-w-4xl text-center">
                     <Badge className="mb-4" variant="secondary">
@@ -78,7 +76,6 @@ export default async function LandingPage() {
                 </div>
             </section>
 
-            {/* Features Section */}
             <section className="bg-muted/30 px-4 py-20" id="features">
                 <div className="container mx-auto">
                     <div className="mb-16 text-center">
@@ -154,7 +151,6 @@ export default async function LandingPage() {
                 </div>
             </section>
 
-            {/* Pricing Section */}
             <section className="px-4 py-20" id="pricing">
                 <div className="container mx-auto">
                     <div className="mb-16 text-center">
@@ -197,12 +193,11 @@ export default async function LandingPage() {
                 </div>
             </section>
 
-            {/* CTA Section */}
             <section className="bg-primary px-4 py-20 text-primary-foreground">
                 <div className="container mx-auto text-center">
                     <h2 className="mb-4 font-bold text-3xl">Ready to streamline your testing?</h2>
                     <p className="mb-8 text-xl opacity-90">
-                        Join thousands of developers who trust TestAssist for their testing needs.
+                        Join thousands of developers who trust AutomaSpec for their testing needs.
                     </p>
                     <Link href="/dashboard">
                         <Button className="px-8 text-lg" size="lg" variant="secondary">
@@ -213,7 +208,6 @@ export default async function LandingPage() {
                 </div>
             </section>
 
-            {/* Footer */}
             <footer className="border-t px-4 py-12">
                 <div className="container mx-auto">
                     <div className="text-center">
@@ -221,14 +215,14 @@ export default async function LandingPage() {
                             <div className="flex h-6 w-6 items-center justify-center rounded bg-primary">
                                 <Code className="h-4 w-4 text-primary-foreground" />
                             </div>
-                            <span className="font-bold">TestAssist</span>
+                            <span className="font-bold">AutomaSpec</span>
                         </div>
                         <p className="text-muted-foreground text-sm">
                             Modern testing dashboard for developers, testers, and managers.
                         </p>
                     </div>
                     <div className="mt-8 border-t pt-8 text-center text-muted-foreground text-sm">
-                        © {new Date().getFullYear()} TestAssist. All rights reserved.
+                        © {new Date().getFullYear()} AutomaSpec. All rights reserved.
                     </div>
                 </div>
             </footer>

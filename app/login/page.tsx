@@ -29,12 +29,12 @@ export default function LoginPage() {
                             <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-primary">
                                 <Code className="h-5 w-5 text-primary-foreground" />
                             </div>
-                            <span className="font-bold text-xl">TestAssist</span>
+                            <span className="font-bold text-xl">AutomaSpec</span>
                         </Link>
                         <h1 className="font-bold text-2xl">{isSignUp ? 'Create your account' : 'Welcome back'}</h1>
                         <p className="text-muted-foreground">
                             {isSignUp ?
-                                'Sign up to get started with TestAssist'
+                                'Sign up to get started with AutomaSpec'
                             :   'Sign in to your account to continue'}
                         </p>
                     </div>
@@ -71,7 +71,7 @@ export default function LoginPage() {
                         <CardContent className="pt-4">
                             <p className="mb-2 text-center text-muted-foreground text-sm">Demo credentials:</p>
                             <div className="space-y-1 text-center text-xs">
-                                <p>Email: demo@testassist.com</p>
+                                <p>Email: demo@AutomaSpec.com</p>
                                 <p>Password: demo1234</p>
                             </div>
                         </CardContent>

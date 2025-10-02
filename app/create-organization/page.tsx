@@ -92,7 +92,7 @@ export default function CreateOrganizationPage() {
                             <Building2 className="h-6 w-6 text-primary-foreground" />
                         </div>
                         <CardTitle>Create Your Organization</CardTitle>
-                        <CardDescription>Set up your workspace to get started with TestAssist</CardDescription>
+                        <CardDescription>Set up your workspace to get started with AutomaSpec</CardDescription>
                     </CardHeader>
                     <CardContent>
                         <form
@@ -179,7 +179,7 @@ export default function CreateOrganizationPage() {
                                             disabled={isLoading}
                                         />
                                         <p className="text-xs text-muted-foreground">
-                                            Used in URLs: testassist.com/{field.state.value || 'your-slug'}
+                                            Used in URLs: AutomaSpec.com/{field.state.value || 'your-slug'}
                                         </p>
                                         {field.state.meta.errors && (
                                             <p className="text-sm text-destructive">{field.state.meta.errors[0]}</p>
