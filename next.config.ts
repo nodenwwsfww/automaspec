@@ -6,13 +6,8 @@ const nextConfig: NextConfig = {
         typedEnv: true,
         useLightningcss: true
     },
+    reactCompiler: true,
     typedRoutes: true,
-    eslint: {
-        ignoreDuringBuilds: true
-    },
-    typescript: {
-        ignoreBuildErrors: false
-    },
     images: {
         unoptimized: true // FIXME
     }

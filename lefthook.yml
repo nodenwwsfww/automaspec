@@ -6,7 +6,7 @@ pre-commit:
           fail_text: '❌ Database schema validation failed'
 
         - name: format
-          glob: "*.{ts,tsx,mts}"
+          glob: '*.{ts,tsx,mts}'
           run: pnpx prettier --write {staged_files}
           stage_fixed: true
           fail_text: '❌ Prettier failed'
@@ -17,22 +17,22 @@ pre-commit:
           fail_text: '❌ Oxlint failed'
 
         - name: todo-check
-          glob: "*.{ts,tsx,mts}"
+          glob: '*.{ts,tsx,mts}'
           run: |
-            if grep -n "TODO\|FIXME" {staged_files}; then
-              echo "⚠️  TODO/FIXME comments found. Consider addressing them."
-            fi
+              if grep -n "TODO\|FIXME" {staged_files}; then
+                echo "⚠️  TODO/FIXME comments found. Consider addressing them."
+              fi
 
 # pre-push:
 #     parallel: true
 #     jobs:
-        # - name: typecheck
-        #   run: pnpx next typegen && pnpx --package=typescript tsc --noEmit
-        #   fail_text: '❌ TypeScript type checking failed'
+#         - name: typecheck
+#           run: pnpx next typegen && pnpx --package=typescript tsc --noEmit
+#           fail_text: '❌ TypeScript type checking failed'
 
-        # - name: test
-        #   run: pnpm test
-        #   fail_text: '❌ Test failed'
+#         - name: test
+#           run: pnpm test
+#           fail_text: '❌ Test failed'
 
 skip_output:
     - meta
