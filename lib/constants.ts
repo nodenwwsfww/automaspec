@@ -1,23 +1,24 @@
 import { CheckCircle, XCircle, Clock, MinusCircle, type LucideIcon } from 'lucide-react'
-import type { JsonAssertionResult } from 'vitest/reporters' // https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/reporters/json.ts
-import type { TestStatus, SpecStatus } from './types'
-
-export const SPEC_STATUSES = {
-    active: 'active',
-    skipped: 'skipped',
-    missing: 'missing',
-    passed: 'passed',
-    failed: 'failed',
-    partial: 'partial'
-} as const
+// https://github.com/vitest-dev/vitest/blob/main/packages/vitest/src/node/reporters/json.ts
+import type { JsonAssertionResult } from 'vitest/reporters'
+import type { SpecStatus } from './types'
 
 export const TEST_STATUSES = {
     passed: 'passed',
     skipped: 'skipped',
     todo: 'todo',
     failed: 'failed',
-    pending: 'pending'
-} satisfies Record<string, JsonAssertionResult['status']>
+    pending: 'pending',
+    disabled: 'disabled',
+    // THIS IS OUR SPECIFIC STATUS FOR TESTS THAT ARE MISSING IN REPORT
+    missing: 'missing'
+} as const satisfies { [K in JsonAssertionResult['status'] | 'missing']: string }
+
+export const SPEC_STATUSES = {
+    ...TEST_STATUSES,
+    deactivated: 'deactivated',
+    partial: 'partial'
+} as const
 
 export type StatusConfig = {
     icon: LucideIcon
@@ -27,15 +28,8 @@ export type StatusConfig = {
     requirementClassName: string
 }
 
-export const STATUS_CONFIGS: Record<TestStatus | SpecStatus, StatusConfig> = {
-    [SPEC_STATUSES.active]: {
-        icon: CheckCircle,
-        color: 'text-emerald-600',
-        label: 'Active',
-        badgeClassName: 'border-emerald-200 bg-emerald-100 text-emerald-800',
-        requirementClassName: 'text-emerald-800 bg-emerald-50'
-    },
-    [SPEC_STATUSES.missing]: {
+export const STATUS_CONFIGS = {
+    [TEST_STATUSES.missing]: {
         icon: MinusCircle,
         color: 'text-slate-600',
         label: 'Missing',
@@ -83,9 +77,19 @@ export const STATUS_CONFIGS: Record<TestStatus | SpecStatus, StatusConfig> = {
         label: 'Partial',
         badgeClassName: 'border-orange-200 bg-orange-100 text-orange-800',
         requirementClassName: 'text-orange-800 bg-orange-50'
+    },
+    [SPEC_STATUSES.deactivated]: {
+        icon: MinusCircle,
+        color: 'text-slate-600',
+        label: 'Deactivated',
+        badgeClassName: 'border-slate-200 bg-slate-100 text-slate-800',
+        requirementClassName: 'text-slate-700 bg-slate-50'
+    },
+    [TEST_STATUSES.disabled]: {
+        icon: MinusCircle,
+        color: 'text-slate-600',
+        label: 'Disabled',
+        badgeClassName: 'border-slate-200 bg-slate-100 text-slate-800',
+        requirementClassName: 'text-slate-700 bg-slate-50'
     }
-} as const
-
-// export function getStatusConfig(status: TestStatus): StatusConfig {
-//     return STATUS_CONFIGS[status]
-// }
+} as const satisfies { [K in SpecStatus]: StatusConfig }

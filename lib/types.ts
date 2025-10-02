@@ -55,60 +55,10 @@ export type Test = z.infer<typeof testSelectSchema>
 
 // I check correct types up to here
 
-// Category with nested structure and stats
-export interface FolderWithStats extends TestFolder {
-    children: FolderWithStats[]
-    specs: SpecWithStats[]
-    passed: number
-    failed: number
-    pending: number
-    skipped: number
-    todo: number
-    total: number
-    status: TestStatus
-}
-
-// Spec with stats
-export interface SpecWithStats extends TestSpec {
-    passed: number
-    failed: number
-    pending: number
-    skipped: number
-    todo: number
-    total: number
-}
-
-// API response types
-export interface TestDataResponse {
-    categories: TestFolder[]
+export interface FolderWithChildren extends TestFolder {
+    children: FolderWithChildren[]
     specs: TestSpec[]
-    tests: Test[]
-    requirements: TestRequirement[]
 }
-
-// Extended types for UI components
-export interface TestSpecWithType extends TestSpec {
-    type: 'spec'
-}
-
-export interface TestFolderWithType extends TestFolder {
-    type: 'category'
-}
-
-export interface TestWithType extends Test {
-    type: 'test'
-}
-
-// Type for selected spec with its requirements and associated tests
-export interface SelectedSpec extends TestSpec {
-    requirements: (TestRequirement & {
-        test?: Test
-        status?: TestStatus
-    })[]
-}
-
-// Union type for editing different node types
-export type EditableNode = TestSpecWithType | TestFolderWithType | TestWithType
 
 // Form input types
 export type CreateTestFolderInput = Omit<TestFolder, 'id' | 'createdAt' | 'updatedAt'>

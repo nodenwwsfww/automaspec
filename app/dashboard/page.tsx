@@ -2,23 +2,25 @@
 
 import { useState } from 'react'
 import { Loader2 } from 'lucide-react'
-import { SelectedSpec, TestStatus, SpecWithStats } from '@/lib/types'
+import { type TestSpec, type Test, type TestRequirement } from '@/lib/types'
 
 import { DashboardHeader } from './header'
 import { Tree } from './tree'
 import { TestDetailsPanel } from './test-details-panel'
 import { useDashboardData } from './hooks'
 
-
 export default function Dashboard() {
-    const [selectedSpec, setSelectedSpec] = useState<SelectedSpec | null>(null)
+    const [selectedSpec, setSelectedSpec] = useState<TestSpec | null>(null)
+    const [selectedRequirements, setSelectedRequirements] = useState<TestRequirement[]>([])
+    const [selectedTests, setSelectedTests] = useState<Test[]>([])
+
     // const [,setGroupEditorOpen] = useState(false)
     // const [,setTestEditorOpen] = useState(false)
     // const [,setEditingGroup] = useState<TestSpec | null>(null)
     // const [,setEditingTest] = useState<Test | null>(null)
     // const [,setParentGroup] = useState<TestSpec | null>(null)
 
-    const { categories, specs, requirements, tests, loading } = useDashboardData()
+    const { folders, specs, requirements, tests, loading } = useDashboardData()
 
     // const {
     //     handleDelete,
@@ -28,25 +30,18 @@ export default function Dashboard() {
     //     updateTestSpecMutation
     // } = useDashboardMutations(queryClient, selectedTest, setSelectedTest)
 
-    const handleSpecSelect = (spec: SpecWithStats) => {
-        // When spec is selected, show spec info and all its requirements
-        const specRequirements = requirements.filter((req) => req.testSpecId === spec.id)
+    const handleSpecSelect = (spec: TestSpec) => {
+        const specRequirements = requirements.filter((req) => req.specId === spec.id)
+        const specTests = tests.filter((test) => test.requirementId === spec.id)
 
-        // Attach test data and status to each requirement
-        const requirementsWithTests = specRequirements.map((req) => {
-            const test = tests.find((test) => test.testRequirementId === req.id)
-            return {
-                ...req,
-                test: test,
-                status: (test?.status || 'pending') as TestStatus
-            }
-        })
-
-        setSelectedSpec({
-            ...spec,
-            requirements: requirementsWithTests
-        })
+        setSelectedSpec(spec)
+        setSelectedRequirements(specRequirements)
+        setSelectedTests(specTests)
     }
+
+    // const handleRequirementSelect = (requirement: TestRequirement) => {
+    //     setSelectedRequirement(requirement)
+    // }
 
     // const handleCreateGroup = () => {
     //     setEditingGroup(null)
@@ -106,7 +101,7 @@ export default function Dashboard() {
     //                 title: item.title,
     //                 description: item.description,
     //                 status: item.status,
-    //                 testCategoryId: editingGroup.testCategoryId
+    //                 testFolderId: editingGroup.testFolderId
     //             })
     //         } else {
     //             // Create new spec
@@ -115,7 +110,7 @@ export default function Dashboard() {
     //                 title: item.title,
     //                 description: item.description,
     //                 status: item.status,
-    //                 testCategoryId: parentGroup?.id || categories[0]?.id
+    //                 testFolderId: parentGroup?.id || folders[0]?.id
     //             })
     //         }
     //     }
@@ -149,20 +144,21 @@ export default function Dashboard() {
 
                 <div className="flex-1 overflow-auto p-2">
                     <Tree
-                        categories={categories}
+                        folders={folders}
                         specs={specs}
                         requirements={requirements}
                         tests={tests}
                         selectedSpecId={selectedSpec?.id || null}
                         onSelectSpec={handleSpecSelect}
                     />
-                    {/* <TreeV2 /> */}
                 </div>
             </div>
 
             <div className="flex w-1/2 flex-col">
                 <TestDetailsPanel
                     selectedSpec={selectedSpec}
+                    selectedRequirements={selectedRequirements}
+                    selectedTests={selectedTests}
                     onEditSpec={() => {}}
                     onCreateGroup={() => {}}
                     onCreateTest={() => {}}

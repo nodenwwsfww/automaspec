@@ -4,42 +4,36 @@ import { useQuery } from '@tanstack/react-query'
 import { orpc } from '@/lib/orpc/orpc'
 
 export function useDashboardData() {
-    const { data: categories = [], isLoading: categoriesLoading } = useQuery(
-        orpc.testCategories.list.queryOptions({
+    const { data: folders = [], isLoading: foldersLoading } = useQuery(
+        orpc.testFolders.list.queryOptions({
             input: {
-                parentCategoryId: null
+                parentFolderId: null
             }
         })
     )
 
     const { data: specs = [], isLoading: specsLoading } = useQuery(
         orpc.testSpecs.list.queryOptions({
-            input: { testCategoryId: '' }
+            input: { folderId: '' }
         })
     )
 
     const { data: requirements = [], isLoading: requirementsLoading } = useQuery(
         orpc.testRequirements.list.queryOptions({
-            input: { testSpecId: '' }
+            input: { specId: '' }
         })
     )
-
-    // Debug: Log requirements data
-    if (!requirementsLoading && requirements.length > 0) {
-        // console.log('Requirements fetched:', requirements.length)
-        // console.log('First requirement:', requirements[0])
-    }
 
     const { data: tests = [], isLoading: testsLoading } = useQuery(
         orpc.tests.list.queryOptions({
-            input: { testRequirementId: '' }
+            input: { requirementId: '' }
         })
     )
 
-    const loading = categoriesLoading || specsLoading || requirementsLoading || testsLoading
+    const loading = foldersLoading || specsLoading || requirementsLoading || testsLoading
 
     return {
-        categories,
+        folders,
         specs,
         requirements,
         tests,
@@ -53,10 +47,10 @@ export function useDashboardData() {
 //     setSelectedTest: (test: Test | null) => void
 // ) {
 //     // Mutations for CRUD operations
-//     const deleteTestCategoryMutation = useMutation(
-//         orpc.testCategories.delete.mutationOptions({
+//     const deleteTestFolderMutation = useMutation(
+//         orpc.testFolders.delete.mutationOptions({
 //             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+//                 queryClient.invalidateQueries({ queryKey: ['testFolders'] })
 //                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
 //                 queryClient.invalidateQueries({ queryKey: ['tests'] })
 //             }
@@ -64,17 +58,17 @@ export function useDashboardData() {
 //     )
 
 //     const createTestCategoryMutation = useMutation(
-//         orpc.testCategories.create.mutationOptions({
+//         orpc.testFolders.create.mutationOptions({
 //             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+//                 queryClient.invalidateQueries({ queryKey: ['testFolders'] })
 //             }
 //         })
 //     )
 
 //     const updateTestCategoryMutation = useMutation(
-//         orpc.testCategories.update.mutationOptions({
+//         orpc.testFolders.update.mutationOptions({
 //             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testCategories'] })
+//                 queryClient.invalidateQueries({ queryKey: ['testFolders'] })
 //             }
 //         })
 //     )
@@ -116,8 +110,8 @@ export function useDashboardData() {
 //     )
 
 //     const handleDelete = async (node: any) => {
-//         if (node.type === 'category') {
-//             deleteTestCategoryMutation.mutate({ id: node.id })
+//         if (node.type === 'folder') {
+//             deleteTestFolderMutation.mutate({ id: node.id })
 //         } else if (node.type === 'spec') {
 //             deleteTestSpecMutation.mutate({ id: node.id })
 //         } else if (node.type === 'test') {
@@ -126,9 +120,9 @@ export function useDashboardData() {
 //     }
 
 //     return {
-//         deleteTestCategoryMutation,
-//         createTestCategoryMutation,
-//         updateTestCategoryMutation,
+//         deleteTestFolderMutation,
+//         createTestFolderMutation,
+//         updateTestFolderMutation,
 //         deleteTestSpecMutation,
 //         createTestSpecMutation,
 //         updateTestSpecMutation,

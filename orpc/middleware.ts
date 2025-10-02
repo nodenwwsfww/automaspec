@@ -16,6 +16,8 @@ export const organizationMiddleware = os.$context<{ session?: Session }>().middl
         throw new ORPCError('Organization not found')
     }
 
+    // TODO: check if user requests from his organization or not
+
     return await next({
         context: { organizationId: context.session.session.activeOrganizationId }
     })

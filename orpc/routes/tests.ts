@@ -3,26 +3,24 @@ import { testsContract } from '@/orpc/contracts/tests'
 import { db } from '@/db'
 import { testFolder, testSpec, testRequirement, test } from '@/db/schema'
 import { eq, and } from 'drizzle-orm'
-import { TestStatus, SpecStatus, TestFramework } from '@/lib/types'
+import { TestStatus, TestFramework } from '@/lib/types'
 import { authMiddleware, organizationMiddleware } from '@/orpc/middleware'
 import { ORPCError } from '@orpc/server'
 
 const os = implement(testsContract).use(authMiddleware).use(organizationMiddleware)
 
-const listTestCategories = os.testCategories.list.handler(async ({ context }) => {
-    const organizationId = context.organizationId
-
-    return await db.select().from(testFolder).where(eq(testFolder.organizationId, organizationId))
+// RIGHT
+const listTestFolders = os.testFolders.list.handler(async ({ context }) => {
+    return await db.select().from(testFolder).where(eq(testFolder.organizationId, context.organizationId))
 })
 
-const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, context }) => {
-    const organizationId = context.organizationId
-
+// WRONG
+const upsertTestFolder = os.testFolders.upsert.handler(async ({ input, context }) => {
     const { id = crypto.randomUUID(), ...updates } = input
 
     const result = await db
         .insert(testFolder)
-        .values({ id, ...updates, organizationId })
+        .values({ id, ...updates, organizationId: context.organizationId })
         .onConflictDoUpdate({
             target: testFolder.id,
             set: { ...updates }
@@ -32,17 +30,17 @@ const upsertTestCategory = os.testCategories.upsert.handler(async ({ input, cont
     return result[0]
 })
 
-const deleteTestCategory = os.testCategories.delete.handler(async ({ input, context }) => {
+const deleteTestFolder = os.testFolders.delete.handler(async ({ input, context }) => {
     const organizationId = context.organizationId
 
-    const deletedCategory = await db
+    const deletedFolder = await db
         .delete(testFolder)
         .where(and(eq(testFolder.id, input.id), eq(testFolder.organizationId, organizationId)))
         .returning({
             id: testFolder.id
         })
 
-    if (!deletedCategory || deletedCategory.length === 0) {
+    if (!deletedFolder || deletedFolder.length === 0) {
         return { success: false }
     }
 
@@ -62,14 +60,12 @@ const upsertTestSpec = os.testSpecs.upsert.handler(async ({ input }) => {
         .insert(testSpec)
         .values({
             id,
-            ...updates,
-            status: updates.status as SpecStatus
+            ...updates
         })
         .onConflictDoUpdate({
             target: testSpec.id,
             set: {
-                ...updates,
-                status: updates.status as SpecStatus
+                ...updates
             }
         })
         .returning()
@@ -84,7 +80,7 @@ const deleteTestSpec = os.testSpecs.delete.handler(async ({ input, context }) =>
     const verification = await db
         .select({ id: testSpec.id })
         .from(testSpec)
-        .innerJoin(testFolder, eq(testSpec.testFolderId, testFolder.id))
+        .innerJoin(testFolder, eq(testSpec.folderId, testFolder.id))
         .where(and(eq(testSpec.id, input.id), eq(testFolder.organizationId, organizationId)))
         .limit(1)
 
@@ -105,14 +101,14 @@ const listTests = os.tests.list.handler(async ({ context }) => {
             status: test.status,
             framework: test.framework,
             code: test.code,
-            testRequirementId: test.testRequirementId,
+            requirementId: test.requirementId,
             createdAt: test.createdAt,
             updatedAt: test.updatedAt
         })
         .from(test)
-        .innerJoin(testRequirement, eq(test.testRequirementId, testRequirement.id))
-        .innerJoin(testSpec, eq(testRequirement.testSpecId, testSpec.id))
-        .innerJoin(testFolder, eq(testSpec.testFolderId, testFolder.id))
+        .innerJoin(testRequirement, eq(test.requirementId, testRequirement.id))
+        .innerJoin(testSpec, eq(testRequirement.specId, testSpec.id))
+        .innerJoin(testFolder, eq(testSpec.folderId, testFolder.id))
         .where(eq(testFolder.organizationId, organizationId))
 })
 
@@ -144,29 +140,16 @@ const deleteTest = os.tests.delete.handler(async ({ input }) => {
     return { success: true }
 })
 
-const listTestRequirements = os.testRequirements.list.handler(async ({ input, context }) => {
-    const organizationId = context.organizationId
+const listTestRequirements = os.testRequirements.list.handler(async ({ input }) => {
+    const conditions = []
 
-    const conditions = [eq(testFolder.organizationId, organizationId)]
-
-    // If testSpecId is provided, filter by it
-    if (input.testSpecId) {
-        conditions.push(eq(testRequirement.testSpecId, input.testSpecId))
+    if (input.specId) {
+        conditions.push(eq(testRequirement.specId, input.specId))
     }
 
     return await db
-        .select({
-            id: testRequirement.id,
-            name: testRequirement.name,
-            description: testRequirement.description,
-            order: testRequirement.order,
-            testSpecId: testRequirement.testSpecId,
-            createdAt: testRequirement.createdAt,
-            updatedAt: testRequirement.updatedAt
-        })
+        .select()
         .from(testRequirement)
-        .innerJoin(testSpec, eq(testRequirement.testSpecId, testSpec.id))
-        .innerJoin(testFolder, eq(testSpec.testFolderId, testFolder.id))
         .where(and(...conditions))
 })
 
@@ -194,10 +177,10 @@ const deleteTestRequirement = os.testRequirements.delete.handler(async ({ input 
 })
 
 export const testsRouter = {
-    testCategories: {
-        list: listTestCategories,
-        upsert: upsertTestCategory,
-        delete: deleteTestCategory
+    testFolders: {
+        list: listTestFolders,
+        upsert: upsertTestFolder,
+        delete: deleteTestFolder
     },
     testSpecs: {
         list: listTestSpecs,

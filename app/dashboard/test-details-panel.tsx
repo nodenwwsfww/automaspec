@@ -6,40 +6,45 @@ import { Button } from '@/components/ui/button'
 import { Tabs, TabsList, TabsTrigger, TabsContent } from '@/components/ui/tabs'
 import { cn } from '@/lib/utils'
 import { Edit, FileText, Trash2, Check, Copy, Plus, Folder } from 'lucide-react'
-import { SelectedSpec, Test, TestRequirement, type TestStatus } from '@/lib/types'
-import { STATUS_CONFIGS, TEST_STATUSES } from '@/lib/constants'
+import { TestSpec, Test, TestRequirement, type TestStatus } from '@/lib/types'
+import { SPEC_STATUSES, STATUS_CONFIGS, TEST_STATUSES } from '@/lib/constants'
 
-interface RequirementWithTest extends TestRequirement {
-    test?: Test
-    status?: TestStatus
-}
 interface TestDetailsPanelProps {
-    selectedSpec: SelectedSpec | null
-    onEditSpec: (spec: SelectedSpec) => void
+    selectedSpec: TestSpec | null
+    selectedRequirements: TestRequirement[]
+    selectedTests: Test[]
+    onEditSpec: (spec: TestSpec) => void
     onCreateGroup: () => void
     onCreateTest: () => void
 }
 
-export function TestDetailsPanel({ selectedSpec, onEditSpec, onCreateGroup, onCreateTest }: TestDetailsPanelProps) {
+export function TestDetailsPanel({
+    selectedSpec,
+    selectedRequirements,
+    selectedTests,
+    onEditSpec,
+    onCreateGroup,
+    onCreateTest
+}: TestDetailsPanelProps) {
     const [copied, setCopied] = useState(false)
     const [editingRequirements, setEditingRequirements] = useState(false)
-    const [, setRequirementsContent] = useState('')
+    const [,setRequirementsContent] = useState('')
 
     const copyTestCode = async () => {
         if (selectedSpec) {
-            // Generate test code from the spec and its requirements
-            const testCode = generateTestCode(selectedSpec)
+            const testCode = generateTestCode(selectedSpec, requirementsToShow, selectedTests)
             await navigator.clipboard.writeText(testCode)
             setCopied(true)
             setTimeout(() => setCopied(false), 2000)
         }
     }
 
-    const generateTestCode = (spec: SelectedSpec): string => {
-        const requirements = spec.requirements
+    const generateTestCode = (spec: TestSpec, reqs: TestRequirement[], tests: Test[]): string => {
+        const requirements = reqs
             .map((req) => {
-                const testStatus = req.test?.status || 'pending'
-                const testCode = req.test?.code || `// TODO: Implement test for ${req.name}`
+                const testStatus = tests.find((t) => t.requirementId === req.id)?.status
+                const testCode =
+                    tests.find((t) => t.requirementId === req.id)?.code || `// TODO: Implement test for ${req.name}`
                 return `  it('${req.name}', () => {
     // ${req.description || 'No description'}
     // Status: ${testStatus}
@@ -50,12 +55,14 @@ export function TestDetailsPanel({ selectedSpec, onEditSpec, onCreateGroup, onCr
 
         return `describe('${spec.name}', () => {
   // ${spec.description || 'No description'}
-  // Total requirements: ${spec.requirements.length}
-  // Passed tests: ${spec.requirements.filter((r) => r.status === 'passed').length}
+  // Total requirements: ${reqs.length}
+  // Passed tests: ${tests.filter((t) => t.status === 'passed').length}
 
 ${requirements}
 })`
     }
+
+    const requirementsToShow: TestRequirement[] = selectedRequirements
 
     const saveRequirements = () => {
         // In real app, would save to database
@@ -101,7 +108,7 @@ ${requirements}
                         </div>
                         <p className="mb-2 text-muted-foreground text-sm">{selectedSpec.description}</p>
                         <div className="flex items-center gap-2">
-                            <Badge variant="outline">{selectedSpec.status}</Badge>
+                            <Badge variant="outline">{selectedSpec.statuses[SPEC_STATUSES.deactivated]}</Badge>
                             <Badge variant="outline">{selectedSpec.fileName || 'No file'}</Badge>
                         </div>
                     </div>
@@ -129,12 +136,12 @@ ${requirements}
                                 </Button>
                             </div>
 
-                            {selectedSpec.requirements.length > 0 && (
+                            {requirementsToShow.length > 0 && (
                                 <div className="mb-4 rounded-lg bg-muted/30 p-3">
                                     <div className="flex items-center gap-4 text-sm">
                                         {Object.values(TEST_STATUSES).map((status) => {
-                                            const count = selectedSpec.requirements.filter(
-                                                (req: RequirementWithTest) => req.status === status
+                                            const count = selectedTests.filter(
+                                                (test: Test) => test.status === status
                                             ).length
 
                                             if (count === 0) return null
@@ -158,7 +165,7 @@ ${requirements}
                             {editingRequirements ?
                                 <div className="space-y-4">
                                     <div className="space-y-2">
-                                        {selectedSpec.requirements.map((req: RequirementWithTest, index: number) => (
+                                        {requirementsToShow.map((req: TestRequirement, index: number) => (
                                             <div
                                                 key={req.id || index}
                                                 className="flex items-center gap-2 rounded-lg border p-3"
@@ -166,15 +173,13 @@ ${requirements}
                                                 <input
                                                     className="flex-1 bg-transparent outline-none"
                                                     onChange={(e) => {
-                                                        const updatedReqs = [...selectedSpec.requirements]
+                                                        const updatedReqs = [...requirementsToShow]
                                                         updatedReqs[index] = {
                                                             ...req,
                                                             name: e.target.value
-                                                        } as RequirementWithTest
+                                                        } as TestRequirement
                                                         setRequirementsContent(
-                                                            updatedReqs
-                                                                .map((r: RequirementWithTest) => r.name)
-                                                                .join('\n')
+                                                            updatedReqs.map((r: TestRequirement) => r.name).join('\n')
                                                         )
                                                     }}
                                                     placeholder="Enter requirement..."
@@ -182,11 +187,11 @@ ${requirements}
                                                 />
                                                 <Button
                                                     onClick={() => {
-                                                        const updatedReqs = selectedSpec.requirements.filter(
+                                                        const updatedReqs = requirementsToShow.filter(
                                                             (_: any, i: number) => i !== index
                                                         )
                                                         setRequirementsContent(
-                                                            updatedReqs.map((r: any) => r.name).join('\n')
+                                                            updatedReqs.map((r: TestRequirement) => r.name).join('\n')
                                                         )
                                                     }}
                                                     size="sm"
@@ -198,17 +203,19 @@ ${requirements}
                                         ))}
                                         <Button
                                             onClick={() => {
-                                                const newReq = {
+                                                const newReq: TestRequirement = {
                                                     id: `req-${Date.now()}`,
                                                     name: '',
                                                     description: null,
-                                                    order: selectedSpec.requirements.length,
-                                                    testSpecId: selectedSpec.id,
+                                                    order: requirementsToShow.length,
+                                                    specId: selectedSpec.id,
                                                     createdAt: new Date(),
                                                     updatedAt: new Date()
                                                 }
-                                                const updatedReqs = [...selectedSpec.requirements, newReq]
-                                                setRequirementsContent(updatedReqs.map((r: any) => r.name).join('\n'))
+                                                const updatedReqs = [...requirementsToShow, newReq]
+                                                setRequirementsContent(
+                                                    updatedReqs.map((r: TestRequirement) => r.name).join('\n')
+                                                )
                                             }}
                                             size="sm"
                                             variant="outline"
@@ -225,8 +232,12 @@ ${requirements}
                                     </div>
                                 </div>
                             :   <div className="space-y-2">
-                                    {selectedSpec.requirements.map((req: RequirementWithTest, index: number) => {
-                                        const config = STATUS_CONFIGS[(req.status || 'pending') as TestStatus]
+                                    {requirementsToShow.map((req: TestRequirement, index: number) => {
+                                        const config =
+                                            STATUS_CONFIGS[
+                                                (selectedTests.find((t) => t.requirementId === req.id)?.status ||
+                                                    'pending') as TestStatus
+                                            ]
                                         const IconComponent = config.icon
                                         const badge = (
                                             <Badge className={config.requirementClassName}>
@@ -234,7 +245,7 @@ ${requirements}
                                                 {config.label}
                                             </Badge>
                                         )
-                                        const color = config.requirementClassName || config.color
+                                        const color = config.requirementClassName
                                         return (
                                             <div
                                                 className={cn('flex items-start gap-3 rounded-lg border p-3', color)}
@@ -250,13 +261,16 @@ ${requirements}
                                                     )}
                                                     <div className="mt-1 text-muted-foreground text-xs">
                                                         Status:{' '}
-                                                        <span className="capitalize">{req.status || 'pending'}</span>
+                                                        <span className="capitalize">
+                                                            {selectedTests.find((t) => t.requirementId === req.id)
+                                                                ?.status || 'pending'}
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
                                         )
                                     })}
-                                    {selectedSpec.requirements.length === 0 && (
+                                    {requirementsToShow.length === 0 && (
                                         <div className="text-muted-foreground text-sm">No requirements defined</div>
                                     )}
                                 </div>
@@ -282,7 +296,9 @@ ${requirements}
                                 </Button>
                             </div>
                             <div className="max-h-[500px] overflow-auto rounded-lg bg-slate-950 p-4 font-mono text-slate-50 text-sm">
-                                <pre className="whitespace-pre-wrap">{generateTestCode(selectedSpec)}</pre>
+                                <pre className="whitespace-pre-wrap">
+                                    {generateTestCode(selectedSpec, requirementsToShow, selectedTests)}
+                                </pre>
                             </div>
                         </div>
                     </TabsContent>

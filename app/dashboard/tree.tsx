@@ -12,158 +12,82 @@ import {
 import { useTree } from '@headless-tree/react'
 import { ChevronDown, ChevronRight, FileText, Folder } from 'lucide-react'
 import { cn } from '@/lib/utils'
-import { STATUS_CONFIGS } from '@/lib/constants'
+import { SPEC_STATUSES, STATUS_CONFIGS } from '@/lib/constants'
 import { Badge } from '@/components/ui/badge'
-import type {
-    FolderWithStats,
-    SpecWithStats,
-    TestFolder,
-    TestSpec,
-    TestRequirement,
-    Test,
-    TestStatus
-} from '@/lib/types'
-import { TEST_STATUSES } from '@/lib/constants'
+import type { FolderWithChildren, TestFolder, TestSpec, TestRequirement, Test, SpecStatus } from '@/lib/types'
 
-interface ItemPayload {
-    type: 'category' | 'spec'
-    category?: FolderWithStats
-    spec?: SpecWithStats
-}
+type ItemPayload = { type: 'folder'; folder: FolderWithChildren } | { type: 'spec'; spec: TestSpec }
 
 interface TreeProps {
-    categories: TestFolder[]
+    folders: TestFolder[]
     specs: TestSpec[]
     requirements: TestRequirement[]
     tests: Test[]
     selectedSpecId: TestSpec['id'] | null
-    onSelectSpec: (spec: SpecWithStats) => void
+    onSelectSpec: (spec: TestSpec) => void
 }
 
-export function Tree({ categories, specs, requirements, tests, selectedSpecId, onSelectSpec }: TreeProps) {
-    const calculateSpecStats = (spec: TestSpec): SpecWithStats => {
-        const specRequirements = requirements.filter((req) => req.testSpecId === spec.id)
-        let passed = 0
-        let failed = 0
-        let pending = 0
-        let skipped = 0
-        let todo = 0
-        const total = specRequirements.length
-
-        specRequirements.forEach((requirement) => {
-            const test = tests.find((t) => t.testRequirementId === requirement.id)
-            if (test?.status === TEST_STATUSES.passed) passed += 1
-            else if (test?.status === TEST_STATUSES.failed) failed += 1
-            else if (test?.status === TEST_STATUSES.pending) pending += 1
-            else if (test?.status === TEST_STATUSES.skipped) skipped += 1
-            else if (test?.status === TEST_STATUSES.todo) todo += 1
-        })
-
-        return {
-            ...spec,
-            passed,
-            failed,
-            pending,
-            skipped,
-            todo,
-            total
-        }
-    }
-
+export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSelectSpec }: TreeProps) {
     const buildHierarchy = useMemo(() => {
-        const specsWithStats = specs.map(calculateSpecStats)
+        const buildFolder = (folder: TestFolder): FolderWithChildren => {
+            const childFolders = folders
+                .filter((f) => f.parentFolderId === folder.id)
+                .map((child) => buildFolder(child))
 
-        const calculateCategoryStats = (s: SpecWithStats[], children: FolderWithStats[]) => {
-            let passed = 0
-            let failed = 0
-            let pending = 0
-            let skipped = 0
-            let todo = 0
-            let total = 0
-            s.forEach((spec) => {
-                passed += spec.passed
-                failed += spec.failed
-                pending += spec.pending
-                skipped += spec.skipped
-                todo += spec.todo
-                total += spec.total
-            })
-            children.forEach((child) => {
-                passed += child.passed
-                failed += child.failed
-                pending += child.pending
-                skipped += child.skipped
-                todo += child.todo
-                total += child.total
-            })
-            return { passed, failed, pending, skipped, todo, total }
-        }
-
-        const buildCategory = (category: TestFolder): FolderWithStats => {
-            const childCategories = categories
-                .filter((cat) => cat.parentCategoryId === category.id)
-                .map((child) => buildCategory(child))
-            const categorySpecs = specsWithStats.filter((spec) => spec.testFolderId === category.id)
-            const stats = calculateCategoryStats(categorySpecs, childCategories)
-            const status: TestStatus =
-                stats.passed === stats.total ? TEST_STATUSES.passed
-                : stats.passed > 0 ? TEST_STATUSES.pending
-                : TEST_STATUSES.failed
+            const folderSpecs = specs.filter((spec) => spec.folderId === folder.id)
             return {
-                ...category,
-                children: childCategories,
-                specs: categorySpecs,
-                ...stats,
-                status
+                ...folder,
+                children: childFolders,
+                specs: folderSpecs
             }
         }
 
-        const roots: FolderWithStats[] = categories.filter((c) => !c.parentCategoryId).map(buildCategory)
-        const orphanSpecs: SpecWithStats[] = specs.filter((s) => !s.testFolderId).map(calculateSpecStats)
+        const roots: FolderWithChildren[] = folders.filter((f) => !f.parentFolderId).map(buildFolder)
+        const orphanSpecs: TestSpec[] = specs.filter((s) => !s.folderId)
         return { roots, orphanSpecs }
-    }, [categories, specs, requirements, tests])
+    }, [folders, specs, requirements, tests])
 
     const { itemsById, childrenById } = useMemo(() => {
         const items: Record<string, ItemPayload> = {}
         const children: Record<string, string[]> = { root: [] }
 
-        const makeCatId = (id: string) => `cat:${id}`
+        const makeFolderId = (id: string) => `folder:${id}`
         const makeSpecId = (id: string) => `spec:${id}`
 
         const ensure = (id: string) => {
             if (!children[id]) children[id] = []
         }
 
-        // Orphan specs (without category) go under root
+        // Orphan specs (without folder) go under root
         buildHierarchy.orphanSpecs.forEach((spec) => {
             const sid = makeSpecId(spec.id)
             items[sid] = { type: 'spec', spec }
             children.root.push(sid)
         })
 
-        const addCategory = (cat: FolderWithStats, parent: string | null) => {
-            const cid = makeCatId(cat.id)
-            items[cid] = { type: 'category', category: cat }
-            ensure(cid)
+        const addFolder = (folder: FolderWithChildren, parent: string | null) => {
+            const fid = makeFolderId(folder.id)
+            items[fid] = { type: 'folder', folder: folder }
+            ensure(fid)
             if (parent) {
                 ensure(parent)
-                children[parent].push(cid)
+                children[parent].push(fid)
             } else {
-                children.root.push(cid)
+                children.root.push(fid)
             }
 
-            // specs of this category
-            cat.specs.forEach((spec) => {
+            // specs of this folder
+            folder.specs.forEach((spec) => {
                 const sid = makeSpecId(spec.id)
                 items[sid] = { type: 'spec', spec }
-                children[cid].push(sid)
+                children[fid].push(sid)
             })
 
-            // child categories
-            cat.children.forEach((child) => addCategory(child, cid))
+            // child folders
+            folder.children.forEach((child) => addFolder(child, fid))
         }
 
-        buildHierarchy.roots.forEach((r) => addCategory(r, null))
+        buildHierarchy.roots.forEach((r) => addFolder(r, null))
 
         return { itemsById: items, childrenById: children }
     }, [buildHierarchy])
@@ -173,8 +97,11 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
 
     const tree = useTree<ItemPayload>({
         rootItemId: 'root',
-        getItemName: (item) => item.getItemData().category?.name || item.getItemData().spec?.name || '',
-        isItemFolder: (item) => item.getItemData().type === 'category',
+        getItemName: (item) => {
+            const data = item.getItemData()
+            return data.type === 'folder' ? data.folder.name : data.spec.name
+        },
+        isItemFolder: (item) => item.getItemData().type === 'folder',
         dataLoader: {
             getItem: (itemId) => itemsById[itemId],
             getChildren: (itemId) => overrides[itemId] ?? childrenById[itemId]
@@ -201,12 +128,12 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
                 const level = item.getItemMeta().level
                 const isFolder = item.isFolder()
                 const isExpanded = item.isExpanded()
-                const isSelected = payload.spec ? selectedSpecId === payload.spec.id : false
+                const isSelected = payload.type === 'spec' ? selectedSpecId === payload.spec.id : false
 
-                const { children: _libChildren, ...baseProps } = item.getProps()
+                const { ...baseProps } = item.getProps()
                 const onClick = (e: any) => {
                     baseProps.onClick?.(e)
-                    if (payload.spec) onSelectSpec(payload.spec)
+                    if (payload.type === 'spec') onSelectSpec(payload.spec)
                 }
 
                 return (
@@ -219,6 +146,7 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
                             isSelected && 'bg-muted'
                         )}
                         style={{ paddingLeft: `${level * 16}px` }}
+                        type="button"
                     >
                         {/* Chevron */}
                         <div className="flex h-4 w-4 items-center justify-center">
@@ -238,34 +166,27 @@ export function Tree({ categories, specs, requirements, tests, selectedSpecId, o
                         <span className="flex-1 text-left text-sm font-medium">{item.getItemName()}</span>
 
                         {/* Right side stats/badge for specs */}
-                        {payload.spec && (
+                        {payload.type === 'spec' && (
                             <div className="flex items-center gap-2">
-                                {payload.spec.status &&
+                                {payload.spec.statuses[SPEC_STATUSES.deactivated] &&
                                     (() => {
-                                        const config =
-                                            STATUS_CONFIGS[payload.spec.status as keyof typeof STATUS_CONFIGS]
+                                        const config = STATUS_CONFIGS[SPEC_STATUSES.deactivated]
                                         return config?.badgeClassName ?
                                                 <Badge className={config.badgeClassName}>{config.label}</Badge>
                                             :   null
                                     })()}
-                                {payload.spec.total > 0 && (
+                                {payload.spec.numberOfTests > 0 && (
                                     <div className="flex items-center gap-1 text-xs">
-                                        {payload.spec.passed > 0 && (
-                                            <span className="text-emerald-600 font-medium">{payload.spec.passed}</span>
-                                        )}
-                                        {payload.spec.failed > 0 && (
-                                            <span className="text-red-600 font-medium">{payload.spec.failed}</span>
-                                        )}
-                                        {payload.spec.pending > 0 && (
-                                            <span className="text-amber-600 font-medium">{payload.spec.pending}</span>
-                                        )}
-                                        {payload.spec.skipped > 0 && (
-                                            <span className="text-slate-600 font-medium">{payload.spec.skipped}</span>
-                                        )}
-                                        {payload.spec.todo > 0 && (
-                                            <span className="text-orange-600 font-medium">{payload.spec.todo}</span>
-                                        )}
-                                        <span className="text-muted-foreground">({payload.spec.total})</span>
+                                        {Object.entries(STATUS_CONFIGS).map(([statusKey, config]) => {
+                                            const count = payload.spec.statuses[statusKey as SpecStatus]
+                                            const color = config.color
+                                            return (
+                                                <span key={statusKey} className={cn(color, 'font-medium')}>
+                                                    {count}
+                                                </span>
+                                            )
+                                        })}
+                                        <span className="text-muted-foreground">({payload.spec.numberOfTests})</span>
                                     </div>
                                 )}
                             </div>

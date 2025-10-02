@@ -2,12 +2,19 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
 import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
+import { SPEC_STATUSES } from '@/lib/constants'
+
+type SpecStatuses = Record<SpecStatus, number>
+
+const DEFAULT_SPEC_STATUSES: SpecStatuses = Object.fromEntries(
+    Object.values(SPEC_STATUSES).map((status: SpecStatus) => [status, 0])
+) as SpecStatuses
 
 export const testFolder = sqliteTable('test_folder', {
     id: text().primaryKey(),
     name: text().notNull(),
     description: text(),
-    parentCategoryId: text(),
+    parentFolderId: text(),
     organizationId: text()
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
@@ -26,11 +33,9 @@ export const testSpec = sqliteTable('test_spec', {
     name: text().notNull(),
     fileName: text(),
     description: text(),
-    // TODO: add enum
-    status: text().$type<SpecStatus>().notNull(),
-    allTestCount: integer().notNull().default(0),
-    succeededTestCount: integer().notNull().default(0),
-    testFolderId: text().references(() => testFolder.id, { onDelete: 'cascade' }),
+    statuses: text({ mode: 'json' }).notNull().$type<SpecStatuses>().default(DEFAULT_SPEC_STATUSES),
+    numberOfTests: integer().notNull().default(0),
+    folderId: text().references(() => testFolder.id, { onDelete: 'cascade' }),
     organizationId: text()
         .references(() => organization.id, { onDelete: 'cascade' })
         .notNull(),
@@ -48,7 +53,7 @@ export const testRequirement = sqliteTable('test_requirement', {
     name: text().notNull(),
     description: text(),
     order: integer().notNull().default(0),
-    testSpecId: text()
+    specId: text()
         .notNull()
         .references(() => testSpec.id, { onDelete: 'cascade' }),
     createdAt: text()
@@ -65,7 +70,7 @@ export const test = sqliteTable('test', {
     status: text().$type<TestStatus>().notNull(),
     framework: text().$type<TestFramework>().notNull(),
     code: text(),
-    testRequirementId: text()
+    requirementId: text()
         .notNull()
         .references(() => testRequirement.id, { onDelete: 'cascade' }),
     createdAt: text()
@@ -79,7 +84,7 @@ export const test = sqliteTable('test', {
 
 export const testFolderRelations = relations(testFolder, ({ one, many }) => ({
     parent: one(testFolder, {
-        fields: [testFolder.parentCategoryId],
+        fields: [testFolder.parentFolderId],
         references: [testFolder.id]
     }),
     organization: one(organization, {
@@ -91,7 +96,7 @@ export const testFolderRelations = relations(testFolder, ({ one, many }) => ({
 
 export const testSpecRelations = relations(testSpec, ({ one, many }) => ({
     folder: one(testFolder, {
-        fields: [testSpec.testFolderId],
+        fields: [testSpec.folderId],
         references: [testFolder.id]
     }),
     organization: one(organization, {
@@ -103,7 +108,7 @@ export const testSpecRelations = relations(testSpec, ({ one, many }) => ({
 
 export const testRequirementRelations = relations(testRequirement, ({ one, many }) => ({
     spec: one(testSpec, {
-        fields: [testRequirement.testSpecId],
+        fields: [testRequirement.specId],
         references: [testSpec.id]
     }),
     tests: many(test)
@@ -111,7 +116,7 @@ export const testRequirementRelations = relations(testRequirement, ({ one, many 
 
 export const testRelations = relations(test, ({ one }) => ({
     requirement: one(testRequirement, {
-        fields: [test.testRequirementId],
+        fields: [test.requirementId],
         references: [testRequirement.id]
     })
 }))
