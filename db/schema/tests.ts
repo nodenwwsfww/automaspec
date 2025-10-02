@@ -2,8 +2,13 @@ import { sqliteTable, text, integer } from 'drizzle-orm/sqlite-core'
 import { relations, sql } from 'drizzle-orm'
 import { TestFramework, SpecStatus, TestStatus } from '@/lib/types'
 import { organization } from './auth'
+import { SPEC_STATUSES } from '@/lib/constants'
 
-type SpecStatuses = Record<SpecStatus, number> | {}
+type SpecStatuses = Record<SpecStatus, number>
+
+const DEFAULT_SPEC_STATUSES: SpecStatuses = Object.fromEntries(
+    Object.values(SPEC_STATUSES).map((status: SpecStatus) => [status, 0])
+) as SpecStatuses
 
 export const testFolder = sqliteTable('test_folder', {
     id: text().primaryKey(),
@@ -28,7 +33,7 @@ export const testSpec = sqliteTable('test_spec', {
     name: text().notNull(),
     fileName: text(),
     description: text(),
-    statuses: text({ mode: 'json' }).$type<SpecStatuses>().default({}),
+    statuses: text({ mode: 'json' }).$type<SpecStatuses>().default(DEFAULT_SPEC_STATUSES),
     numberOfTests: integer().notNull().default(0),
     folderId: text().references(() => testFolder.id, { onDelete: 'cascade' }),
     organizationId: text()
