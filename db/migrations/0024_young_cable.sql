@@ -1,1 +1,0 @@
-ALTER TABLE `test_requirement` RENAME COLUMN "text" TO "name";

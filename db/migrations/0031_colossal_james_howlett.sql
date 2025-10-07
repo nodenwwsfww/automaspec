@@ -1,1 +1,0 @@
-ALTER TABLE `test_spec` DROP COLUMN `test_status`;
