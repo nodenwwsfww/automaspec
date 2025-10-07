@@ -47,14 +47,10 @@ export default function CreateOrganizationPage() {
             setError(null)
 
             try {
-                console.log('Creating organization with:', { name: value.name, slug: value.slug })
-
                 const result = await authClient.organization.create({
                     name: value.name,
                     slug: value.slug
                 })
-
-                console.log('Organization creation result:', result)
 
                 if (result.error) {
                     setError(result.error.message || 'Failed to create organization')
