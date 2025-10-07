@@ -1,9 +1,9 @@
 pre-commit:
     jobs:
-        # - name: db-check
-        #   glob: 'db/schema/*.ts'
-        #   run: pnpm drizzle-kit check
-        #   fail_text: '❌ Database schema validation failed'
+        - name: db-check
+          glob: 'db/schema/*.ts'
+          run: pnpm drizzle-kit check
+          fail_text: '❌ Database schema validation failed'
 
         - name: format
           glob: '*.{ts,tsx,mts}'
