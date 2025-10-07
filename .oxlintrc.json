@@ -3,5 +3,6 @@
     "env": {
         "browser": true
     },
-    "plugins": ["nextjs"]
+    "plugins": ["nextjs"],
+    "ignorePatterns": ["__tests__/**/*.ts"]
 }

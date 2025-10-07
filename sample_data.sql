@@ -1,217 +1,287 @@
--- Insert a sample user (auth table uses integer timestamps)
-INSERT INTO user (id, name, email, email_verified, image, created_at, updated_at) VALUES 
-('sample-user-1', 'Demo User', 'demo@example.com', 1, NULL, unixepoch() * 1000, unixepoch() * 1000);
-
--- Insert a sample organization (auth table uses integer timestamps)
-INSERT INTO organization (id, name, slug, logo, plan, created_at, updated_at, metadata) VALUES 
-('NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', 'Demo Organization', 'demo-org', NULL, 'free', unixepoch() * 1000, unixepoch() * 1000, NULL);
-
--- Insert member relationship (user is owner of organization)
-INSERT INTO member (id, organization_id, user_id, role, created_at, updated_at) VALUES 
-('sample-member-1', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', 'sample-user-1', 'owner', unixepoch() * 1000, unixepoch() * 1000);
-
 -- Insert test folders (test tables use text timestamps with CURRENT_TIMESTAMP)
 INSERT INTO test_folder (id, name, description, parent_folder_id, organization_id, "order", created_at, updated_at) VALUES 
-('cat-1', 'Shopping Cart', 'Shopping cart functionality', NULL, 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-2', 'Payment', 'Payment processing functionality', NULL, 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-3', 'Authentication', 'User authentication functionality', NULL, 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('cat-4', 'API Tests', 'Backend API testing', NULL, 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('folder-1', 'Dashboard Tests', 'Tests for dashboard functionality', NULL, 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', 1, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('folder-2', 'Authentication', 'User authentication and authorization tests', NULL, 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', 2, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('folder-3', 'Test Management', 'Tests for test CRUD operations', NULL, 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', 3, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('folder-4', 'API Routes', 'Backend API endpoint tests', NULL, 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', 4, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('folder-5', 'Organization Management', 'Organization and member management tests', NULL, 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', 5, CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
 -- Insert test specs (test files)
 INSERT INTO test_spec (id, name, file_name, description, statuses, number_of_tests, folder_id, organization_id, created_at, updated_at) VALUES 
-('spec-1', 'Add to Cart Tests', 'add-to-cart.spec.ts', 'Tests for adding items to cart', '{"passed":1,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'cat-1', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-2', 'Cart Persistence Tests', 'cart-persistence.spec.ts', 'Tests for cart data persistence', '{"passed":2,"failed":0,"pending":0,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 2, 'cat-1', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-3', 'Payment Method Tests', 'payment-methods.spec.ts', 'Tests for payment method selection', '{"passed":1,"failed":1,"pending":0,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 2, 'cat-2', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-4', 'Payment Processing Tests', 'payment-processing.spec.ts', 'Tests for payment processing flow', '{"passed":1,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'cat-2', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-5', 'Login Tests', 'login.spec.ts', 'User login functionality tests', '{"passed":2,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 4, 'cat-3', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-6', 'Registration Tests', 'registration.spec.ts', 'User registration tests', '{"passed":1,"failed":1,"pending":0,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 2, 'cat-3', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-7', 'Users API Tests', 'users-api.spec.ts', 'API tests for user management', '{"passed":2,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 4, 'cat-4', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('spec-8', 'Products API Tests', 'products-api.spec.ts', 'API tests for product management', '{"passed":2,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 4, 'cat-4', 'NvmOabP4cDHC0JFKHsmJ2pG4zmrNcBhN', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('spec-1', 'Dashboard Tree View', 'dashboard-tree.spec.ts', 'Tests for test tree navigation and display', '{"passed":2,"failed":1,"pending":0,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-1', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-2', 'Test Details Panel', 'test-details-panel.spec.ts', 'Tests for test details display and editing', '{"passed":2,"failed":0,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-1', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-3', 'User Login', 'user-login.spec.ts', 'Tests for user authentication flow', '{"passed":3,"failed":0,"pending":0,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-2', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-4', 'Session Management', 'session-management.spec.ts', 'Tests for session handling and expiration', '{"passed":1,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-2', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-5', 'Create Test Spec', 'create-test-spec.spec.ts', 'Tests for creating new test specifications', '{"passed":2,"failed":0,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-3', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-6', 'Update Test Status', 'update-test-status.spec.ts', 'Tests for updating test statuses', '{"passed":3,"failed":0,"pending":0,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-3', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-7', 'Test API Endpoints', 'test-api.spec.ts', 'API tests for test management endpoints', '{"passed":2,"failed":1,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 4, 'folder-4', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('spec-8', 'Organization API', 'organization-api.spec.ts', 'API tests for organization management', '{"passed":2,"failed":0,"pending":1,"skipped":0,"todo":0,"disabled":0,"missing":0,"deactivated":0,"partial":0}', 3, 'folder-5', 'FBMJEf0o18Bsk8BTD3OXuRhxBigwH6r0', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for add-to-cart.spec.ts
+-- Insert test requirements for dashboard-tree.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-1', 'User should be able to add items to cart', 'Adding products to shopping cart', 1, 'spec-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-2', 'User should be able to remove items from cart', 'Removing products from shopping cart', 2, 'spec-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-3', 'User should be able to update item quantity', 'Changing product quantity in cart', 3, 'spec-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-1', 'Should display test folders in tree structure', 'Tree component should render folders hierarchically', 1, 'spec-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-2', 'Should expand and collapse folders', 'User should be able to toggle folder visibility', 2, 'spec-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-3', 'Should display test specs within folders', 'Test specs should be visible under their parent folders', 3, 'spec-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for cart-persistence.spec.ts
+-- Insert test requirements for test-details-panel.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-4', 'Cart should persist across sessions', 'Cart items should be saved when user logs out and in', 1, 'spec-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-5', 'Cart should show correct total price', 'Total price calculation including taxes and discounts', 2, 'spec-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-4', 'Should display test spec details', 'Panel should show test name, description, and status', 1, 'spec-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-5', 'Should display all test requirements', 'List all requirements associated with the test spec', 2, 'spec-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-6', 'Should allow editing test details', 'User should be able to update test spec information', 3, 'spec-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for payment-methods.spec.ts
+-- Insert test requirements for user-login.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-6', 'User should be able to select payment method', 'Choose between credit card, PayPal, etc.', 1, 'spec-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-7', 'User should be able to enter payment details', 'Credit card form validation and processing', 2, 'spec-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-7', 'Should authenticate with valid credentials', 'User login with correct email and password', 1, 'spec-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-8', 'Should reject invalid credentials', 'Login should fail with incorrect password', 2, 'spec-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-9', 'Should redirect to dashboard after login', 'Successful login redirects to /dashboard', 3, 'spec-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for payment-processing.spec.ts
+-- Insert test requirements for session-management.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-8', 'Payment should be processed successfully', 'Successful payment transaction flow', 1, 'spec-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-9', 'User should receive payment confirmation', 'Email and on-screen confirmation after payment', 2, 'spec-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-10', 'Failed payments should be handled gracefully', 'Error handling for declined cards or failed transactions', 3, 'spec-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-10', 'Should maintain session across page reloads', 'User session persists after page refresh', 1, 'spec-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-11', 'Should clear session on logout', 'Logout should remove user session', 2, 'spec-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-12', 'Should handle expired sessions', 'Redirect to login when session expires', 3, 'spec-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for login.spec.ts
+-- Insert test requirements for create-test-spec.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-11', 'User should be able to login with email and password', 'Standard email/password authentication', 1, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-12', 'User should be able to reset password', 'Password reset via email link', 2, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-13', 'User session should expire after inactivity', 'Automatic logout after session timeout', 3, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-14', 'User should be able to logout', 'Manual logout functionality', 4, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-13', 'Should create new test spec in folder', 'User can add test spec to selected folder', 1, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-14', 'Should validate required fields', 'Form should validate name and organization', 2, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-15', 'Should initialize with default statuses', 'New test spec should have all status counts at 0', 3, 'spec-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for registration.spec.ts
+-- Insert test requirements for update-test-status.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-15', 'User should be able to register new account', 'User registration with email verification', 1, 'spec-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-16', 'Registration should validate email format', 'Email validation during registration', 2, 'spec-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-16', 'Should update test status to passed', 'Mark test as passed and update count', 1, 'spec-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-17', 'Should update test status to failed', 'Mark test as failed and update count', 2, 'spec-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-18', 'Should reflect status in parent spec', 'Test spec statuses should update when test changes', 3, 'spec-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for users-api.spec.ts
+-- Insert test requirements for test-api.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-17', 'API should create new user', 'POST /api/users endpoint', 1, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-18', 'API should retrieve user by ID', 'GET /api/users/:id endpoint', 2, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-19', 'API should update user profile', 'PUT /api/users/:id endpoint', 3, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-20', 'API should delete user account', 'DELETE /api/users/:id endpoint', 4, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-19', 'Should fetch all tests for organization', 'GET /api/tests returns organization tests', 1, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-20', 'Should create new test requirement', 'POST /api/test-requirements creates requirement', 2, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-21', 'Should update test spec details', 'PUT /api/test-specs/:id updates spec', 3, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-22', 'Should delete test spec and cascade', 'DELETE /api/test-specs/:id removes spec and children', 4, 'spec-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert test requirements for products-api.spec.ts
+-- Insert test requirements for organization-api.spec.ts
 INSERT INTO test_requirement (id, name, description, "order", spec_id, created_at, updated_at) VALUES 
-('req-21', 'API should list all products', 'GET /api/products endpoint', 1, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-22', 'API should create new product', 'POST /api/products endpoint', 2, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-23', 'API should update product details', 'PUT /api/products/:id endpoint', 3, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
-('req-24', 'API should delete product', 'DELETE /api/products/:id endpoint', 4, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('req-23', 'Should create new organization', 'POST /api/organizations creates organization', 1, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-24', 'Should add member to organization', 'POST /api/organizations/:id/members adds member', 2, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('req-25', 'Should list organization members', 'GET /api/organizations/:id/members returns members', 3, 'spec-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
 
--- Insert tests (one test per requirement)
+-- Insert tests (realistic unit tests for the project)
 INSERT INTO test (id, status, framework, code, requirement_id, created_at, updated_at) VALUES 
-('test-1', 'passed', 'vitest', 'test("should add item to cart", async ({ page }) => {
-  await page.goto("/products");
-  await page.click("[data-testid=add-to-cart-btn]");
-  await expect(page.locator("[data-testid=cart-count]")).toHaveText("1");
-});', 'req-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-1', 'passed', 'vitest', 'import { render, screen } from "@testing-library/react"
+import { Tree } from "@/app/dashboard/tree"
 
-('test-2', 'failed', 'vitest', 'test("should remove item from cart", async ({ page }) => {
-  await page.goto("/cart");
-  await page.click("[data-testid=remove-item-btn]");
-  await expect(page.locator("[data-testid=cart-empty]")).toBeVisible();
-});', 'req-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should display test folders in tree structure", () => {
+  const folders = [{ id: "1", name: "Test Folder", children: [] }]
+  render(<Tree folders={folders} />)
+  expect(screen.getByText("Test Folder")).toBeInTheDocument()
+})', 'req-1', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-3', 'pending', 'vitest', 'test("should update item quantity", async ({ page }) => {
-  // TODO: Implement quantity update test
-});', 'req-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-2', 'passed', 'vitest', 'import { render, screen, fireEvent } from "@testing-library/react"
+import { Tree } from "@/app/dashboard/tree"
 
-('test-4', 'passed', 'vitest', 'test("should persist cart across sessions", async ({ page }) => {
-  await page.goto("/products");
-  await page.click("[data-testid=add-to-cart-btn]");
-  await page.reload();
-  await expect(page.locator("[data-testid=cart-count]")).toHaveText("1");
-});', 'req-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should expand and collapse folders", async () => {
+  const folders = [{ id: "1", name: "Folder", children: [{ id: "2", name: "Child" }] }]
+  render(<Tree folders={folders} />)
+  const toggle = screen.getByRole("button", { name: /toggle/i })
+  fireEvent.click(toggle)
+  expect(screen.getByText("Child")).toBeVisible()
+})', 'req-2', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-5', 'passed', 'vitest', 'test("should show correct total price", async ({ page }) => {
-  await page.goto("/cart");
-  await expect(page.locator("[data-testid=total-price]")).toContainText("$");
-});', 'req-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-3', 'failed', 'vitest', 'import { render, screen } from "@testing-library/react"
+import { Tree } from "@/app/dashboard/tree"
 
-('test-6', 'passed', 'vitest', 'test("should select payment method", async ({ page }) => {
-  await page.goto("/checkout");
-  await page.click("[data-testid=payment-method-card]");
-  await expect(page.locator("[data-testid=payment-method-card]")).toBeChecked();
-});', 'req-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should display test specs within folders", () => {
+  const folders = [{ id: "1", name: "Folder", specs: [{ id: "s1", name: "spec.ts" }] }]
+  render(<Tree folders={folders} />)
+  expect(screen.getByText("spec.ts")).toBeInTheDocument()
+  // Fails: specs not rendering correctly
+})', 'req-3', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-7', 'failed', 'vitest', 'test("should enter payment details", async ({ page }) => {
-  await page.goto("/checkout");
-  await page.fill("[data-testid=card-number]", "4111111111111111");
-  // Test fails due to validation issues
-});', 'req-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-4', 'passed', 'vitest', 'import { render, screen } from "@testing-library/react"
+import TestDetailsPanel from "@/app/dashboard/test-details-panel"
 
-('test-8', 'pending', 'vitest', 'test("should process payment successfully", async ({ page }) => {
-  // TODO: Implement payment processing test
-});', 'req-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should display test spec details", () => {
+  const spec = { id: "1", name: "Test", description: "Description" }
+  render(<TestDetailsPanel spec={spec} />)
+  expect(screen.getByText("Test")).toBeInTheDocument()
+  expect(screen.getByText("Description")).toBeInTheDocument()
+})', 'req-4', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-9', 'passed', 'vitest', 'test("should receive payment confirmation", async ({ page }) => {
-  await page.goto("/order-confirmation");
-  await expect(page.locator("[data-testid=confirmation-message]")).toBeVisible();
-});', 'req-9', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-5', 'passed', 'vitest', 'import { render, screen } from "@testing-library/react"
+import TestDetailsPanel from "@/app/dashboard/test-details-panel"
 
-('test-10', 'failed', 'vitest', 'test("should handle failed payments", async ({ page }) => {
-  await page.goto("/checkout");
-  await page.fill("[data-testid=card-number]", "4000000000000002");
-  await page.click("[data-testid=submit-payment]");
-  await expect(page.locator("[data-testid=error-message]")).toBeVisible();
-});', 'req-10', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should display all test requirements", () => {
+  const spec = { id: "1", name: "Test", requirements: [{ id: "r1", name: "Req 1" }] }
+  render(<TestDetailsPanel spec={spec} />)
+  expect(screen.getByText("Req 1")).toBeInTheDocument()
+})', 'req-5', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-11', 'passed', 'vitest', 'test("should login with email and password", async ({ page }) => {
-  await page.goto("/login");
-  await page.fill("[data-testid=email]", "test@example.com");
-  await page.fill("[data-testid=password]", "password123");
-  await page.click("[data-testid=login-btn]");
-  await expect(page).toHaveURL("/dashboard");
-});', 'req-11', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-6', 'pending', 'vitest', 'import { render, screen, fireEvent } from "@testing-library/react"
+import TestDetailsPanel from "@/app/dashboard/test-details-panel"
 
-('test-12', 'pending', 'vitest', 'test("should reset password", async ({ page }) => {
-  // TODO: Implement password reset test
-});', 'req-12', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should allow editing test details", () => {
+  // TODO: Implement edit functionality test
+})', 'req-6', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-13', 'failed', 'vitest', 'test("should expire session after inactivity", async ({ page }) => {
-  // Session timeout test - currently failing
-});', 'req-13', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-7', 'passed', 'vitest', 'import { signIn } from "@/lib/shared/better-auth"
 
-('test-14', 'passed', 'vitest', 'test("should logout user", async ({ page }) => {
-  await page.goto("/dashboard");
-  await page.click("[data-testid=logout-btn]");
-  await expect(page).toHaveURL("/login");
-});', 'req-14', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should authenticate with valid credentials", async () => {
+  const result = await signIn.email({ 
+    email: "test@example.com", 
+    password: "password123" 
+  })
+  expect(result.user).toBeDefined()
+  expect(result.user.email).toBe("test@example.com")
+})', 'req-7', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-15', 'passed', 'vitest', 'test("should register new account", async ({ page }) => {
-  await page.goto("/register");
-  await page.fill("[data-testid=email]", "new@example.com");
-  await page.fill("[data-testid=password]", "newpassword123");
-  await page.click("[data-testid=register-btn]");
-  await expect(page.locator("[data-testid=success-message]")).toBeVisible();
-});', 'req-15', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-8', 'passed', 'vitest', 'import { signIn } from "@/lib/shared/better-auth"
 
-('test-16', 'failed', 'vitest', 'test("should validate email format", async ({ page }) => {
-  await page.goto("/register");
-  await page.fill("[data-testid=email]", "invalid-email");
-  await expect(page.locator("[data-testid=error-message]")).toBeVisible();
-});', 'req-16', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should reject invalid credentials", async () => {
+  await expect(
+    signIn.email({ email: "test@example.com", password: "wrong" })
+  ).rejects.toThrow("Invalid credentials")
+})', 'req-8', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-17', 'passed', 'vitest', 'test("API should create new user", async ({ request }) => {
-  const response = await request.post("/api/users", {
-    data: { email: "test@example.com", name: "Test User" }
-  });
-  expect(response.status()).toBe(201);
-});', 'req-17', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-9', 'passed', 'vitest', 'import { render, screen } from "@testing-library/react"
+import { useRouter } from "next/navigation"
 
-('test-18', 'passed', 'vitest', 'test("API should retrieve user by ID", async ({ request }) => {
-  const response = await request.get("/api/users/1");
-  expect(response.status()).toBe(200);
-});', 'req-18', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should redirect to dashboard after login", async () => {
+  const { push } = useRouter()
+  // After successful login
+  expect(push).toHaveBeenCalledWith("/dashboard")
+})', 'req-9', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-19', 'failed', 'vitest', 'test("API should update user profile", async ({ request }) => {
-  const response = await request.put("/api/users/1", {
-    data: { name: "Updated Name" }
-  });
-  expect(response.status()).toBe(200);
-});', 'req-19', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-10', 'passed', 'vitest', 'import { render } from "@testing-library/react"
+import { useSession } from "@/lib/shared/better-auth"
 
-('test-20', 'pending', 'vitest', 'test("API should delete user account", async ({ request }) => {
-  // TODO: Implement user deletion test
-});', 'req-20', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should maintain session across page reloads", () => {
+  const { data: session } = useSession()
+  window.location.reload()
+  expect(session).toBeDefined()
+})', 'req-10', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-21', 'passed', 'vitest', 'test("API should list all products", async ({ request }) => {
-  const response = await request.get("/api/products");
-  expect(response.status()).toBe(200);
-});', 'req-21', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-11', 'failed', 'vitest', 'import { signOut } from "@/lib/shared/better-auth"
 
-('test-22', 'failed', 'vitest', 'test("API should create new product", async ({ request }) => {
-  const response = await request.post("/api/products", {
-    data: { name: "New Product", price: 99.99 }
-  });
-  expect(response.status()).toBe(201);
-});', 'req-22', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+test("should clear session on logout", async () => {
+  await signOut()
+  const session = await getSession()
+  expect(session).toBeNull()
+  // Fails: session still exists
+})', 'req-11', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-23', 'passed', 'vitest', 'test("API should update product details", async ({ request }) => {
-  const response = await request.put("/api/products/1", {
-    data: { price: 89.99 }
-  });
-  expect(response.status()).toBe(200);
-});', 'req-23', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+('test-12', 'pending', 'vitest', 'test("should handle expired sessions", () => {
+  // TODO: Implement session expiration handling
+})', 'req-12', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
 
-('test-24', 'pending', 'vitest', 'test("API should delete product", async ({ request }) => {
-  // TODO: Implement product deletion test
-});', 'req-24', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
+('test-13', 'passed', 'vitest', 'import { db } from "@/db"
+import { testSpec } from "@/db/schema"
+
+test("should create new test spec in folder", async () => {
+  const result = await db.insert(testSpec).values({
+    id: "test-1",
+    name: "New Test",
+    organizationId: "org-1",
+    folderId: "folder-1"
+  })
+  expect(result).toBeDefined()
+})', 'req-13', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-14', 'passed', 'vitest', 'import { testSpecInsertSchema } from "@/lib/types"
+
+test("should validate required fields", () => {
+  const invalid = { name: "", organizationId: "" }
+  expect(() => testSpecInsertSchema.parse(invalid)).toThrow()
+})', 'req-14', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-15', 'pending', 'vitest', 'test("should initialize with default statuses", () => {
+  // TODO: Verify default status initialization
+})', 'req-15', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-16', 'passed', 'vitest', 'import { db } from "@/db"
+import { test } from "@/db/schema"
+import { TEST_STATUSES } from "@/lib/constants"
+
+test("should update test status to passed", async () => {
+  await db.update(test)
+    .set({ status: TEST_STATUSES.passed })
+    .where(eq(test.id, "test-1"))
+  const updated = await db.query.test.findFirst({ where: eq(test.id, "test-1") })
+  expect(updated.status).toBe("passed")
+})', 'req-16', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-17', 'passed', 'vitest', 'import { db } from "@/db"
+import { test } from "@/db/schema"
+import { TEST_STATUSES } from "@/lib/constants"
+
+test("should update test status to failed", async () => {
+  await db.update(test)
+    .set({ status: TEST_STATUSES.failed })
+    .where(eq(test.id, "test-1"))
+  const updated = await db.query.test.findFirst({ where: eq(test.id, "test-1") })
+  expect(updated.status).toBe("failed")
+})', 'req-17', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-18', 'passed', 'vitest', 'import { updateTestSpecStatuses } from "@/orpc/routes/tests"
+
+test("should reflect status in parent spec", async () => {
+  await updateTestSpecStatuses("spec-1")
+  const spec = await db.query.testSpec.findFirst({ where: eq(testSpec.id, "spec-1") })
+  expect(spec.statuses.passed).toBeGreaterThan(0)
+})', 'req-18', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-19', 'passed', 'vitest', 'import { testRouter } from "@/orpc/routes/tests"
+
+test("should fetch all tests for organization", async () => {
+  const result = await testRouter.getTests({ organizationId: "org-1" })
+  expect(result).toBeInstanceOf(Array)
+  expect(result.length).toBeGreaterThan(0)
+})', 'req-19', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-20', 'failed', 'vitest', 'import { testRouter } from "@/orpc/routes/tests"
+
+test("should create new test requirement", async () => {
+  const result = await testRouter.createRequirement({
+    name: "New Requirement",
+    specId: "spec-1"
+  })
+  expect(result.id).toBeDefined()
+  // Fails: validation error
+})', 'req-20', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-21', 'pending', 'vitest', 'test("should update test spec details", async () => {
+  // TODO: Implement spec update test
+})', 'req-21', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-22', 'pending', 'vitest', 'test("should delete test spec and cascade", async () => {
+  // TODO: Implement cascade delete test
+})', 'req-22', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-23', 'passed', 'vitest', 'import { db } from "@/db"
+import { organization } from "@/db/schema"
+
+test("should create new organization", async () => {
+  const result = await db.insert(organization).values({
+    id: "org-new",
+    name: "New Org",
+    plan: "free"
+  })
+  expect(result).toBeDefined()
+})', 'req-23', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-24', 'passed', 'vitest', 'import { db } from "@/db"
+import { member } from "@/db/schema"
+
+test("should add member to organization", async () => {
+  const result = await db.insert(member).values({
+    id: "member-new",
+    organizationId: "org-1",
+    userId: "user-1",
+    role: "member"
+  })
+  expect(result).toBeDefined()
+})', 'req-24', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP),
+
+('test-25', 'pending', 'vitest', 'test("should list organization members", async () => {
+  // TODO: Implement member listing test
+})', 'req-25', CURRENT_TIMESTAMP, CURRENT_TIMESTAMP);
