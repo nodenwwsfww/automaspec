@@ -71,7 +71,7 @@ export default function LoginPage() {
                         <CardContent className="pt-4">
                             <p className="mb-2 text-center text-muted-foreground text-sm">Demo credentials:</p>
                             <div className="space-y-1 text-center text-xs">
-                                <p>Email: demo@AutomaSpec.com</p>
+                                <p>Email: demo@automaspec.com</p>
                                 <p>Password: demo1234</p>
                             </div>
                         </CardContent>
