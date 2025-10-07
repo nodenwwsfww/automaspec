@@ -31,7 +31,7 @@ export const testFolder = sqliteTable('test_folder', {
     id: text().primaryKey().notNull(),
     name: text().notNull(),
     description: text(),
-    parentFolderId: text().notNull().default('0'),
+    parentFolderId: text(),
     organizationId: text()
         .notNull()
         .references(() => organization.id, { onDelete: 'cascade' }),
@@ -65,7 +65,7 @@ export const testRequirement = sqliteTable('test_requirement', {
 export const testSpec = sqliteTable('test_spec', {
     id: text().primaryKey().notNull(),
     name: text().notNull(),
-    fileName: text('file_name'),
+    fileName: text(),
     description: text(),
     statuses: text({ mode: 'json' }).$type<SpecStatuses>().default(DEFAULT_SPEC_STATUSES).notNull(),
     numberOfTests: integer().notNull().default(0),

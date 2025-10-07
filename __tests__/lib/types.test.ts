@@ -39,7 +39,7 @@ describe('Type Schemas', () => {
 
             const result = testSpecInsertSchema.safeParse(valid)
             if (!result.success) {
-                console.log('Validation errors:', result.error.errors)
+                console.log('Validation errors:', result.error.issues)
             }
             expect(result.success).toBe(true)
         })
@@ -60,7 +60,7 @@ describe('Type Schemas', () => {
 
             const result = testFolderInsertSchema.safeParse(valid)
             if (!result.success) {
-                console.log('Validation errors:', result.error.errors)
+                console.log('Validation errors:', result.error.issues)
             }
             expect(result.success).toBe(true)
         })
