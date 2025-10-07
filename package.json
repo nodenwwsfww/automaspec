@@ -11,6 +11,7 @@
     "db:push": "drizzle-kit push",
     "db:studio": "drizzle-kit studio",
     "db:check": "lefthook run pre-commit --jobs db-check",
+    "dbs": "drizzle-kit studio --config=drizzle.config.ts",
     "dbg": "drizzle-kit generate --config=drizzle.config.ts",
     "dbm": "drizzle-kit migrate --config=drizzle.config.ts",
     "dbup": "pnpm dbg && pnpm dbm",
