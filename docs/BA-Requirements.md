@@ -77,13 +77,13 @@ quadrantChart
     quadrant-2 Keep Satisfied
     quadrant-3 Monitor
     quadrant-4 Keep Informed
-    QA Engineers: [0.85, 0.75]
-    Development Teams: [0.90, 0.70]
-    Product Managers: [0.65, 0.80]
-    Project Managers: [0.70, 0.75]
-    Academic Advisors: [0.50, 0.85]
-    End Users: [0.55, 0.35]
-    DevOps Engineers: [0.60, 0.50]
+    QA Engineers: [0.90, 0.85]
+    Development Teams: [0.85, 0.68]
+    Product Managers: [0.72, 0.90]
+    Project Managers: [0.80, 0.78]
+    Academic Advisors: [0.40, 0.88]
+    End Users: [0.62, 0.20]
+    DevOps Engineers: [0.75, 0.42]
 ```
 
 **Stakeholder Descriptions:**
