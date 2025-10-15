@@ -110,7 +110,7 @@ quadrantChart
 2. **Platform Adoption**
    - Target: 80% of invited users actively using platform within 2 months
    - Measurement: Monthly active users / Total registered users
-   - Success threshold: ≥5 organizations onboarded for beta
+   - Success threshold: >=5 organizations onboarded for beta
 
 3. **Test Coverage Improvement**
    - Target: 40% improvement in test coverage visibility
@@ -118,9 +118,9 @@ quadrantChart
    - Success threshold: 90% of test specs have associated status tracking
 
 4. **User Satisfaction**
-   - Target: Net Promoter Score (NPS) ≥ 40
+   - Target: Net Promoter Score (NPS) >= 40
    - Measurement: User survey responses
-   - Success threshold: ≥70% users rate experience as "Good" or "Excellent"
+   - Success threshold: >=70% users rate experience as "Good" or "Excellent"
 
 5. **System Performance**
    - Target: Page load time < 2 seconds, AI generation < 60 seconds
@@ -128,7 +128,7 @@ quadrantChart
    - Success threshold: 95th percentile within targets
 
 6. **CI/CD Integration Success**
-   - Target: Automated test result sync in ≥80% of connected repositories
+   - Target: Automated test result sync in >=80% of connected repositories
    - Measurement: Successful sync events / Total test runs
    - Success threshold: Zero data loss, < 5-minute sync delay
 
@@ -704,7 +704,7 @@ graph TB
 **Maintainability Requirements:**
 - **Code Quality**: TypeScript for type safety, ESLint for code standards
 - **Documentation**: API documentation via Scalar, inline code comments
-- **Automated Testing**: Unit test coverage ≥ 70%, integration tests for critical paths
+- **Automated Testing**: Unit test coverage >= 70%, integration tests for critical paths
 - **Version Control**: Git with conventional commits
 - **CI/CD Pipeline**: Automated builds, tests, and deployments
 - **Database Migrations**: Versioned migrations via Drizzle Kit
