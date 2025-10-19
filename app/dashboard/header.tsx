@@ -3,9 +3,12 @@
 import { Badge } from '@/components/ui/badge'
 import { Button } from '@/components/ui/button'
 import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from '@/components/ui/dropdown-menu'
-import { Folder, Plus, User, Settings, LogOut, Building2 } from 'lucide-react'
+import { Folder, Plus, User, Settings, LogOut, Building2, RefreshCw } from 'lucide-react'
 import Link from 'next/link'
 import { authClient } from '@/lib/shared/better-auth'
+import { useState } from 'react'
+import { client } from '@/lib/orpc/orpc'
+import { toast } from 'sonner'
 
 interface DashboardHeaderProps {
     onCreateGroup: () => void
@@ -14,6 +17,31 @@ interface DashboardHeaderProps {
 
 export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeaderProps) {
     const { data: activeOrganization } = authClient.useActiveOrganization()
+    const [isSyncing, setIsSyncing] = useState(false)
+
+    const handleSyncClick = async () => {
+        try {
+            setIsSyncing(true)
+
+            const response = await fetch('/test-results.json')
+            if (!response.ok) {
+                throw new Error('test-results.json not found. Make sure the file exists in the public folder.')
+            }
+
+            const testResults = await response.json()
+            const result = await client.tests.syncReport(testResults)
+
+            toast.success('Test results synced successfully', {
+                description: `Updated: ${result.updated}, Missing: ${result.missing}`
+            })
+        } catch (error) {
+            toast.error('Failed to sync test results', {
+                description: error instanceof Error ? error.message : 'Unknown error'
+            })
+        } finally {
+            setIsSyncing(false)
+        }
+    }
 
     return (
         <div className="flex items-center justify-between border-b p-4">
@@ -25,6 +53,11 @@ export function DashboardHeader({ onCreateGroup, onCreateTest }: DashboardHeader
                 <Badge variant="secondary">Free Plan</Badge>
             </div>
             <div className="flex items-center gap-2">
+                <Button onClick={handleSyncClick} size="sm" variant="outline" disabled={isSyncing}>
+                    <RefreshCw className={`mr-2 h-4 w-4 ${isSyncing ? 'animate-spin' : ''}`} />
+                    Sync Tests
+                </Button>
+
                 <Button onClick={onCreateGroup} size="sm" variant="outline">
                     <Folder className="mr-2 h-4 w-4" />
                     New Group
