@@ -28,7 +28,7 @@ export function TestDetailsPanel({
 }: TestDetailsPanelProps) {
     const [copied, setCopied] = useState(false)
     const [editingRequirements, setEditingRequirements] = useState(false)
-    const [,setRequirementsContent] = useState('')
+    const [, setRequirementsContent] = useState('')
 
     const copyTestCode = async () => {
         if (selectedSpec) {

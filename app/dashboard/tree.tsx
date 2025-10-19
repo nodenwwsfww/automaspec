@@ -42,7 +42,9 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
             }
         }
 
-        const roots: FolderWithChildren[] = folders.filter((f) => !f.parentFolderId).map(buildFolder)
+        const roots: FolderWithChildren[] = folders
+            .filter((f) => !f.parentFolderId || f.parentFolderId === '0')
+            .map(buildFolder)
         const orphanSpecs: TestSpec[] = specs.filter((s) => !s.folderId)
         return { roots, orphanSpecs }
     }, [folders, specs, requirements, tests])

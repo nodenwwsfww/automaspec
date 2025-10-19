@@ -2,131 +2,61 @@
 
 import { useQuery } from '@tanstack/react-query'
 import { orpc } from '@/lib/orpc/orpc'
+import { type TestFolder, type TestSpec, type TestRequirement } from '@/lib/types'
 
-export function useDashboardData() {
+export function useFolders(parentFolderId: TestFolder['id']) {
     const { data: folders = [], isLoading: foldersLoading } = useQuery(
         orpc.testFolders.list.queryOptions({
-            input: {
-                parentFolderId: null
-            }
+            input: { parentFolderId }
         })
     )
 
-    const { data: specs = [], isLoading: specsLoading } = useQuery(
-        orpc.testSpecs.list.queryOptions({
-            input: { folderId: '' }
-        })
-    )
-
-    const { data: requirements = [], isLoading: requirementsLoading } = useQuery(
-        orpc.testRequirements.list.queryOptions({
-            input: { specId: '' }
-        })
-    )
-
-    const { data: tests = [], isLoading: testsLoading } = useQuery(
-        orpc.tests.list.queryOptions({
-            input: { requirementId: '' }
-        })
-    )
-
-    const loading = foldersLoading || specsLoading || requirementsLoading || testsLoading
+    const folderIds = folders.map((f) => f.id)
+    const folderById = Object.fromEntries(folders.map((f) => [f.id, f]))
 
     return {
         folders,
-        specs,
-        requirements,
-        tests,
-        loading
+        folderIds,
+        folderById,
+        foldersLoading
     }
 }
 
-// export function useDashboardMutations(
-//     queryClient: any,
-//     selectedTest: Test | null,
-//     setSelectedTest: (test: Test | null) => void
-// ) {
-//     // Mutations for CRUD operations
-//     const deleteTestFolderMutation = useMutation(
-//         orpc.testFolders.delete.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testFolders'] })
-//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-//                 queryClient.invalidateQueries({ queryKey: ['tests'] })
-//             }
-//         })
-//     )
+export function useSpecs(folderId: TestFolder['id']) {
+    const { data: specs = [], isLoading: specsLoading } = useQuery(
+        orpc.testSpecs.list.queryOptions({
+            input: { folderId }
+        })
+    )
 
-//     const createTestCategoryMutation = useMutation(
-//         orpc.testFolders.create.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testFolders'] })
-//             }
-//         })
-//     )
+    const specIds = specs.map((s) => s.id)
+    const specById = Object.fromEntries(specs.map((s) => [s.id, s]))
 
-//     const updateTestCategoryMutation = useMutation(
-//         orpc.testFolders.update.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testFolders'] })
-//             }
-//         })
-//     )
+    return { specs, specIds, specById, specsLoading }
+}
 
-//     const deleteTestSpecMutation = useMutation(
-//         orpc.testSpecs.delete.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-//                 queryClient.invalidateQueries({ queryKey: ['tests'] })
-//             }
-//         })
-//     )
+export function useRequirements(specId: TestSpec['id']) {
+    const { data: requirements = [], isLoading: requirementsLoading } = useQuery(
+        orpc.testRequirements.list.queryOptions({
+            input: { specId }
+        })
+    )
 
-//     const createTestSpecMutation = useMutation(
-//         orpc.testSpecs.create.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-//             }
-//         })
-//     )
+    const requirementIds = requirements.map((r) => r.id)
+    const requirementById = Object.fromEntries(requirements.map((r) => [r.id, r]))
 
-//     const updateTestSpecMutation = useMutation(
-//         orpc.testSpecs.update.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['testSpecs'] })
-//             }
-//         })
-//     )
+    return { requirements, requirementIds, requirementById, requirementsLoading }
+}
 
-//     const deleteTestMutation = useMutation(
-//         orpc.tests.delete.mutationOptions({
-//             onSuccess: () => {
-//                 queryClient.invalidateQueries({ queryKey: ['tests'] })
-//                 if (selectedTest && deleteTestMutation.variables?.id === selectedTest.id) {
-//                     setSelectedTest(null)
-//                 }
-//             }
-//         })
-//     )
+export function useTests(requirementId: TestRequirement['id']) {
+    const { data: tests = [], isLoading: testsLoading } = useQuery(
+        orpc.tests.list.queryOptions({
+            input: { requirementId }
+        })
+    )
 
-//     const handleDelete = async (node: any) => {
-//         if (node.type === 'folder') {
-//             deleteTestFolderMutation.mutate({ id: node.id })
-//         } else if (node.type === 'spec') {
-//             deleteTestSpecMutation.mutate({ id: node.id })
-//         } else if (node.type === 'test') {
-//             deleteTestMutation.mutate({ id: node.id })
-//         }
-//     }
+    const testIds = tests.map((t) => t.id)
+    const testById = Object.fromEntries(tests.map((t) => [t.id, t]))
 
-//     return {
-//         deleteTestFolderMutation,
-//         createTestFolderMutation,
-//         updateTestFolderMutation,
-//         deleteTestSpecMutation,
-//         createTestSpecMutation,
-//         updateTestSpecMutation,
-//         deleteTestMutation,
-//         handleDelete
-//     }
-// }
+    return { tests, testIds, testById, testsLoading }
+}
