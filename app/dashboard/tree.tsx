@@ -37,7 +37,7 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
             const folderSpecs = specs.filter((spec) => spec.folderId === folder.id)
             return {
                 ...folder,
-                children: childFolders,
+                folders: childFolders,
                 specs: folderSpecs
             }
         }
@@ -45,26 +45,27 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
         const roots: FolderWithChildren[] = folders
             .filter((f) => !f.parentFolderId || f.parentFolderId === '0')
             .map(buildFolder)
+
         const orphanSpecs: TestSpec[] = specs.filter((s) => !s.folderId)
         return { roots, orphanSpecs }
     }, [folders, specs, requirements, tests])
 
-    const { itemsById, childrenById } = useMemo(() => {
+    const { itemsById, foldersById } = useMemo(() => {
         const items: Record<string, ItemPayload> = {}
-        const children: Record<string, string[]> = { root: [] }
+        const folders: Record<string, string[]> = { root: [] }
 
         const makeFolderId = (id: string) => `folder:${id}`
         const makeSpecId = (id: string) => `spec:${id}`
 
         const ensure = (id: string) => {
-            if (!children[id]) children[id] = []
+            if (!folders[id]) folders[id] = []
         }
 
         // Orphan specs (without folder) go under root
         buildHierarchy.orphanSpecs.forEach((spec) => {
             const sid = makeSpecId(spec.id)
             items[sid] = { type: 'spec', spec }
-            children.root.push(sid)
+            folders.root.push(sid)
         })
 
         const addFolder = (folder: FolderWithChildren, parent: string | null) => {
@@ -73,25 +74,25 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
             ensure(fid)
             if (parent) {
                 ensure(parent)
-                children[parent].push(fid)
+                folders[parent].push(fid)
             } else {
-                children.root.push(fid)
+                folders.root.push(fid)
             }
 
             // specs of this folder
             folder.specs.forEach((spec) => {
                 const sid = makeSpecId(spec.id)
                 items[sid] = { type: 'spec', spec }
-                children[fid].push(sid)
+                folders[fid].push(sid)
             })
 
-            // child folders
-            folder.children.forEach((child) => addFolder(child, fid))
+            // folders of this folder
+            folder.folders.forEach((folder) => addFolder(folder, fid))
         }
 
         buildHierarchy.roots.forEach((r) => addFolder(r, null))
 
-        return { itemsById: items, childrenById: children }
+        return { itemsById: items, foldersById: folders }
     }, [buildHierarchy])
 
     // Store only overrides produced by drag-and-drop; fall back to computed children
@@ -106,7 +107,7 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
         isItemFolder: (item) => item.getItemData().type === 'folder',
         dataLoader: {
             getItem: (itemId) => itemsById[itemId],
-            getChildren: (itemId) => overrides[itemId] ?? childrenById[itemId]
+            getChildren: (itemId) => overrides[itemId] ?? foldersById[itemId]
         },
         canReorder: true,
         onDrop: createOnDropHandler((item, newChildren) => {

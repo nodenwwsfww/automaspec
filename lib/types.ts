@@ -52,13 +52,12 @@ export type TestFolder = z.infer<typeof testFolderSelectSchema>
 export type TestSpec = z.infer<typeof testSpecSelectSchema>
 export type TestRequirement = z.infer<typeof testRequirementSelectSchema>
 export type Test = z.infer<typeof testSelectSchema>
-
-// I check correct types up to here
-
 export interface FolderWithChildren extends TestFolder {
-    children: FolderWithChildren[]
+    folders: FolderWithChildren[]
     specs: TestSpec[]
 }
+
+// I check correct types up to here
 
 // Form input types
 export type CreateTestFolderInput = Omit<TestFolder, 'id' | 'createdAt' | 'updatedAt'>

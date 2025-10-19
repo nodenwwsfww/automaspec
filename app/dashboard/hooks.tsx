@@ -4,17 +4,6 @@ import { useQuery } from '@tanstack/react-query'
 import { orpc } from '@/lib/orpc/orpc'
 import { type TestFolder, type TestSpec, type TestRequirement } from '@/lib/types'
 
-// export function useInitialStructure() {
-//     const { folders, foldersLoading } = useFolders(null)
-//     const { specs, specsLoading } = useSpecs(null)
-//     const structure = {
-//         ...folders,
-//         ...specs,
-//     }
-//     const structureLoading = foldersLoading || specsLoading
-//     return { structure, structureLoading }
-// }
-
 export function useFolders(parentFolderId: TestFolder['parentFolderId']) {
     const { data: folders, isLoading: foldersLoading } = useQuery(
         orpc.testFolders.list.queryOptions({
