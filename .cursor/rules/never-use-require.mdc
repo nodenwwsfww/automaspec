@@ -1,0 +1,5 @@
+---
+alwaysApply: true
+---
+
+Never use require() in code, always use import instead
