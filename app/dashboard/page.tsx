@@ -13,16 +13,16 @@ export default function Dashboard() {
     const [selectedRequirements, setSelectedRequirements] = useState<TestRequirement[]>([])
     const [selectedTests, setSelectedTests] = useState<Test[]>([])
 
-    const { folders, foldersLoading } = useFolders('folder-1') // FIXME: use the actual folder id
-    const { specs, specsLoading } = useSpecs(folders[0]?.id)
-    const { requirements, requirementsLoading } = useRequirements(specs[0]?.id)
-    const { tests, testsLoading } = useTests(requirements[0]?.id)
+    const { folders, foldersLoading } = useFolders(null)
+    const { specs, specsLoading } = useSpecs(null)
+    const { requirements, requirementsLoading } = useRequirements('')
+    const { tests, testsLoading } = useTests('')
 
     const loading = foldersLoading || specsLoading || requirementsLoading || testsLoading
 
     const handleSpecSelect = (spec: TestSpec) => {
-        const specRequirements = requirements.filter((req) => req.specId === spec.id)
-        const specTests = tests.filter((test) => test.requirementId === spec.id)
+        const specRequirements = requirements?.filter((req) => req.specId === spec.id) ?? []
+        const specTests = tests?.filter((test) => test.requirementId === spec.id) ?? []
 
         setSelectedSpec(spec)
         setSelectedRequirements(specRequirements)
@@ -47,10 +47,10 @@ export default function Dashboard() {
 
                 <div className="flex-1 overflow-auto p-2">
                     <Tree
-                        folders={folders}
-                        specs={specs}
-                        requirements={requirements}
-                        tests={tests}
+                        folders={folders ?? []}
+                        specs={specs ?? []}
+                        requirements={requirements ?? []}
+                        tests={tests ?? []}
                         selectedSpecId={selectedSpec?.id || null}
                         onSelectSpec={handleSpecSelect}
                     />

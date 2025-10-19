@@ -16,7 +16,7 @@ import { type TestFolder, type TestSpec, type TestRequirement } from '@/lib/type
 // }
 
 export function useFolders(parentFolderId: TestFolder['parentFolderId']) {
-    const { data: folders = [], isLoading: foldersLoading } = useQuery(
+    const { data: folders, isLoading: foldersLoading } = useQuery(
         orpc.testFolders.list.queryOptions({
             input: { parentFolderId }
         })
@@ -34,7 +34,7 @@ export function useFolders(parentFolderId: TestFolder['parentFolderId']) {
 }
 
 export function useSpecs(folderId: TestSpec['folderId']) {
-    const { data: specs = [], isLoading: specsLoading } = useQuery(
+    const { data: specs, isLoading: specsLoading } = useQuery(
         orpc.testSpecs.list.queryOptions({
             input: { folderId }
         })
@@ -47,27 +47,27 @@ export function useSpecs(folderId: TestSpec['folderId']) {
 }
 
 export function useRequirements(specId: TestSpec['id']) {
-    const { data: requirements = [], isLoading: requirementsLoading } = useQuery(
+    const { data: requirements, isLoading: requirementsLoading } = useQuery(
         orpc.testRequirements.list.queryOptions({
             input: { specId }
         })
     )
 
-    const requirementIds = requirements.map((r) => r.id)
-    const requirementById = Object.fromEntries(requirements.map((r) => [r.id, r]))
+    // const requirementIds = requirements.map((r) => r.id)
+    // const requirementById = Object.fromEntries(requirements.map((r) => [r.id, r]))
 
-    return { requirements, requirementIds, requirementById, requirementsLoading }
+    return { requirements, requirementsLoading }
 }
 
 export function useTests(requirementId: TestRequirement['id']) {
-    const { data: tests = [], isLoading: testsLoading } = useQuery(
+    const { data: tests, isLoading: testsLoading } = useQuery(
         orpc.tests.list.queryOptions({
             input: { requirementId }
         })
     )
 
-    const testIds = tests.map((t) => t.id)
-    const testById = Object.fromEntries(tests.map((t) => [t.id, t]))
+    // const testIds = tests.map((t) => t.id)
+    // const testById = Object.fromEntries(tests.map((t) => [t.id, t]))
 
-    return { tests, testIds, testById, testsLoading }
+    return { tests, testsLoading }
 }
