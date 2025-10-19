@@ -1,0 +1,1 @@
+ALTER TABLE `test_folder` ADD `parent_folder_id` text;

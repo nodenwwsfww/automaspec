@@ -13,6 +13,11 @@ import {
 
 // FIXME: almost all contract schemes are bullshit here
 
+const getTestFolderContract = oc
+    .route({ method: 'GET', path: '/test-folders/{id}' })
+    .input(testFolderInsertSchema.pick({ id: true }))
+    .output(testFolderSelectSchema)
+
 const listTestFoldersContract = oc
     .route({ method: 'GET', path: '/test-folders' })
     .input(testFolderInsertSchema.pick({ parentFolderId: true }).partial({ parentFolderId: true }))
@@ -75,6 +80,7 @@ const deleteTestContract = oc
 
 export const testsContract = {
     testFolders: {
+        get: getTestFolderContract,
         list: listTestFoldersContract,
         upsert: upsertTestFolderContract,
         delete: deleteTestFolderContract

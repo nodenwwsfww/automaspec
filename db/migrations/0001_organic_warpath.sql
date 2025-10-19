@@ -1,0 +1,1 @@
+ALTER TABLE `test_folder` DROP COLUMN `parent_folder_id`;

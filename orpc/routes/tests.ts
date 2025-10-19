@@ -9,6 +9,20 @@ import { ORPCError } from '@orpc/server'
 
 const os = implement(testsContract).use(authMiddleware).use(organizationMiddleware)
 
+const getTestFolder = os.testFolders.get.handler(async ({ input, context }) => {
+    const folder = await db
+        .select()
+        .from(testFolder)
+        .where(and(eq(testFolder.id, input.id), eq(testFolder.organizationId, context.organizationId)))
+        .limit(1)
+
+    if (folder.length === 0) {
+        throw new ORPCError('Folder not found')
+    }
+
+    return folder[0]
+})
+
 // RIGHT
 const listTestFolders = os.testFolders.list.handler(async ({ context }) => {
     return await db.select().from(testFolder).where(eq(testFolder.organizationId, context.organizationId))
@@ -178,6 +192,7 @@ const deleteTestRequirement = os.testRequirements.delete.handler(async ({ input 
 
 export const testsRouter = {
     testFolders: {
+        get: getTestFolder,
         list: listTestFolders,
         upsert: upsertTestFolder,
         delete: deleteTestFolder
