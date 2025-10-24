@@ -3,7 +3,7 @@
 import { useMemo, useState } from 'react'
 import {
     selectionFeature,
-    syncDataLoaderFeature,
+    asyncDataLoaderFeature,
     hotkeysCoreFeature,
     dragAndDropFeature,
     keyboardDragAndDropFeature,
@@ -98,25 +98,55 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
     // Store only overrides produced by drag-and-drop; fall back to computed children
     const [overrides, setOverrides] = useState<Record<string, string[]>>({})
 
+    const [selectedItems, setSelectedItems] = useState<string[]>([])
+    const [expandedItems, setExpandedItems] = useState<string[]>([])
+    const [focusedItem, setFocusedItem] = useState<string | null>(null)
+
     const tree = useTree<ItemPayload>({
         rootItemId: 'root',
+        state: {
+            selectedItems,
+            expandedItems,
+            focusedItem
+        },
+        setSelectedItems,
+        setExpandedItems,
+        setFocusedItem,
+        isItemFolder: (item) => item.getItemData().type === 'folder',
+        canReorder: true,
+        indent: 16,
+
+        // ALREADY CHECKED UP TO HERE
         getItemName: (item) => {
             const data = item.getItemData()
             return data.type === 'folder' ? data.folder.name : data.spec.name
         },
-        isItemFolder: (item) => item.getItemData().type === 'folder',
+        // TODO: make this pretty
+        createLoadingItemData: () => ({
+            type: 'folder',
+            folder: {
+                id: 'loading',
+                name: 'Loading...',
+                description: 'Loading...',
+                parentFolderId: 'loading',
+                createdAt: new Date(),
+                updatedAt: new Date(),
+                folders: [],
+                specs: [],
+                organizationId: 'loading',
+                order: 0
+            }
+        }),
         dataLoader: {
             getItem: (itemId) => itemsById[itemId],
             getChildren: (itemId) => overrides[itemId] ?? foldersById[itemId]
         },
-        canReorder: true,
         onDrop: createOnDropHandler((item, newChildren) => {
             const targetId = item.getId()
             setOverrides((prev) => ({ ...prev, [targetId]: newChildren }))
         }),
-        indent: 16,
         features: [
-            syncDataLoaderFeature,
+            asyncDataLoaderFeature,
             selectionFeature,
             hotkeysCoreFeature,
             dragAndDropFeature,
@@ -133,15 +163,17 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
                 const isExpanded = item.isExpanded()
                 const isSelected = payload.type === 'spec' ? selectedSpecId === payload.spec.id : false
 
-                const { ...baseProps } = item.getProps()
-                const onClick = (e: any) => {
-                    baseProps.onClick?.(e)
-                    if (payload.type === 'spec') onSelectSpec(payload.spec)
+                const onClick = (e: React.MouseEvent<HTMLButtonElement>) => {
+                    item.getProps().onClick?.(e)
+                    if (payload.type === 'spec') {
+                        onSelectSpec(payload.spec)
+                    }
+                    setSelectedItems([item.getId()])
                 }
 
                 return (
                     <button
-                        {...baseProps}
+                        {...item.getProps()}
                         onClick={onClick}
                         key={item.getId()}
                         className={cn(
@@ -151,7 +183,6 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
                         style={{ paddingLeft: `${level * 16}px` }}
                         type="button"
                     >
-                        {/* Chevron */}
                         <div className="flex h-4 w-4 items-center justify-center">
                             {isFolder ?
                                 isExpanded ?
@@ -160,15 +191,12 @@ export function Tree({ folders, specs, requirements, tests, selectedSpecId, onSe
                             :   <span className="w-3" />}
                         </div>
 
-                        {/* Icon */}
                         {isFolder ?
                             <Folder className="h-4 w-4 text-muted-foreground" />
                         :   <FileText className="h-4 w-4 text-muted-foreground" />}
 
-                        {/* Label */}
                         <span className="flex-1 text-left text-sm font-medium">{item.getItemName()}</span>
 
-                        {/* Right side stats/badge for specs */}
                         {payload.type === 'spec' && (
                             <div className="flex items-center gap-2">
                                 {payload.spec.statuses[SPEC_STATUSES.deactivated] &&

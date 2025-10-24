@@ -21,8 +21,8 @@ export default function Dashboard() {
     const loading = foldersLoading || specsLoading || requirementsLoading || testsLoading
 
     const handleSpecSelect = (spec: TestSpec) => {
-        const specRequirements = requirements?.filter((req) => req.specId === spec.id) ?? []
-        const specTests = tests?.filter((test) => test.requirementId === spec.id) ?? []
+        const specRequirements = requirements.filter((req) => req.specId === spec.id)
+        const specTests = tests.filter((test) => test.requirementId === spec.id)
 
         setSelectedSpec(spec)
         setSelectedRequirements(specRequirements)
@@ -47,10 +47,10 @@ export default function Dashboard() {
 
                 <div className="flex-1 overflow-auto p-2">
                     <Tree
-                        folders={folders ?? []}
-                        specs={specs ?? []}
-                        requirements={requirements ?? []}
-                        tests={tests ?? []}
+                        folders={folders}
+                        specs={specs}
+                        requirements={requirements}
+                        tests={tests}
                         selectedSpecId={selectedSpec?.id || null}
                         onSelectSpec={handleSpecSelect}
                     />

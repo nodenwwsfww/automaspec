@@ -15,7 +15,7 @@ export function useFolders(parentFolderId: TestFolder['parentFolderId']) {
     // const folderById = Object.fromEntries(folders.map((f) => [f.id, f]))
 
     return {
-        folders,
+        folders: folders ?? [],
         // folderIds,
         // folderById,
         foldersLoading
@@ -32,7 +32,7 @@ export function useSpecs(folderId: TestSpec['folderId']) {
     // const specIds = specs.map((s) => s.id)
     // const specById = Object.fromEntries(specs.map((s) => [s.id, s]))
 
-    return { specs, specsLoading }
+    return { specs: specs ?? [], specsLoading }
 }
 
 export function useRequirements(specId: TestSpec['id']) {
@@ -45,7 +45,7 @@ export function useRequirements(specId: TestSpec['id']) {
     // const requirementIds = requirements.map((r) => r.id)
     // const requirementById = Object.fromEntries(requirements.map((r) => [r.id, r]))
 
-    return { requirements, requirementsLoading }
+    return { requirements: requirements ?? [], requirementsLoading }
 }
 
 export function useTests(requirementId: TestRequirement['id']) {
@@ -58,5 +58,5 @@ export function useTests(requirementId: TestRequirement['id']) {
     // const testIds = tests.map((t) => t.id)
     // const testById = Object.fromEntries(tests.map((t) => [t.id, t]))
 
-    return { tests, testsLoading }
+    return { tests: tests ?? [], testsLoading }
 }
